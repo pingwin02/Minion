@@ -14,8 +14,10 @@ module.exports = {
                 + currentdate.getHours() + ":"  
                 + currentdate.getMinutes() + ":" 
                 + currentdate.getSeconds();
-
-		console.log(`${interaction.user} użył komendy ${interaction.commandName} Czas: ${datetime}`);
+				
+		console.log(
+			`${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id}) used ${interaction.commandName} command in ${interaction.channel.name} (${interaction.channel.id}) at ${datetime}`
+			);
 
 		if (!command) {
 			console.error(`No command matching ${interaction.commandName} was found.`);

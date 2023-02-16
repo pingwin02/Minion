@@ -41,7 +41,7 @@ module.exports = {
         if (!uwagi) {
             uwagi = 'Brak';
         }
-        const message = await channel.send(`WNIOSEK @${id}\n${indeks} ${nr_grupy} ${imie} ${nazwisko} Uwagi: ${uwagi}`);
+        const message = await channel.send(`WNIOSEK ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id})\n${indeks} ${nr_grupy} ${imie} ${nazwisko} Uwagi: ${uwagi}`);
         await message.react('✅').then(() => message.react('❌'));
 
         const filter = (reaction, user) => {
