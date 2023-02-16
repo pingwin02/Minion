@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
 
-const { weryfikacjeID } = require('../config.json');
-
 module.exports = {
 	data: new SlashCommandBuilder()
 	.setName('verify')
@@ -24,13 +22,13 @@ module.exports = {
         option.setName('nr_grupy')
             .setDescription('Nr grupy dziekańskiej studenta, jeśli brak to wpisz 0')
             .setMinValue(0)
-            .setMaxValue(6)
+            .setMaxValue(5)
             .setRequired(true))
     .addStringOption(option =>
         option.setName('uwagi')
             .setDescription('Dodatkowe uwagi dotyczące wniosku')),
     async execute(interaction) {
-        const channel = interaction.client.channels.cache.get(weryfikacjeID);
+        const channel = interaction.client.channels.cache.get(process.env.weryfikacjeID);
         if (!channel) return console.log('Kanał nie istnieje!');
         const id = interaction.user.id;
         const imie = interaction.options.getString('imię');
@@ -41,7 +39,7 @@ module.exports = {
         if (!uwagi) {
             uwagi = 'Brak';
         }
-        const message = await channel.send(`WNIOSEK ID#${id}\n${indeks} ${nr_grupy} ${imie} ${nazwisko} Uwagi: ${uwagi}`);
+        const message = await channel.send(`WNIOSEK @${id}\n${indeks} ${nr_grupy} ${imie} ${nazwisko} Uwagi: ${uwagi}`);
         await message.react('✅').then(() => message.react('❌'));
 
         const filter = (reaction, user) => {
