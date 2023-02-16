@@ -20,7 +20,7 @@ module.exports = {
 				await interaction.reply({ content: `Nick: **${user.username}**\nID: **${user.id}**`, ephemeral: true });
 				
 			} else {
-				await interaction.reply({ content: `Twój nick: **${interaction.user.username}**\Twoje ID: **${interaction.user.id}**`, ephemeral: true });
+				await interaction.reply({ content: `Twój nick: **${interaction.user.username}**\nTwoje ID: **${interaction.user.id}**`, ephemeral: true });
 			}
 		} else if (interaction.options.getSubcommand() === 'server') {
 			await interaction.reply({ content: `Nazwa serwera: **${interaction.guild.name}**\nIlość użytkowników: **${interaction.guild.memberCount}**`, ephemeral: true });
