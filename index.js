@@ -2,16 +2,25 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 // Require the necessary discord.js classes
-const { Client, Events, GatewayIntentBits , Collection } = require("discord.js");
+const { Client, Partials, GatewayIntentBits , Collection } = require("discord.js");
 
 require('dotenv').config()
 
 // Create a new client instance
-const client = new Client({ intents: [
-  GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.GuildMessageReactions
-] });
+const client = new Client({ 
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessageReactions
+  ],
+  partials: [
+    Partials.Message, 
+    Partials.Channel, 
+    Partials.Reaction
+  ] 
+});
 
 // Create a new Collection for the commands
 client.commands = new Collection();
@@ -48,7 +57,6 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
-
 
 // Log in to Discord with your client's token
 client.login(process.env.token);

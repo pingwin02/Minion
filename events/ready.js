@@ -6,9 +6,11 @@ module.exports = {
   execute(client) {
     // Set the bot's activity
     client.user.setPresence({
-		activities: [{ name: `studentów (debili)`, type: ActivityType.Listening }],
-		status: 'online',
-	  });
+      activities: [
+        { name: `studentów (debili)`, type: ActivityType.Listening },
+      ],
+      status: "online",
+    });
     console.log(`Ready! Logged in as ${client.user.tag}`);
   },
 };
