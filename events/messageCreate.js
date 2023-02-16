@@ -16,22 +16,28 @@ module.exports = {
           if (element.author.id === message.client.user.id)
             toDelete.push(element.id);
         });
-        console.log(toDelete);
+        if (toDelete.length === 0) {
+          message.reply({
+            content: `Nie znaleziono żadnych wiadomości do usunięcia`,
+            ephemeral: true,
+          });
+          return;
+        }
         message.client.channels.fetch(message.channelId).then((chl) => {
           toDelete.forEach((msgid) => {
             chl.messages.delete(msgid);
           });
+
+          message
+            .reply({
+              content: `Usunąłem **${toDelete.length}** moich wiadomości`,
+              ephemeral: true,
+            })
+            .then((msg) => {
+              setTimeout(() => msg.delete(), 3000);
+            });
         });
       });
-
-      message
-        .reply({
-          content: `Usunąłem **${toDelete.length}** moich wiadomości`,
-          ephemeral: true,
-        })
-        .then((msg) => {
-          setTimeout(() => msg.delete(), 3000);
-        });
     } else if (message.content === "student") {
       message.reply("debil <:dziubdziub:1052315768555061279>");
     }
