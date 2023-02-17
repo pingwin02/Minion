@@ -2,24 +2,50 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 // Require the necessary discord.js classes
-const { Client, Partials, GatewayIntentBits , Collection } = require("discord.js");
+const {
+  Client,
+  Partials,
+  GatewayIntentBits,
+  Collection,
+} = require("discord.js");
 
-require('dotenv').config()
+require("dotenv").config();
+
+module.exports = {
+  printMessage
+}
+
+function printMessage(message) {
+  var currentdate = new Date().toISOString().
+  replace(/T/, ' ').      // replace T with a space
+  replace(/\..+/, '')     // delete the dot and everything after
+
+  let user = message.author;
+  if (message.author === undefined) user = message.user;
+
+  let commandName = message.commandName;
+  if (commandName === undefined) commandName = message.content;
+
+  if (message.guild === null)
+    return console.log(
+      `${currentdate} - ${user.username}#${user.discriminator} (${user.id}) used ${commandName} command in DMs`
+    );
+  return console.log(
+    `${currentdate} - ${user.username}#${user.discriminator} (${user.id}) used ${commandName} command in ${message.channel.name} (${message.channel.id}) at ${message.guild.name} (${message.guild.id})`
+  );
+}
 
 // Create a new client instance
-const client = new Client({ 
+const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildMessageReactions
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildPresences
   ],
-  partials: [
-    Partials.Message, 
-    Partials.Channel, 
-    Partials.Reaction
-  ] 
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 // Create a new Collection for the commands
@@ -45,17 +71,19 @@ for (const file of commandFiles) {
 }
 
 // Retrieve all of the events from the events folder
-const eventsPath = path.join(__dirname, 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+const eventsPath = path.join(__dirname, "events");
+const eventFiles = fs
+  .readdirSync(eventsPath)
+  .filter((file) => file.endsWith(".js"));
 
 for (const file of eventFiles) {
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
-	}
+  const filePath = path.join(eventsPath, file);
+  const event = require(filePath);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
+  }
 }
 
 // Log in to Discord with your client's token

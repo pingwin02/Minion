@@ -1,12 +1,12 @@
 const { Events } = require("discord.js");
 
+const {printMessage} = require("../index.js");
+
 module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
-    if (message.content.startsWith("!clear")) {
-      console.log(
-        `${message.author.username}#${message.author.discriminator} (${message.author.id}) used !clear command in ${message.channel.name} (${message.channel.id})`
-      );
+    if (message.content === "!clear") {
+      printMessage(message);
       const channel = message.client.channels.cache.get(
         message.channelId.toString()
       );
@@ -27,27 +27,26 @@ module.exports = {
             .then((msg) => {
               setTimeout(() => msg.delete(), 3000);
             });
-          return;
-        }
-        message.client.channels.fetch(message.channelId).then((chl) => {
-          toDelete.forEach((msgid) => {
-            chl.messages.delete(msgid);
-          });
-
-          message
-            .reply({
-              content: `Usunąłem **${toDelete.length}** moich wiadomości`,
-              ephemeral: true,
-            })
-            .then((msg) => {
-              setTimeout(() => msg.delete(), 3000);
+        } else {
+          message.client.channels.fetch(message.channelId).then((chl) => {
+            toDelete.forEach((msgid) => {
+              chl.messages.delete(msgid);
             });
-        });
+
+            message
+              .reply({
+                content: `Usunąłem **${toDelete.length}** moich wiadomości`,
+                ephemeral: true,
+              })
+              .then((msg) => {
+                setTimeout(() => msg.delete(), 3000);
+              });
+          });
+        }
+        if (message.guild) setTimeout(() => message.delete(), 4000);
       });
     } else if (message.content === "student") {
-      console.log(
-        `${message.author.username}#${message.author.discriminator} (${message.author.id}) used student command in ${message.channel.name} (${message.channel.id})`
-      );
+      printMessage(message);
       message.reply("debil <:dziubdziub:1052315768555061279>");
     }
   },

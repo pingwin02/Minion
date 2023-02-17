@@ -1,5 +1,9 @@
 const { SlashCommandBuilder } = require('discord.js');
 
+function activeMembersCounter(guild) {
+	return guild.members.cache.filter((m) => m.presence?.status == "online").size;
+  }
+
 module.exports = {
 	data: new SlashCommandBuilder()
 	.setName('info')
@@ -24,8 +28,8 @@ module.exports = {
 				await interaction.reply({ content: `Twój nick: **${interaction.user.username}**\nTwoje ID: **${interaction.user.id}**`, ephemeral: true });
 			}
 		} else if (interaction.options.getSubcommand() === 'server') {
-			await interaction.reply({ content: `Nazwa serwera: **${interaction.guild.name}**\nIlość użytkowników: **${interaction.guild.memberCount}**`, ephemeral: true });
+			await interaction.reply({ content: `Nazwa serwera: **${interaction.guild.name}**\nStworzony: **${interaction.guild.createdAt}**\nIlość użytkowników: **${interaction.guild.memberCount}** (w tym **${activeMembersCounter(interaction.guild)}** aktywnych)` , ephemeral: true });
 		}
 	},
 
-};
+}
