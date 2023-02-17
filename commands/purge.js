@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("purge")
-    .setDescription("Kasuje wiadomości.")
+    .setDescription("Kasuje wiadomości, które są młodsze niż 14 dni.")
     .addIntegerOption((option) =>
       option
         .setName("ilość")
@@ -16,9 +16,9 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply();
     const amount = interaction.options.getInteger("ilość") + 1;
-    await interaction.channel.bulkDelete(amount);
+    await interaction.channel.bulkDelete(amount, true);
 
-    const msg = `Usunięto **${amount - 1}** wiadomości.`;
+    const msg = `Usunięto około **${amount - 1}** wiadomości.`;
     interaction.channel.send(msg).then((msg) => {
       setTimeout(() => msg.delete(), 3000);
     });
