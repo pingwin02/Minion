@@ -1,6 +1,6 @@
 const { Events } = require("discord.js");
 
-const {printMessage} = require("../index.js");
+const { printMessage, sendError } = require("../index.js");
 
 module.exports = {
   name: Events.MessageCreate,
@@ -25,12 +25,20 @@ module.exports = {
               ephemeral: true,
             })
             .then((msg) => {
-              setTimeout(() => msg.delete(), 3000);
+              setTimeout(
+                () =>
+                  msg.delete().catch((err) => {
+                    sendError("Kasowanie wiadomości", err, message);
+                  }),
+                3000
+              );
             });
         } else {
           message.client.channels.fetch(message.channelId).then((chl) => {
             toDelete.forEach((msgid) => {
-              chl.messages.delete(msgid);
+              chl.messages.delete(msgid).catch((err) => {
+                sendError("Kasowanie wiadomości", err, message);
+              });
             });
 
             message
@@ -39,11 +47,24 @@ module.exports = {
                 ephemeral: true,
               })
               .then((msg) => {
-                setTimeout(() => msg.delete(), 3000);
+                setTimeout(
+                  () =>
+                    msg.delete().catch((err) => {
+                      sendError("Kasowanie wiadomości", err, message);
+                    }),
+                  3000
+                );
               });
           });
         }
-        if (message.guild) setTimeout(() => message.delete(), 4000);
+        if (message.guild)
+          setTimeout(
+            () =>
+              message.delete().catch((err) => {
+                sendError("Kasowanie wiadomości", err, message);
+              }),
+            4000
+          );
       });
     } else if (message.content === "student") {
       printMessage(message);

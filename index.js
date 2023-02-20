@@ -12,13 +12,15 @@ const {
 require("dotenv").config();
 
 module.exports = {
-  printMessage
-}
+  printMessage,
+  sendError,
+};
 
 function printMessage(message) {
-  var currentdate = new Date().toISOString().
-  replace(/T/, ' ').      // replace T with a space
-  replace(/\..+/, '')     // delete the dot and everything after
+  var currentdate = new Date()
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, "");
 
   let user = message.author;
   if (message.author === undefined) user = message.user;
@@ -35,6 +37,12 @@ function printMessage(message) {
   );
 }
 
+function sendError(title, err, interaction) {
+  interaction.channel.send(
+    `:x: Wystąpił nieoczekiwany błąd: ${title}\n\`${err}\``
+  );
+}
+
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -43,7 +51,7 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildPresences
+    GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });

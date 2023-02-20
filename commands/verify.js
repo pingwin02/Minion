@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 
-require("dotenv").config();
+const { sendError } = require("../index.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -75,7 +75,13 @@ module.exports = {
           if (reaction.emoji.name === "✅") {
             message.react("✅");
             message.reply("Zatwierdzono wniosek!").then((msg) => {
-              setTimeout(() => msg.delete(), 5000);
+              setTimeout(
+                () =>
+                  msg.delete().catch((err) => {
+                    sendError("Kasowanie wiadomości", err, interaction);
+                  }),
+                5000
+              );
               interaction.client.users.cache
                 .get(id)
                 .send(
@@ -85,7 +91,13 @@ module.exports = {
           } else {
             message.react("❌");
             message.reply("Odrzucono wniosek!").then((msg) => {
-              setTimeout(() => msg.delete(), 5000);
+              setTimeout(
+                () =>
+                  msg.delete().catch((err) => {
+                    sendError("Kasowanie wiadomości", err, interaction);
+                  }),
+                5000
+              );
               interaction.client.users.cache
                 .get(id)
                 .send(
@@ -101,7 +113,13 @@ module.exports = {
             ":x: Brak reakcji na wniosek w ciągu 60 sekund. Automatyzacja wyłączona."
           )
           .then((msg) => {
-            setTimeout(() => msg.delete(), 10000);
+            setTimeout(
+              () =>
+                msg.delete().catch((err) => {
+                  sendError("Kasowanie wiadomości", err, interaction);
+                }),
+              10000
+            );
           });
         message.reactions.removeAll();
       });
