@@ -1,6 +1,6 @@
 const { Events } = require("discord.js");
 
-const {printMessage} = require("../index.js");
+const { printMessage } = require("../index.js");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -10,6 +10,19 @@ module.exports = {
     const command = interaction.client.commands.get(interaction.commandName);
 
     printMessage(interaction);
+
+    const channel = interaction.client.channels.cache.get(
+      interaction.channelId
+    );
+    if (
+      !channel.permissionsFor(interaction.client.user).has("SendMessages") ||
+      !channel.permissionsFor(interaction.client.user).has("ViewChannel")
+    ) {
+      return interaction.reply({
+        content: ":x: Nie mam uprawnień do wysyłania wiadomości",
+        ephemeral: true,
+      });
+    }
 
     if (!command) {
       console.error(
