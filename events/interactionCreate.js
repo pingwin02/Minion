@@ -15,11 +15,13 @@ module.exports = {
       interaction.channelId
     );
     if (
-      !channel.permissionsFor(interaction.client.user).has("SendMessages") ||
-      !channel.permissionsFor(interaction.client.user).has("ViewChannel")
+      interaction.guild &&
+      (!channel.permissionsFor(interaction.client.user).has("SendMessages") ||
+        !channel.permissionsFor(interaction.client.user).has("ViewChannel"))
     ) {
       return interaction.reply({
-        content: ":x: Nie mam uprawnień do wysyłania wiadomości",
+        content:
+          ":x: Nie mam uprawnień do wysyłania wiadomości lub nie widzę tego kanału",
         ephemeral: true,
       });
     }
