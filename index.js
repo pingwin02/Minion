@@ -1,6 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+const { REST, Routes } = require("discord.js");
+
 // Require the necessary discord.js classes
 const {
   Client,
@@ -16,11 +18,26 @@ module.exports = {
   sendError,
 };
 
+const TOKEN = process.env.token;
+const CLIENT_ID = process.env.clientId;
+
+if (
+  !TOKEN ||
+  !CLIENT_ID ||
+  !process.env.kiedykolosID ||
+  !process.env.weryfikacjeID
+) {
+  console.log(
+    "Please provide a valid token, client ID, kiedykolos channel ID and weryfikacje channel ID in the .env file."
+  );
+  process.exit(1);
+}
+
+const LOAD_SLASH = process.argv[2] == "load";
+
 function printMessage(message) {
-  var currentdate = new Date()
-    .toISOString()
-    .replace(/T/, " ")
-    .replace(/\..+/, "");
+  const currentdate =
+    new Date().toISOString().replace(/T/, " ").replace(/\..+/, "") + " UTC";
 
   let user = message.author;
   if (message.author === undefined) user = message.user;
@@ -30,10 +47,10 @@ function printMessage(message) {
 
   if (message.guild === null)
     return console.log(
-      `${currentdate} - ${user.username}#${user.discriminator} (${user.id}) used ${commandName} command in DMs`
+      `${currentdate} - ${user.username} (${user.id}) used ${commandName} command in DMs`
     );
   return console.log(
-    `${currentdate} - ${user.username}#${user.discriminator} (${user.id}) used ${commandName} command in ${message.channel.name} (${message.channel.id}) at ${message.guild.name} (${message.guild.id})`
+    `${currentdate} - ${user.username} (${user.id}) used ${commandName} command in #${message.channel.name} (${message.channel.id}) at ${message.guild.name} (${message.guild.id})`
   );
 }
 
@@ -56,43 +73,61 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-// Create a new Collection for the commands
-client.commands = new Collection();
-
-// Retrieve all of the commands from the commands folder
-const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
+// Load slash commands from commands folder
+client.slashcommands = new Collection();
+let commands = [];
+const slashFiles = fs
+  .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
-
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
-  // Set a new item in the Collection with the key as the command name and the value as the exported module
-  if ("data" in command && "execute" in command) {
-    client.commands.set(command.data.name, command);
+for (const file of slashFiles) {
+  const slashcmd = require(`./commands/${file}`);
+  if ("data" in slashcmd && "execute" in slashcmd) {
+    client.slashcommands.set(slashcmd.data.name, slashcmd);
   } else {
     console.log(
-      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+      `[WARNING] The command at ./commands/${file} is missing a required "data" or "execute" property.`
     );
   }
+  if (LOAD_SLASH) commands.push(slashcmd.data.toJSON());
 }
 
-// Retrieve all of the events from the events folder
-const eventsPath = path.join(__dirname, "events");
-const eventFiles = fs
-  .readdirSync(eventsPath)
-  .filter((file) => file.endsWith(".js"));
+// If deploy argument is passed, load slash commands and exit
+if (LOAD_SLASH) {
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
 
-for (const file of eventFiles) {
-  const filePath = path.join(eventsPath, file);
-  const event = require(filePath);
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args));
-  } else {
-    client.on(event.name, (...args) => event.execute(...args));
+  (async () => {
+    try {
+      console.log(
+        `Started refreshing ${commands.length} application (/) commands.`
+      );
+      const data = await rest.put(Routes.applicationCommands(CLIENT_ID), {
+        body: commands,
+      });
+      console.log(
+        `Successfully reloaded ${data.length} application (/) commands.`
+      );
+      process.exit(0);
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  })();
+} else {
+  // Otherwise, load events and login
+  const eventFiles = fs
+    .readdirSync("./events")
+    .filter((file) => file.endsWith(".js"));
+
+  for (const file of eventFiles) {
+    const event = require(`./events/${file}`);
+
+    if (event.once) {
+      client.once(event.name, (...args) => event.execute(...args));
+    } else {
+      client.on(event.name, (...args) => event.execute(...args));
+    }
   }
-}
 
-// Log in to Discord with your client's token
-client.login(process.env.token);
+  // Login to Discord
+  client.login(TOKEN);
+}

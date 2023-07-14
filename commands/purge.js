@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 
-const { sendError } = require("../index.js");
+const { sendError } = require("../index");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
     )
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-  async execute(interaction) {
+  async execute({ client, interaction }) {
     await interaction.deferReply();
     const amount = interaction.options.getInteger("ilość") + 1;
     await interaction.channel.bulkDelete(amount, true).catch((err) => {
@@ -23,7 +23,7 @@ module.exports = {
     });
 
     const msg = `Usunięto około **${amount - 1}** wiadomości.`;
-    interaction.channel.send(msg).then((msg) => {
+    await interaction.channel.send(msg).then((msg) => {
       setTimeout(
         () =>
           msg.delete().catch((err) => {

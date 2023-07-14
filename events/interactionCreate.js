@@ -7,17 +7,15 @@ module.exports = {
   async execute(interaction) {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = interaction.client.commands.get(interaction.commandName);
-
     printMessage(interaction);
 
-    const channel = interaction.client.channels.cache.get(
-      interaction.channelId
-    );
+    const client = interaction.client;
+
+    const channel = client.channels.cache.get(interaction.channelId);
     if (
       interaction.guild &&
-      (!channel.permissionsFor(interaction.client.user).has("SendMessages") ||
-        !channel.permissionsFor(interaction.client.user).has("ViewChannel"))
+      (!channel.permissionsFor(client.user).has("SendMessages") ||
+        !channel.permissionsFor(client.user).has("ViewChannel"))
     ) {
       return interaction.reply({
         content:
@@ -26,6 +24,10 @@ module.exports = {
       });
     }
 
+    const command = interaction.client.slashcommands.get(
+      interaction.commandName
+    );
+
     if (!command) {
       console.error(
         `No command matching ${interaction.commandName} was found.`
@@ -33,11 +35,20 @@ module.exports = {
       return;
     }
 
+    const slashcmd = client.slashcommands.get(interaction.commandName);
+    if (!slashcmd)
+      return interaction.reply(
+        ":x: Wystąpił nieoczekiwany błąd: `Unknown Command`"
+      );
+
     try {
-      await command.execute(interaction);
-    } catch (error) {
-      console.error(`Error executing ${interaction.commandName}`);
-      console.error(error);
+      await slashcmd.execute({ client, interaction });
+    } catch (err) {
+      console.error(err);
+      interaction.reply({
+        content: `:x: Wystąpił nieoczekiwany błąd: \`${err}\``,
+        ephemeral: true,
+      });
     }
   },
 };

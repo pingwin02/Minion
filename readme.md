@@ -1,0 +1,57 @@
+# Discord Bot Readme
+
+This readme provides instructions for running and configuring the Discord bot.
+
+## Requirements
+
+Before running the bot, make sure you have the following dependencies installed:
+
+- `discord.js`: Version 14.11.0 or higher.
+- `dotenv`: Version 16.3.1 or higher.
+
+You can install these dependencies by running the following command:
+
+```
+npm install discord.js@^14.11.0 dotenv@^16.3.1
+```
+
+## Commands
+
+The bot supports the following 6 slash commands and one prefix command:
+
+1. `/info`: Provides information about the bot.
+2. `/kiedy-kolos`: Sends a link to the specified channel (defined in the env file).
+3. `/losuj`: Generates a random number within the given range.
+4. `/ping`: Displays information about the bot's latency.
+5. `/purge`: Deletes the specified number of messages.
+6. `/verify`: Command for student verification.
+
+Additionally, the bot supports the command `!clear`, which deletes messages sent by the bot in the current channel.
+
+## Prerequisites
+
+To run the bot, you need to have the following file:
+
+- `.env`: This file should contain the following variables:
+  - `token`: Token of the bot.
+  - `clientId`: Client ID of the bot.
+  - `kiedykolosID`: ID of the channel for `/kiedy-kolos` command.
+  - `weryfikacjeID`: ID of the channel for `/verify` command.
+
+For example:
+
+```
+token=1234567890
+clientId=1234567890
+kiedykolosID=1234567890
+weryfikacjeID=1234567890
+```
+
+## Setup
+
+Follow the steps below to set up and run the bot:
+
+1. Run the script `npm run deploy` to load the slash commands into the bot.
+2. Start the bot using a tool like nodemon or type `npm start`.
+
+That's it! The bot should now be up and running, ready to respond to commands on your Discord server.

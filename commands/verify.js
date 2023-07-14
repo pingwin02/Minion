@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 
-const { sendError } = require("../index.js");
+const { sendError } = require("../index");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -33,10 +33,20 @@ module.exports = {
     )
     .addStringOption((option) =>
       option
+        .setName("strumień")
+        .setDescription("Strumień studenta")
+        .setRequired(true)
+        .addChoices(
+          { name: "Aplikacje", value: "Aplikacje" },
+          { name: "Systemy", value: "Systemy" }
+        )
+    )
+    .addStringOption((option) =>
+      option
         .setName("uwagi")
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
-  async execute(interaction) {
+  async execute({ client, interaction }) {
     const channel = interaction.client.channels.cache.get(
       process.env.weryfikacjeID
     );
