@@ -1,12 +1,18 @@
+const fs = require("fs");
 const { Events } = require("discord.js");
-
-const { printMessage, sendError } = require("../index.js");
+const { logInfo, sendError } = require("../index.js");
 
 module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     if (message.content === "!clear") {
-      printMessage(message);
+      fs.writeFile("logs/log.log", "", (err) => {
+        if (err) {
+          console.error("Error clearing log file:", err);
+        }
+      });
+      logInfo(`Log file cleared by ${message.author.username}`, 2);
+
       const channel = message.client.channels.cache.get(
         message.channelId.toString()
       );

@@ -1,4 +1,5 @@
 const { Events, ActivityType } = require("discord.js");
+const { logInfo } = require("..");
 
 module.exports = {
   name: Events.ClientReady,
@@ -11,6 +12,6 @@ module.exports = {
       ],
       status: "online",
     });
-    console.log(`Ready! Logged in as ${client.user.tag}`);
+    logInfo(`Logged in as ${client.user.tag}!`, 2);
   },
 };

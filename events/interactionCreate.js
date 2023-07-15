@@ -1,13 +1,27 @@
 const { Events } = require("discord.js");
-
-const { printMessage } = require("../index.js");
+const { logInfo } = require("..");
 
 module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
     if (!interaction.isChatInputCommand()) return;
 
-    printMessage(interaction);
+    let user = interaction.author;
+    if (interaction.author === undefined) user = interaction.user;
+
+    let commandName = interaction.commandName;
+    if (commandName === undefined) commandName = interaction.content;
+
+    if (interaction.guild === null)
+      logInfo(
+        `${user.username} (${user.id}) used ${commandName} command in DMs`,
+        0
+      );
+    else
+      logInfo(
+        `${user.username} (${user.id}) used ${commandName} command in #${interaction.channel.name} (${interaction.channel.id}) at ${interaction.guild.name} (${interaction.guild.id})`,
+        0
+      );
 
     const client = interaction.client;
 
@@ -44,7 +58,7 @@ module.exports = {
     try {
       await slashcmd.execute({ client, interaction });
     } catch (err) {
-      console.error(err);
+      logInfo(err, 1);
       interaction.reply({
         content: `:x: Wystąpił nieoczekiwany błąd: \`${err}\``,
         ephemeral: true,

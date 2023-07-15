@@ -1,5 +1,4 @@
 const fs = require("node:fs");
-const path = require("node:path");
 
 const { REST, Routes } = require("discord.js");
 
@@ -13,8 +12,10 @@ const {
 
 require("dotenv").config();
 
+const keep_alive = require("./keep_alive.js"); //for replit
+
 module.exports = {
-  printMessage,
+  logInfo,
   sendError,
 };
 
@@ -35,26 +36,56 @@ if (
 
 const LOAD_SLASH = process.argv[2] == "load";
 
-function printMessage(message) {
+// Create logs folder if it doesn't exist
+if (!fs.existsSync("logs")) {
+  fs.mkdirSync("logs");
+}
+/**
+ * Logs information to the console and appends it to a log file.
+ * @param {string} info - Information to log.
+ * @param {integer} type - Type of information to log.
+ *
+ * type = 0: Command;
+ * type = 1: Error;
+ * type = 2: Info;
+ *
+ * @returns {void}
+ */
+
+function logInfo(info, type) {
   const currentdate =
     new Date().toISOString().replace(/T/, " ").replace(/\..+/, "") + " UTC";
 
-  let user = message.author;
-  if (message.author === undefined) user = message.user;
+  var logMessage = `[${currentdate}] - `;
 
-  let commandName = message.commandName;
-  if (commandName === undefined) commandName = message.content;
+  switch (type) {
+    case 0:
+      logMessage += "[COMMAND] ";
+      break;
+    case 1:
+      logMessage += "[ERROR] ";
+      break;
+    case 2:
+      logMessage += "[INFO] ";
+      break;
+    default:
+      logMessage += "[OTHER] ";
+      break;
+  }
 
-  if (message.guild === null)
-    return console.log(
-      `${currentdate} - ${user.username} (${user.id}) used ${commandName} command in DMs`
-    );
-  return console.log(
-    `${currentdate} - ${user.username} (${user.id}) used ${commandName} command in #${message.channel.name} (${message.channel.id}) at ${message.guild.name} (${message.guild.id})`
-  );
+  logMessage += info;
+
+  fs.appendFile("logs/log.log", `${logMessage}\n`, (err) => {
+    if (err) {
+      console.error("Error writing to log file:", err);
+    }
+  });
+
+  console.log(logMessage);
 }
 
 function sendError(title, err, interaction) {
+  logInfo(`Error: ${title}\n${err}`, 1);
   interaction.channel.send(
     `:x: Wystąpił nieoczekiwany błąd: ${title}\n\`${err}\``
   );
