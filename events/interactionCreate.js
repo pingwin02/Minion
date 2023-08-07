@@ -9,17 +9,13 @@ module.exports = {
     let user = interaction.author;
     if (interaction.author === undefined) user = interaction.user;
 
-    let commandName = interaction.commandName;
-    if (commandName === undefined) commandName = interaction.content;
+    let commandName = interaction;
 
     if (interaction.guild === null)
-      logInfo(
-        `${user.username} (${user.id}) used ${commandName} command in DMs`,
-        0
-      );
+      logInfo(`${user.username} (${user.id}) used ${commandName} in DMs`, 0);
     else
       logInfo(
-        `${user.username} (${user.id}) used ${commandName} command in #${interaction.channel.name} (${interaction.channel.id}) at ${interaction.guild.name} (${interaction.guild.id})`,
+        `${user.username} (${user.id}) used ${commandName} in #${interaction.channel.name} at ${interaction.guild.name}`,
         0
       );
 

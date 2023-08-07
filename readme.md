@@ -1,18 +1,22 @@
 # Discord Bot Readme
 
+<p align="center">
+  <img src="website/bot_logo.png" width="150" height="150">
+</p>
+
 This readme provides instructions for running and configuring the Discord bot.
 
 ## Requirements
 
 Before running the bot, make sure you have the following dependencies installed:
 
-- `discord.js`: Version 14.11.0 or higher.
+- `discord.js`: Version 14.12.1 or higher.
 - `dotenv`: Version 16.3.1 or higher.
 
 You can install these dependencies by running the following command:
 
 ```
-npm install discord.js@^14.11.0 dotenv@^16.3.1
+npm install discord.js@^14.12.1 dotenv@^16.3.1
 ```
 
 ## Commands

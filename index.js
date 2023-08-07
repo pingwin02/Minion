@@ -12,7 +12,7 @@ const {
 
 require("dotenv").config();
 
-const keep_alive = require("./keep_alive.js"); //for replit
+const keep_alive = require("./website/server.js"); // for repl.it
 
 module.exports = {
   logInfo,
