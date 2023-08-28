@@ -10,13 +10,15 @@ This readme provides instructions for running and configuring the Discord bot.
 
 Before running the bot, make sure you have the following dependencies installed:
 
-- `discord.js`: Version 14.12.1 or higher.
-- `dotenv`: Version 16.3.1 or higher.
+- `discord.js`
+- `dotenv`
+- `googleapis`
+- `moment`
 
 You can install these dependencies by running the following command:
 
 ```
-npm install discord.js@^14.12.1 dotenv@^16.3.1
+npm install discord.js dotenv googleapis moment
 ```
 
 ## Commands
@@ -24,7 +26,7 @@ npm install discord.js@^14.12.1 dotenv@^16.3.1
 The bot supports the following 6 slash commands and one prefix command:
 
 1. `/info`: Provides information about the bot.
-2. `/kiedy-kolos`: Sends a link to the specified channel (defined in the env file).
+2. `/kiedy-kolos`: Updates message with events from Google Calendar API.
 3. `/losuj`: Generates a random number within the given range.
 4. `/ping`: Displays information about the bot's latency.
 5. `/purge`: Deletes the specified number of messages.
@@ -41,14 +43,15 @@ To run the bot, you need to have the following file:
   - `clientId`: Client ID of the bot.
   - `kiedykolosID`: ID of the channel for `/kiedy-kolos` command.
   - `weryfikacjeID`: ID of the channel for `/verify` command.
+  - `calendarKeyFile`: Path to the Google Calendar API key file.
+  - `calendarID`: ID of the Google Calendar.
 
 For example:
 
 ```
 token=1234567890
 clientId=1234567890
-kiedykolosID=1234567890
-weryfikacjeID=1234567890
+...
 ```
 
 ## Setup

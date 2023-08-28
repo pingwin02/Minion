@@ -85,7 +85,7 @@ function logInfo(info, type) {
 }
 
 function sendError(title, err, interaction) {
-  logInfo(`Error: ${title}\n${err}`, 1);
+  logInfo(`${title}\n${err}`, 1);
   interaction.channel.send(
     `:x: Wystąpił nieoczekiwany błąd: ${title}\n\`${err}\``
   );

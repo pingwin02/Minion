@@ -60,7 +60,9 @@ const server = http.createServer(async (req, res) => {
       <br><br>
       Strona odświeża się automatycznie co minutę w celu podtrzymania aktywności bota.
       <br><br>
-      Miłego korzystania! ~pingwiniasty
+      Miłego korzystania! 
+      <br><br>
+      ~pingwiniasty
       `;
       const styles =
         ".rectangle { width: 30%; font-size: 24px; font-weight: bold; text-align: center; white-space: normal; min-width: 300px; }";
