@@ -36,9 +36,11 @@ module.exports = {
       }
     }
 
+    const authJSON = JSON.parse(process.env.googleAuth);
+
     const auth = new google.auth.GoogleAuth({
-      keyFile: process.env.calendarKeyFile,
-      scopes: "https://www.googleapis.com/auth/calendar.readonly",
+      credentials: authJSON,
+      scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
     });
 
     const calendar = google.calendar({ version: "v3", auth });

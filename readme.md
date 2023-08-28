@@ -43,8 +43,8 @@ To run the bot, you need to have the following file:
   - `clientId`: Client ID of the bot.
   - `kiedykolosID`: ID of the channel for `/kiedy-kolos` command.
   - `weryfikacjeID`: ID of the channel for `/verify` command.
-  - `calendarKeyFile`: Path to the Google Calendar API key file.
   - `calendarID`: ID of the Google Calendar.
+  - `googleAuth`: Whole google API key from the Google Cloud Platform.
 
 For example:
 
