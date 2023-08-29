@@ -19,17 +19,20 @@ module.exports = {
   sendError,
 };
 
-const TOKEN = process.env.token;
-const CLIENT_ID = process.env.clientId;
+const TOKEN = process.env.TOKEN;
+const CLIENT_ID = process.env.CLIENT_ID;
 
 if (
   !TOKEN ||
   !CLIENT_ID ||
-  !process.env.kiedykolosID ||
-  !process.env.weryfikacjeID
+  !process.env.KIEDY_KOLOS_ID ||
+  !process.env.WERYFIKACJE_ID ||
+  !process.env.CALENDAR_ID ||
+  !process.env.GOOGLE_AUTH
 ) {
-  console.log(
-    "Please provide a valid token, client ID, kiedykolos channel ID and weryfikacje channel ID in the .env file."
+  logInfo(
+    "Missing one or more required environment variables. Please check your .env file.",
+    1
   );
   process.exit(1);
 }

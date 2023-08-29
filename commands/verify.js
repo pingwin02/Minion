@@ -48,7 +48,7 @@ module.exports = {
     ),
   async execute({ client, interaction }) {
     const channel = interaction.client.channels.cache.get(
-      process.env.weryfikacjeID
+      process.env.WERYFIKACJE_ID
     );
     if (!channel) return console.log("Kanał nie istnieje!");
     const id = interaction.user.id;

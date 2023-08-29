@@ -39,18 +39,18 @@ Additionally, the bot supports the command `!clear`, which deletes messages sent
 To run the bot, you need to have the following file:
 
 - `.env`: This file should contain the following variables:
-  - `token`: Token of the bot.
-  - `clientId`: Client ID of the bot.
-  - `kiedykolosID`: ID of the channel for `/kiedy-kolos` command.
-  - `weryfikacjeID`: ID of the channel for `/verify` command.
-  - `calendarID`: ID of the Google Calendar.
-  - `googleAuth`: Whole google API key from the Google Cloud Platform.
+  - `TOKEN`: Token of the bot.
+  - `CLIENT_ID`: Client ID of the bot.
+  - `KIEDY_KOLOS_ID`: ID of the channel for `/kiedy-kolos` command.
+  - `WERYFIKACJE_ID`: ID of the channel for `/verify` command.
+  - `CALENDAR_ID`: ID of the Google Calendar.
+  - `GOOGLE_AUTH`: Whole google API key from the Google Cloud Platform.
 
 For example:
 
 ```
-token=1234567890
-clientId=1234567890
+TOKEN=1234567890
+CLIENT_ID=1234567890
 ...
 ```
 

@@ -12,7 +12,7 @@ module.exports = {
   async execute({ client, interaction }) {
     // Pobierz ostatnią wiadomość z kanału
     const channel = interaction.client.channels.cache.get(
-      process.env.kiedykolosID
+      process.env.KIEDY_KOLOS_ID
     );
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
     const mainMessage = fetchedMessages.last();
@@ -36,7 +36,7 @@ module.exports = {
       }
     }
 
-    const authJSON = JSON.parse(process.env.googleAuth);
+    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
     const auth = new google.auth.GoogleAuth({
       credentials: authJSON,
@@ -46,7 +46,7 @@ module.exports = {
     const calendar = google.calendar({ version: "v3", auth });
 
     const params = {
-      calendarId: process.env.calendarID,
+      calendarId: process.env.CALENDAR_ID,
       timeMin: new Date().toISOString(),
       singleEvents: true,
       orderBy: "startTime",
@@ -120,7 +120,7 @@ module.exports = {
       }
 
       await interaction.reply({
-        content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.kiedykolosID}> aby zobaczyć.`,
+        content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.KIEDY_KOLOS_ID}> aby zobaczyć.`,
         ephemeral: true,
       });
     } catch (error) {
