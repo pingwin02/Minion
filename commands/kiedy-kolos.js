@@ -24,7 +24,7 @@ module.exports = {
       );
       const currentTime = moment();
 
-      // Jeśli wiadomość została zmieniona w ciągu ostatnich 5 minut, nie rób nic
+      // Jeśli wiadomość została zmieniona w ciągu ostatniej minuty, nie rób nic
       const editThreshold = 1; // Czas w minutach
       if (currentTime.diff(lastEditTime, "minutes") <= editThreshold) {
         await interaction.reply({
@@ -48,7 +48,6 @@ module.exports = {
     const params = {
       calendarId: process.env.calendarID,
       timeMin: new Date().toISOString(),
-      maxResults: 10,
       singleEvents: true,
       orderBy: "startTime",
     };
