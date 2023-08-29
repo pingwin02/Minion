@@ -9,6 +9,7 @@ const generateHTML = (title, content, styles = "") => `
     <title>${title}</title>
     <link rel="icon" type="image/png" href="bot_logo.png">
     <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8">
     <script src="script.js" defer></script>
     <style>${styles}</style>
   </head>
