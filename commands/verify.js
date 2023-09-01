@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 
-const { sendError } = require("../index");
+const { sendError, logInfo } = require("../index");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -47,10 +47,15 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
+    return await interaction.reply({
+      content: ":x: Komenda tymczasowo wyłączona",
+      ephemeral: true,
+    });
+
     const channel = interaction.client.channels.cache.get(
       process.env.WERYFIKACJE_ID
     );
-    if (!channel) return console.log("Kanał nie istnieje!");
+    if (!channel) return logInfo("Nie znaleziono kanału WERYFIKACJE", 1);
     const id = interaction.user.id;
     const imie = interaction.options.getString("imię");
     const nazwisko = interaction.options.getString("nazwisko");

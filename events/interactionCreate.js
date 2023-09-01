@@ -55,10 +55,12 @@ module.exports = {
       await slashcmd.execute({ client, interaction });
     } catch (err) {
       logInfo(err, 1);
-      interaction.reply({
-        content: `:x: Wystąpił nieoczekiwany błąd: \`${err}\``,
-        ephemeral: true,
-      });
+      const msg = `:x: Wystąpił nieoczekiwany błąd: \`${err}\``;
+      if (interaction.deferred || interaction.replied) {
+        interaction.editReply(msg);
+      } else {
+        interaction.reply(msg);
+      }
     }
   },
 };

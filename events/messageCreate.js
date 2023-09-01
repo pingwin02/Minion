@@ -73,7 +73,6 @@ module.exports = {
           );
       });
     } else if (message.content === "student") {
-      printMessage(message);
       message.reply("debil <:dziubdziub:1052315768555061279>");
     }
   },
