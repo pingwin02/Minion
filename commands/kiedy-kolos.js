@@ -25,8 +25,8 @@ module.exports = {
       const currentTime = moment();
 
       // Jeśli wiadomość została zmieniona w ciągu ostatniej minuty, nie rób nic
-      const editThreshold = 1; // Czas w minutach
-      if (currentTime.diff(lastEditTime, "minutes") <= editThreshold) {
+      const editThreshold = 60; // Czas w sekundach
+      if (currentTime.diff(lastEditTime, "seconds") <= editThreshold) {
         await interaction.reply({
           content:
             ":stopwatch: Aktualizacja przeprowadzona niedawno. Spróbuj ponownie za chwilę.",
