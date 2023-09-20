@@ -5,6 +5,7 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const { google } = require("googleapis");
+const moment = require("moment");
 const { logInfo } = require("../index");
 
 module.exports = {
@@ -84,17 +85,14 @@ module.exports = {
 
       const params = {
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "A2:G",
+        range: "A2",
       };
 
       const response = await sheets.spreadsheets.values.get(params);
       const values = response.data.values;
       if (values) {
         const indeksy = values.map((row) => row[0]);
-        if (
-          indeksy.includes(indeks) &&
-          values[indeksy.indexOf(indeks)][6] === "Oczekujący"
-        ) {
+        if (indeksy.includes(indeks)) {
           return await interaction.reply({
             embeds: [
               new EmbedBuilder()
@@ -113,7 +111,18 @@ module.exports = {
       }
 
       const updateData = {
-        values: [[indeks, imie, nazwisko, grupa, id, uwagi, "Oczekujący"]],
+        values: [
+          [
+            indeks,
+            imie,
+            nazwisko,
+            grupa,
+            id,
+            uwagi,
+            "Oczekujący",
+            moment().format("DD.MM.YYYY HH:mm:ss"),
+          ],
+        ],
       };
 
       await sheets.spreadsheets.values.append({

@@ -94,7 +94,7 @@ module.exports = {
         .then((msg) => {
           setTimeout(() => {
             msg.delete();
-          }, 5000);
+          }, 10000);
         })
         .catch((err) => logInfo(err, 1));
       interaction.message.delete().catch((err) => logInfo(err, 1));

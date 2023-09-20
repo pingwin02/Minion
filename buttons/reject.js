@@ -45,7 +45,7 @@ module.exports = {
         .setTitle(`:x: Wniosek został odrzucony`)
         .setColor("Red")
         .setDescription(
-          `Twoja prośba o weryfikację została odrzucona.\n\nJeśli chcesz dowiedzieć się więcej, \
+          `Twoja prośba o weryfikację została odrzucona.\nJeśli chcesz dowiedzieć się więcej, \
         napisz do <@${interaction.user.id}>.`
         )
         .setThumbnail(
@@ -69,7 +69,7 @@ module.exports = {
         .then((msg) => {
           setTimeout(() => {
             msg.delete();
-          }, 5000);
+          }, 10000);
         })
         .catch((err) => logInfo(err, 1));
       interaction.message.delete().catch((err) => logInfo(err, 1));
