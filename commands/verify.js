@@ -4,7 +4,7 @@ const {
   ButtonBuilder,
   ActionRowBuilder,
 } = require("discord.js");
-
+const { google } = require("googleapis");
 const { logInfo } = require("../index");
 
 module.exports = {
@@ -73,6 +73,56 @@ module.exports = {
     }
 
     try {
+      const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
+
+      const auth = new google.auth.GoogleAuth({
+        credentials: authJSON,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+
+      const sheets = google.sheets({ version: "v4", auth });
+
+      const params = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "A2:G",
+      };
+
+      const response = await sheets.spreadsheets.values.get(params);
+      const values = response.data.values;
+      if (values) {
+        const indeksy = values.map((row) => row[0]);
+        if (
+          indeksy.includes(indeks) &&
+          values[indeksy.indexOf(indeks)][6] === "Oczekujący"
+        ) {
+          return await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle(`:x: Wniosek został już wysłany`)
+                .setColor("Red")
+                .setDescription(
+                  "Jeśli masz jakieś pytania, skontaktuj się z jednym z moderatorów."
+                )
+                .setThumbnail(
+                  `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+                )
+                .setTimestamp(),
+            ],
+          });
+        }
+      }
+
+      const updateData = {
+        values: [[indeks, imie, nazwisko, grupa, id, uwagi, "Oczekujący"]],
+      };
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "A2",
+        valueInputOption: "RAW",
+        resource: updateData,
+      });
+
       const embed = new EmbedBuilder()
         .setTitle(`Wniosek o weryfikację`)
         .setColor("Blue")

@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require("discord.js");
 const { logInfo } = require("..");
+const { google } = require("googleapis");
 
 module.exports = {
   name: "accept",
@@ -7,13 +8,8 @@ module.exports = {
     interaction.deferUpdate();
     try {
       const _user = interaction.message.embeds[0].fields[4].value;
-      const indeks = interaction.message.embeds[0].fields[0].value;
-      const imie = interaction.message.embeds[0].fields[1].value;
-      const nazwisko = interaction.message.embeds[0].fields[2].value;
       const grupa = interaction.message.embeds[0].fields[3].value;
-      const uwagi = interaction.message.embeds[0].fields[5].value;
 
-      //check bot permissions for role assignment
       if (!interaction.guild.members.me.permissions.has("ManageRoles")) {
         return logInfo(`No permissions to manage roles`, 1);
       }
@@ -35,6 +31,37 @@ module.exports = {
       roles.forEach((role) => {
         member.roles.add(role);
       });
+
+      const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
+
+      const auth = new google.auth.GoogleAuth({
+        credentials: authJSON,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+
+      const sheets = google.sheets({ version: "v4", auth });
+
+      const params = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "E2",
+      };
+
+      const response = await sheets.spreadsheets.values.get(params);
+      const values = response.data.values;
+
+      if (values) {
+        const ids = values.map((row) => row[0]);
+        const row = ids.indexOf(_user) + 2;
+        const updateData = {
+          values: [["Zaakceptowany"]],
+        };
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: process.env.SPREADSHEET_ID,
+          range: `G${row}`,
+          valueInputOption: "RAW",
+          resource: updateData,
+        });
+      }
 
       const _userChannel = await client.users.fetch(_user);
       const embed = new EmbedBuilder()

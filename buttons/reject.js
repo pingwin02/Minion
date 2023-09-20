@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require("discord.js");
 const { logInfo } = require("..");
+const { google } = require("googleapis");
 
 module.exports = {
   name: "reject",
@@ -8,6 +9,38 @@ module.exports = {
     try {
       const _user = interaction.message.embeds[0].fields[4].value;
       const _userChannel = await client.users.fetch(_user);
+
+      const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
+
+      const auth = new google.auth.GoogleAuth({
+        credentials: authJSON,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+
+      const sheets = google.sheets({ version: "v4", auth });
+
+      const params = {
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "E2",
+      };
+
+      const response = await sheets.spreadsheets.values.get(params);
+      const values = response.data.values;
+
+      if (values) {
+        const ids = values.map((row) => row[0]);
+        const row = ids.indexOf(_user) + 2;
+        const updateData = {
+          values: [["Odrzucony"]],
+        };
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: process.env.SPREADSHEET_ID,
+          range: `G${row}`,
+          valueInputOption: "RAW",
+          resource: updateData,
+        });
+      }
+
       const embed = new EmbedBuilder()
         .setTitle(`:x: Wniosek został odrzucony`)
         .setColor("Red")
