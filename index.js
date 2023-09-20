@@ -26,7 +26,7 @@ if (
   !TOKEN ||
   !CLIENT_ID ||
   !process.env.KIEDY_KOLOS_ID ||
-  !process.env.WERYFIKACJE_ID ||
+  !process.env.WNIOSKI_ID ||
   !process.env.CALENDAR_ID ||
   !process.env.GOOGLE_AUTH
 ) {
@@ -123,6 +123,22 @@ for (const file of slashFiles) {
     );
   }
   if (LOAD_SLASH) commands.push(slashcmd.data.toJSON());
+}
+
+// Load button commands from buttons folder
+client.buttoncommands = new Collection();
+const buttonFiles = fs
+  .readdirSync("./buttons")
+  .filter((file) => file.endsWith(".js"));
+for (const file of buttonFiles) {
+  const buttoncmd = require(`./buttons/${file}`);
+  if ("name" in buttoncmd && "execute" in buttoncmd) {
+    client.buttoncommands.set(buttoncmd.name, buttoncmd);
+  } else {
+    console.log(
+      `[WARNING] The button at ./buttons/${file} is missing a required "name" or "execute" property.`
+    );
+  }
 }
 
 // If deploy argument is passed, load slash commands and exit

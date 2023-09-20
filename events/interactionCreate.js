@@ -1,31 +1,31 @@
-const { Events } = require("discord.js");
+const { Events, InteractionType } = require("discord.js");
 const { logInfo } = require("..");
 
 module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
-    if (!interaction.isChatInputCommand()) return;
-
-    let user = interaction.author;
-    if (interaction.author === undefined) user = interaction.user;
-
-    let commandName = interaction;
+    const user = interaction.author || interaction.user;
 
     if (interaction.guild === null)
-      logInfo(`${user.username} (${user.id}) used ${commandName} in DMs`, 0);
-    else
+      logInfo(`${user.username} (${user.id}) used ${interaction} in DMs`, 0);
+    else if (interaction.isButton()) {
       logInfo(
-        `${user.username} (${user.id}) used ${commandName} in #${interaction.channel.name} at ${interaction.guild.name}`,
+        `${user.username} (${user.id}) ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`,
+        0
+      );
+    } else
+      logInfo(
+        `${user.username} (${user.id}) used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`,
         0
       );
 
-    const client = interaction.client;
-
-    const channel = client.channels.cache.get(interaction.channelId);
+    const channel = interaction.client.channels.cache.get(
+      interaction.channelId
+    );
     if (
       interaction.guild &&
-      (!channel.permissionsFor(client.user).has("SendMessages") ||
-        !channel.permissionsFor(client.user).has("ViewChannel"))
+      (!channel.permissionsFor(interaction.client.user).has("SendMessages") ||
+        !channel.permissionsFor(interaction.client.user).has("ViewChannel"))
     ) {
       return interaction.reply({
         content:
@@ -34,25 +34,21 @@ module.exports = {
       });
     }
 
-    const command = interaction.client.slashcommands.get(
-      interaction.commandName
-    );
+    const collection = interaction.isCommand()
+      ? interaction.client.slashcommands
+      : interaction.client.buttoncommands;
+    const commandName = interaction.commandName || interaction.customId;
 
-    if (!command) {
-      console.error(
-        `No command matching ${interaction.commandName} was found.`
-      );
+    const cmd = collection.get(commandName);
+
+    if (!cmd) {
+      logInfo(`Unknown command/button: ${commandName}`, 1);
       return;
     }
 
-    const slashcmd = client.slashcommands.get(interaction.commandName);
-    if (!slashcmd)
-      return interaction.reply(
-        ":x: Wystąpił nieoczekiwany błąd: `Unknown Command`"
-      );
-
     try {
-      await slashcmd.execute({ client, interaction });
+      const client = interaction.client;
+      await cmd.execute({ client, interaction });
     } catch (err) {
       logInfo(err, 1);
       const msg = `:x: Wystąpił nieoczekiwany błąd: \`${err}\``;

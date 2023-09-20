@@ -1,6 +1,11 @@
-const { SlashCommandBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ButtonBuilder,
+  ActionRowBuilder,
+} = require("discord.js");
 
-const { sendError, logInfo } = require("../index");
+const { logInfo } = require("../index");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,8 +15,8 @@ module.exports = {
       option
         .setName("indeks")
         .setDescription("6-cyfrowy numer indeksu")
-        .setMinValue(160000)
-        .setMaxValue(195000)
+        .setMinValue(100000)
+        .setMaxValue(999999)
         .setRequired(true)
     )
     .addStringOption((option) =>
@@ -23,23 +28,21 @@ module.exports = {
         .setDescription("Nazwisko studenta")
         .setRequired(true)
     )
-    .addIntegerOption((option) =>
-      option
-        .setName("nr_grupy")
-        .setDescription("Nr grupy dziekańskiej studenta, jeśli brak to wpisz 0")
-        .setMinValue(0)
-        .setMaxValue(5)
-        .setRequired(true)
-    )
     .addStringOption((option) =>
       option
-        .setName("strumień")
-        .setDescription("Strumień studenta")
-        .setRequired(true)
-        .addChoices(
-          { name: "Aplikacje", value: "Aplikacje" },
-          { name: "Systemy", value: "Systemy" }
+        .setName("grupa")
+        .setDescription(
+          "Grupa dziekańska studenta (A - aplikacje, S - systemy)"
         )
+        .addChoices(
+          { name: "Grupa 1A", value: "1A" },
+          { name: "Grupa 2A", value: "2A" },
+          { name: "Grupa 3A", value: "3A" },
+          { name: "Grupa 4A", value: "4A" },
+          { name: "Grupa 1S", value: "1S" },
+          { name: "Grupa 2S", value: "2S" }
+        )
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
@@ -47,98 +50,77 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
-    return await interaction.reply({
-      content: ":x: Komenda tymczasowo wyłączona",
-      ephemeral: true,
-    });
-
     const channel = interaction.client.channels.cache.get(
-      process.env.WERYFIKACJE_ID
+      process.env.WNIOSKI_ID
     );
-    if (!channel) return logInfo("Nie znaleziono kanału WERYFIKACJE", 1);
+    if (!channel) return logInfo("Nie znaleziono kanału WNIOSKI", 1);
     const id = interaction.user.id;
     const imie = interaction.options.getString("imię");
     const nazwisko = interaction.options.getString("nazwisko");
-    const indeks = interaction.options.getInteger("indeks");
-    const nr_grupy = interaction.options.getInteger("nr_grupy");
-    uwagi = interaction.options.getString("uwagi");
-    if (!uwagi) {
-      uwagi = "Brak";
-    }
+    const indeks = interaction.options.getInteger("indeks").toString();
+    const grupa = interaction.options.getString("grupa");
+    const uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (interaction.guild) {
       return await interaction.reply({
-        content: "Komenda dostępna tylko w prywatnej konwersacji",
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(`:x: Komenda dostępna tylko w prywatnej konwersacji`)
+            .setColor("Red"),
+        ],
         ephemeral: true,
       });
     }
 
-    const message = await channel.send(
-      `WNIOSEK ${interaction.user.username}#${interaction.user.discriminator} (${interaction.user.id})\n${indeks} ${nr_grupy} ${imie} ${nazwisko} Uwagi: ${uwagi}`
-    );
-    await message.react("✅").then(() => message.react("❌"));
+    try {
+      const embed = new EmbedBuilder()
+        .setTitle(`Wniosek o weryfikację`)
+        .setColor("Blue")
+        .setAuthor({
+          name: `${interaction.user.username}`,
+          iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
+        })
+        .addFields(
+          { name: "Indeks", value: indeks, inline: true },
+          { name: "Imię", value: imie, inline: true },
+          { name: "Nazwisko", value: nazwisko, inline: true },
+          { name: "Grupa", value: grupa, inline: true },
+          { name: "Discord ID", value: id, inline: true },
+          { name: "Uwagi", value: uwagi }
+        )
+        .setTimestamp();
 
-    const filter = (reaction, user) => {
-      return ["✅", "❌"].includes(reaction.emoji.name);
-    };
+      const acceptButton = new ButtonBuilder()
+        .setCustomId("accept")
+        .setLabel("Akceptuj")
+        .setStyle("Success");
 
-    message
-      .awaitReactions({ filter, max: 1, time: 60000, errors: ["time"] })
-      .then((collected) => {
-        const reaction = collected.first();
-        message.reactions.removeAll().then(() => {
-          if (reaction.emoji.name === "✅") {
-            message.react("✅");
-            message.reply("Zatwierdzono wniosek!").then((msg) => {
-              setTimeout(
-                () =>
-                  msg.delete().catch((err) => {
-                    sendError("Kasowanie wiadomości", err, interaction);
-                  }),
-                5000
-              );
-              interaction.client.users.cache
-                .get(id)
-                .send(
-                  "Wniosek został zatwierdzony! Możesz teraz korzystać z kanałów serwera"
-                );
-            });
-          } else {
-            message.react("❌");
-            message.reply("Odrzucono wniosek!").then((msg) => {
-              setTimeout(
-                () =>
-                  msg.delete().catch((err) => {
-                    sendError("Kasowanie wiadomości", err, interaction);
-                  }),
-                5000
-              );
-              interaction.client.users.cache
-                .get(id)
-                .send(
-                  "Wniosek został odrzucony! Jeśli uważasz, że jest to błąd, skontaktuj się ze starostą"
-                );
-            });
-          }
-        });
-      })
-      .catch((collected) => {
-        message
-          .reply(
-            ":x: Brak reakcji na wniosek w ciągu 60 sekund. Automatyzacja wyłączona."
-          )
-          .then((msg) => {
-            setTimeout(
-              () =>
-                msg.delete().catch((err) => {
-                  sendError("Kasowanie wiadomości", err, interaction);
-                }),
-              10000
-            );
-          });
-        message.reactions.removeAll();
-      });
+      const rejectButton = new ButtonBuilder()
+        .setCustomId("reject")
+        .setLabel("Odrzuć")
+        .setStyle("Danger");
 
-    await interaction.reply("Wysłano! Czekaj na odpowiedź od administracji");
+      const row = new ActionRowBuilder().addComponents(
+        acceptButton,
+        rejectButton
+      );
+
+      const responseEmbed = new EmbedBuilder()
+        .setTitle(`:incoming_envelope: Wniosek wysłano`)
+        .setColor("Blue")
+        .setDescription(
+          `Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź.`
+        )
+        .setThumbnail(
+          `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+        )
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [responseEmbed] });
+
+      await channel.send({ embeds: [embed], components: [row] });
+    } catch (error) {
+      logInfo(error, 1);
+    }
   },
 };
