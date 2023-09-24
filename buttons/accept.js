@@ -29,7 +29,7 @@ module.exports = {
 
       const member = await interaction.guild.members.fetch(_user);
       roles.forEach((role) => {
-        member.roles.add(role);
+        member.roles.add(role).catch((err) => logInfo(err, 1));
       });
 
       const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
@@ -43,7 +43,7 @@ module.exports = {
 
       const params = {
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "E2",
+        range: "E2:E",
       };
 
       const response = await sheets.spreadsheets.values.get(params);

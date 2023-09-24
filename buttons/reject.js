@@ -21,7 +21,7 @@ module.exports = {
 
       const params = {
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "E2",
+        range: "E2:E",
       };
 
       const response = await sheets.spreadsheets.values.get(params);

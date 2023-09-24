@@ -54,7 +54,15 @@ module.exports = {
     const channel = interaction.client.channels.cache.get(
       process.env.WNIOSKI_ID
     );
-    if (!channel) return logInfo("Nie znaleziono kanału WNIOSKI", 1);
+
+    if (
+      !channel ||
+      !channel.permissionsFor(client.user).has("ViewChannel") ||
+      !channel.permissionsFor(client.user).has("SendMessages")
+    ) {
+      throw new Error("Nie znaleziono kanału WNIOSKI lub brak uprawnień");
+    }
+
     const id = interaction.user.id;
     const imie = interaction.options.getString("imię");
     const nazwisko = interaction.options.getString("nazwisko");
@@ -72,6 +80,30 @@ module.exports = {
         ephemeral: true,
       });
     }
+    const result = await interaction.user.send().catch((error) => {
+      if (error.status === 403) {
+        interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle(`:x: Brak uprawnień do wysyłania wiadomości prywatnych`)
+              .setDescription(
+                `Upewnij się, że włączyłeś prywatne wiadomości \
+                  w ustawieniach prywatności serwera. Więcej informacji: \
+                  https://support.discord.com/hc/pl/articles/360060145013`
+              )
+              .setColor("Red")
+              .setFooter({ text: `Error: ${error.message}` }),
+          ],
+          ephemeral: true,
+        });
+        return false;
+      }
+      return true;
+    });
+
+    if (!result) {
+      return;
+    }
 
     try {
       const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
@@ -85,14 +117,14 @@ module.exports = {
 
       const params = {
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "A2",
+        range: "E2:E",
       };
 
       const response = await sheets.spreadsheets.values.get(params);
       const values = response.data.values;
       if (values) {
-        const indeksy = values.map((row) => row[0]);
-        if (indeksy.includes(indeks)) {
+        const ids = values.map((row) => row[0]);
+        if (ids.includes(id)) {
           return await interaction.reply({
             embeds: [
               new EmbedBuilder()
@@ -106,6 +138,7 @@ module.exports = {
                 )
                 .setTimestamp(),
             ],
+            ephemeral: true,
           });
         }
       }
@@ -175,7 +208,7 @@ module.exports = {
         )
         .setTimestamp();
 
-      await interaction.reply({ embeds: [responseEmbed] });
+      await interaction.reply({ embeds: [responseEmbed], ephemeral: true });
 
       await channel.send({ embeds: [embed], components: [row] });
     } catch (error) {

@@ -1,4 +1,4 @@
-const { Events, InteractionType } = require("discord.js");
+const { Events } = require("discord.js");
 const { logInfo } = require("..");
 
 module.exports = {

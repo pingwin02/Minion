@@ -14,6 +14,15 @@ module.exports = {
     const channel = interaction.client.channels.cache.get(
       process.env.KIEDY_KOLOS_ID
     );
+
+    if (
+      !channel ||
+      !channel.permissionsFor(client.user).has("ViewChannel") ||
+      !channel.permissionsFor(client.user).has("SendMessages")
+    ) {
+      throw new Error("Nie znaleziono kanału KIEDY_KOLOS lub brak uprawnień");
+    }
+
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
     const mainMessage = fetchedMessages.last();
 
