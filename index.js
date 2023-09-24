@@ -8,6 +8,8 @@ const {
   Partials,
   GatewayIntentBits,
   Collection,
+  ActivityType,
+  PresenceUpdateStatus,
 } = require("discord.js");
 
 require("dotenv").config();
@@ -98,6 +100,7 @@ function sendError(title, err, interaction) {
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
@@ -105,6 +108,10 @@ const client = new Client({
     GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+  presence: {
+    activities: [{ name: `studentów (debili)`, type: ActivityType.Listening }],
+    status: PresenceUpdateStatus.Online,
+  },
 });
 
 // Load slash commands from commands folder
