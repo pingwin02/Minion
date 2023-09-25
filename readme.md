@@ -45,6 +45,7 @@ To run the bot, you need to have the following file:
   - `KIEDY_KOLOS_ID`: ID of the channel for `/kiedy-kolos` command.
   - `WNIOSKI_ID`: ID of the channel for `/verify` command.
   - `CALENDAR_ID`: ID of the Google Calendar.
+  - `SPREADSHEET_ID`: ID of the Google Spreadsheet.
   - `GOOGLE_AUTH`: Whole google API key from the Google Cloud Platform.
 
 For example:

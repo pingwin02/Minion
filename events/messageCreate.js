@@ -79,6 +79,7 @@ module.exports = {
       message.guild &&
       message.author.id === process.env.ADMIN_ID
     ) {
+      await message.react("⌚");
       await message.guild.members.fetch().then((members) => {
         members.forEach((member) => {
           member.roles.cache.forEach((role) => {
@@ -87,15 +88,16 @@ module.exports = {
               role.name !== "@everyone"
             ) {
               member.roles.remove(role).catch((err) => {
-                logInfo(
-                  `Error removing role ${role.name} from ${member.user.username}`,
-                  err
+                console.error(
+                  `Error removing role ${role.name} from ${member.user.username}: ${err}`
                 );
               });
             }
           });
         });
       });
+      await message.reactions.removeAll();
+      await message.react("✅");
     }
   },
 };
