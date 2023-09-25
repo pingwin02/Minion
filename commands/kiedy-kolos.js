@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment");
-const { logInfo } = require("..");
 
 require("dotenv").config();
 
@@ -133,11 +132,11 @@ module.exports = {
         ephemeral: true,
       });
     } catch (error) {
-      logInfo(`${error}`, 1);
       await interaction.reply({
         content: ":x: Wystąpił błąd podczas pobierania wydarzeń.",
         ephemeral: true,
       });
+      throw error;
     }
   },
 };

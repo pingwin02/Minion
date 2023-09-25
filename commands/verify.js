@@ -6,7 +6,6 @@ const {
 } = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment");
-const { logInfo } = require("../index");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -105,114 +104,110 @@ module.exports = {
       return;
     }
 
-    try {
-      const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
+    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
-      const auth = new google.auth.GoogleAuth({
-        credentials: authJSON,
-        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-      });
+    const auth = new google.auth.GoogleAuth({
+      credentials: authJSON,
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    });
 
-      const sheets = google.sheets({ version: "v4", auth });
+    const sheets = google.sheets({ version: "v4", auth });
 
-      const params = {
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "E2:E",
-      };
+    const params = {
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: "E2:E",
+    };
 
-      const response = await sheets.spreadsheets.values.get(params);
-      const values = response.data.values;
-      if (values) {
-        const ids = values.map((row) => row[0]);
-        if (ids.includes(id)) {
-          return await interaction.reply({
-            embeds: [
-              new EmbedBuilder()
-                .setTitle(`:x: Wniosek został już wysłany`)
-                .setColor("Red")
-                .setDescription(
-                  "Jeśli masz jakieś pytania, skontaktuj się z jednym z moderatorów."
-                )
-                .setThumbnail(
-                  `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
-                )
-                .setTimestamp(),
-            ],
-            ephemeral: true,
-          });
-        }
-      }
-
-      const updateData = {
-        values: [
-          [
-            indeks,
-            imie,
-            nazwisko,
-            grupa,
-            id,
-            uwagi,
-            "Oczekujący",
-            moment().format("DD.MM.YYYY HH:mm:ss"),
+    const response = await sheets.spreadsheets.values.get(params);
+    const values = response.data.values;
+    if (values) {
+      const ids = values.map((row) => row[0]);
+      if (ids.includes(id)) {
+        return await interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle(`:x: Wniosek został już wysłany`)
+              .setColor("Red")
+              .setDescription(
+                "Jeśli masz jakieś pytania, skontaktuj się z jednym z moderatorów."
+              )
+              .setThumbnail(
+                `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+              )
+              .setTimestamp(),
           ],
-        ],
-      };
-
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "A2",
-        valueInputOption: "RAW",
-        resource: updateData,
-      });
-
-      const embed = new EmbedBuilder()
-        .setTitle(`Wniosek o weryfikację`)
-        .setColor("Blue")
-        .setAuthor({
-          name: `${interaction.user.username}`,
-          iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
-        })
-        .addFields(
-          { name: "Indeks", value: indeks, inline: true },
-          { name: "Imię", value: imie, inline: true },
-          { name: "Nazwisko", value: nazwisko, inline: true },
-          { name: "Grupa", value: grupa, inline: true },
-          { name: "Discord ID", value: id, inline: true },
-          { name: "Uwagi", value: uwagi }
-        )
-        .setTimestamp();
-
-      const acceptButton = new ButtonBuilder()
-        .setCustomId("accept")
-        .setLabel("Akceptuj")
-        .setStyle("Success");
-
-      const rejectButton = new ButtonBuilder()
-        .setCustomId("reject")
-        .setLabel("Odrzuć")
-        .setStyle("Danger");
-
-      const row = new ActionRowBuilder().addComponents(
-        acceptButton,
-        rejectButton
-      );
-
-      const responseEmbed = new EmbedBuilder()
-        .setTitle(`:incoming_envelope: Wniosek wysłano`)
-        .setColor("Blue")
-        .setDescription(
-          `Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź.`
-        )
-        .setThumbnail(
-          `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
-        )
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [responseEmbed], ephemeral: true });
-
-      await channel.send({ embeds: [embed], components: [row] });
-    } catch (error) {
-      logInfo(error, 1);
+          ephemeral: true,
+        });
+      }
     }
+
+    const updateData = {
+      values: [
+        [
+          indeks,
+          imie,
+          nazwisko,
+          grupa,
+          id,
+          uwagi,
+          "Oczekujący",
+          moment().format("DD.MM.YYYY HH:mm:ss"),
+        ],
+      ],
+    };
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: "A2",
+      valueInputOption: "RAW",
+      resource: updateData,
+    });
+
+    const embed = new EmbedBuilder()
+      .setTitle(`Wniosek o weryfikację`)
+      .setColor("Blue")
+      .setAuthor({
+        name: `${interaction.user.username}`,
+        iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
+      })
+      .addFields(
+        { name: "Indeks", value: indeks, inline: true },
+        { name: "Imię", value: imie, inline: true },
+        { name: "Nazwisko", value: nazwisko, inline: true },
+        { name: "Grupa", value: grupa, inline: true },
+        { name: "Discord ID", value: id, inline: true },
+        { name: "Uwagi", value: uwagi }
+      )
+      .setTimestamp();
+
+    const acceptButton = new ButtonBuilder()
+      .setCustomId("accept")
+      .setLabel("Akceptuj")
+      .setStyle("Success");
+
+    const rejectButton = new ButtonBuilder()
+      .setCustomId("reject")
+      .setLabel("Odrzuć")
+      .setStyle("Danger");
+
+    const row = new ActionRowBuilder().addComponents(
+      acceptButton,
+      rejectButton
+    );
+
+    const responseEmbed = new EmbedBuilder()
+      .setTitle(`:incoming_envelope: Wniosek wysłano`)
+      .setColor("Blue")
+      .setDescription(
+        `Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź.`
+      )
+      .setThumbnail(
+        `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+      )
+      .setTimestamp();
+
+    await interaction.reply({ embeds: [responseEmbed], ephemeral: true });
+
+    await channel.send({ embeds: [embed], components: [row] });
   },
 };

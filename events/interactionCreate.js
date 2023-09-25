@@ -5,27 +5,24 @@ module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
     const user = interaction.author || interaction.user;
+    const client = interaction.client;
 
     if (interaction.guild === null)
-      logInfo(`${user.username} (${user.id}) used ${interaction} in DMs`, 0);
+      logInfo(`${user.username} (${user.id}) used ${interaction} in DMs`);
     else if (interaction.isButton()) {
       logInfo(
-        `${user.username} (${user.id}) ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`,
-        0
+        `${user.username} (${user.id}) ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`
       );
     } else
       logInfo(
-        `${user.username} (${user.id}) used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`,
-        0
+        `${user.username} (${user.id}) used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`
       );
 
-    const channel = interaction.client.channels.cache.get(
-      interaction.channelId
-    );
+    const channel = client.channels.cache.get(interaction.channelId);
     if (
       interaction.guild &&
-      (!channel.permissionsFor(interaction.client.user).has("SendMessages") ||
-        !channel.permissionsFor(interaction.client.user).has("ViewChannel"))
+      (!channel.permissionsFor(client.user).has("SendMessages") ||
+        !channel.permissionsFor(client.user).has("ViewChannel"))
     ) {
       return interaction.reply({
         content:
@@ -35,22 +32,21 @@ module.exports = {
     }
 
     const collection = interaction.isCommand()
-      ? interaction.client.slashcommands
-      : interaction.client.buttoncommands;
+      ? client.slashcommands
+      : client.buttoncommands;
     const commandName = interaction.commandName || interaction.customId;
 
     const cmd = collection.get(commandName);
 
     if (!cmd) {
-      logInfo(`Unknown command/button: ${commandName}`, 1);
+      logInfo("Unknown command/button", new Error(commandName));
       return;
     }
 
     try {
-      const client = interaction.client;
       await cmd.execute({ client, interaction });
     } catch (err) {
-      logInfo(err, 1);
+      logInfo(`/${commandName} command`, err);
       const msg = `:x: Wystąpił nieoczekiwany błąd: \`${err}\``;
       if (interaction.deferred || interaction.replied) {
         interaction.editReply(msg);

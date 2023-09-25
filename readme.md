@@ -41,6 +41,7 @@ To run the bot, you need to have the following file:
 - `.env`: This file should contain the following variables:
   - `TOKEN`: Token of the bot.
   - `CLIENT_ID`: Client ID of the bot.
+  - `ADMIN_ID`: ID of the admin.
   - `KIEDY_KOLOS_ID`: ID of the channel for `/kiedy-kolos` command.
   - `WNIOSKI_ID`: ID of the channel for `/verify` command.
   - `CALENDAR_ID`: ID of the Google Calendar.

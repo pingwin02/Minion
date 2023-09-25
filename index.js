@@ -1,4 +1,5 @@
 const fs = require("node:fs");
+const { inspect } = require("util");
 
 const { REST, Routes } = require("discord.js");
 
@@ -27,6 +28,7 @@ const CLIENT_ID = process.env.CLIENT_ID;
 if (
   !TOKEN ||
   !CLIENT_ID ||
+  !process.env.ADMIN_ID ||
   !process.env.KIEDY_KOLOS_ID ||
   !process.env.WNIOSKI_ID ||
   !process.env.CALENDAR_ID ||
@@ -48,37 +50,28 @@ if (!fs.existsSync("logs")) {
 /**
  * Logs information to the console and appends it to a log file.
  * @param {string} info - Information to log.
- * @param {integer} type - Type of information to log.
- *
- * type = 0: Command;
- * type = 1: Error;
- * type = 2: Info;
+ * @param {Error} error - Error to log (optional)
  *
  * @returns {void}
  */
 
-function logInfo(info, type) {
+function logInfo(info, error) {
+  /**
+   * @type {string}
+   * @description Current date and time in ISO format without milliseconds.
+   */
   const currentdate =
     new Date().toISOString().replace(/T/, " ").replace(/\..+/, "") + " UTC";
 
   var logMessage = `[${currentdate}] - `;
 
-  switch (type) {
-    case 0:
-      logMessage += "[COMMAND] ";
-      break;
-    case 1:
-      logMessage += "[ERROR] ";
-      break;
-    case 2:
-      logMessage += "[INFO] ";
-      break;
-    default:
-      logMessage += "[OTHER] ";
-      break;
+  if (error) {
+    logMessage += `[ERROR] ${info}: ${inspect(error, {
+      breakLength: 80,
+    })}`;
+  } else {
+    logMessage += `[INFO] ${info}`;
   }
-
-  logMessage += info;
 
   fs.appendFile("logs/log.log", `${logMessage}\n`, (err) => {
     if (err) {
@@ -90,7 +83,7 @@ function logInfo(info, type) {
 }
 
 function sendError(title, err, interaction) {
-  logInfo(`${title}\n${err}`, 1);
+  logInfo(title, err);
   interaction.channel.send(
     `:x: Wystąpił nieoczekiwany błąd: ${title}\n\`${err}\``
   );

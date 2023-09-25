@@ -11,7 +11,7 @@ module.exports = {
           console.error("Error clearing log file:", err);
         }
       });
-      logInfo(`Log file cleared by ${message.author.username}`, 2);
+      logInfo(`Log file cleared by ${message.author.username}`);
 
       const channel = message.client.channels.cache.get(
         message.channelId.toString()
@@ -74,6 +74,28 @@ module.exports = {
       });
     } else if (message.content === "student") {
       message.reply("debil <:dziubdziub:1052315768555061279>");
+    } else if (
+      message.content === "remove_all_roles" &&
+      message.guild &&
+      message.author.id === process.env.ADMIN_ID
+    ) {
+      await message.guild.members.fetch().then((members) => {
+        members.forEach((member) => {
+          member.roles.cache.forEach((role) => {
+            if (
+              role.position < message.guild.members.me.roles.highest.position &&
+              role.name !== "@everyone"
+            ) {
+              member.roles.remove(role).catch((err) => {
+                logInfo(
+                  `Error removing role ${role.name} from ${member.user.username}`,
+                  err
+                );
+              });
+            }
+          });
+        });
+      });
     }
   },
 };

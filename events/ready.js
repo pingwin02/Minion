@@ -5,6 +5,6 @@ module.exports = {
   name: Events.ClientReady,
   once: true,
   execute(client) {
-    logInfo(`Logged in as ${client.user.tag}!`, 2);
+    logInfo(`Logged in as ${client.user.tag}!`);
   },
 };
