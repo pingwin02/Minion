@@ -1,9 +1,3 @@
-const fs = require("node:fs");
-const { inspect } = require("util");
-
-const { REST, Routes } = require("discord.js");
-
-// Require the necessary discord.js classes
 const {
   Client,
   Partials,
@@ -12,10 +6,17 @@ const {
   ActivityType,
   PresenceUpdateStatus,
 } = require("discord.js");
+const { REST, Routes } = require("discord.js");
+const fs = require("node:fs");
+const { inspect } = require("util");
 
 require("dotenv").config();
 
-const keep_alive = require("./website/server.js"); // for repl.it
+const LOAD_SLASH = process.argv[2] == "load";
+
+if (!LOAD_SLASH) {
+  const keep_alive = require("./website/server.js");
+}
 
 module.exports = {
   logInfo,
@@ -40,8 +41,6 @@ if (
   );
   process.exit(1);
 }
-
-const LOAD_SLASH = process.argv[2] == "load";
 
 // Create logs folder if it doesn't exist
 if (!fs.existsSync("logs")) {

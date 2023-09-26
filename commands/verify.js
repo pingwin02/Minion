@@ -40,7 +40,8 @@ module.exports = {
           { name: "Grupa 3A", value: "3A" },
           { name: "Grupa 4A", value: "4A" },
           { name: "Grupa 1S", value: "1S" },
-          { name: "Grupa 2S", value: "2S" }
+          { name: "Grupa 2S", value: "2S" },
+          { name: "Brak", value: "Brak" }
         )
         .setRequired(true)
     )

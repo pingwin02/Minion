@@ -16,19 +16,30 @@ module.exports = {
       );
     }
 
-    const strumien = grupa[1] === "S" ? "Systemiarz" : "Apkowicz";
-
-    const roles = [];
-    roles.push(interaction.guild.roles.cache.find((r) => r.name === "Student"));
-    roles.push(interaction.guild.roles.cache.find((r) => r.name === strumien));
-    roles.push(
-      interaction.guild.roles.cache.find((r) => r.name === "Grupa " + grupa)
-    );
-
     const member = await interaction.guild.members.fetch(_user);
-    roles.forEach((role) => {
+
+    if (grupa === "Brak") {
+      const role = interaction.guild.roles.cache.find(
+        (r) => r.name === "Obserwator"
+      );
       member.roles.add(role).catch((err) => logInfo("Adding role", err));
-    });
+    } else {
+      const strumien = grupa[1] === "S" ? "Systemiarz" : "Apkowicz";
+      const roles = [];
+      roles.push(
+        interaction.guild.roles.cache.find((r) => r.name === "Student")
+      );
+      roles.push(
+        interaction.guild.roles.cache.find((r) => r.name === strumien)
+      );
+      roles.push(
+        interaction.guild.roles.cache.find((r) => r.name === "Grupa " + grupa)
+      );
+
+      roles.forEach((role) => {
+        member.roles.add(role).catch((err) => logInfo("Adding role", err));
+      });
+    }
 
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 

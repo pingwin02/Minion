@@ -12,13 +12,10 @@ module.exports = {
         }
       });
       logInfo(`Log file cleared by ${message.author.username}`);
-
       const channel = message.client.channels.cache.get(
         message.channelId.toString()
       );
-
       const toDelete = [];
-
       channel.messages.fetch({ limit: 100 }).then((messages) => {
         messages.forEach((element) => {
           if (element.author.id === message.client.user.id)

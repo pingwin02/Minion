@@ -8,14 +8,14 @@ module.exports = {
     const client = interaction.client;
 
     if (interaction.guild === null)
-      logInfo(`${user.username} (${user.id}) used ${interaction} in DMs`);
+      logInfo(`${user.username} used ${interaction} in DMs`);
     else if (interaction.isButton()) {
       logInfo(
-        `${user.username} (${user.id}) ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`
+        `${user.username} ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`
       );
     } else
       logInfo(
-        `${user.username} (${user.id}) used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`
+        `${user.username} used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`
       );
 
     const channel = client.channels.cache.get(interaction.channelId);
