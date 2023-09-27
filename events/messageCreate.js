@@ -84,11 +84,16 @@ module.exports = {
               role.position < message.guild.members.me.roles.highest.position &&
               role.name !== "@everyone"
             ) {
-              member.roles.remove(role).catch((err) => {
-                console.error(
-                  `Error removing role ${role.name} from ${member.user.username}: ${err}`
+              setTimeout(() => {
+                console.log(
+                  `Trying to remove role ${role.name} from ${member.user.username}`
                 );
-              });
+                member.roles.remove(role).catch((err) => {
+                  console.error(
+                    `Error while removing role ${role.name} from ${member.user.username}: ${err}`
+                  );
+                });
+              }, 20);
             }
           });
         });
