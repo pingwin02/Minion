@@ -66,7 +66,7 @@ function logInfo(info, error) {
 
   if (error) {
     logMessage += `[ERROR] ${info}: ${inspect(error, {
-      breakLength: 80,
+      depth: 0,
     })}`;
   } else {
     logMessage += `[INFO] ${info}`;

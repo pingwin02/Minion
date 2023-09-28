@@ -51,6 +51,7 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
+    await interaction.deferReply({ ephemeral: true });
     const channel = interaction.client.channels.cache.get(
       process.env.WNIOSKI_ID
     );
@@ -71,18 +72,17 @@ module.exports = {
     const uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (interaction.guild) {
-      return await interaction.reply({
+      return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
             .setTitle(`:x: Komenda dostępna tylko w prywatnej konwersacji`)
             .setColor("Red"),
         ],
-        ephemeral: true,
       });
     }
     const result = await interaction.user.send().catch((error) => {
       if (error.status === 403) {
-        interaction.reply({
+        interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setTitle(`:x: Brak uprawnień do wysyłania wiadomości prywatnych`)
@@ -94,7 +94,6 @@ module.exports = {
               .setColor("Red")
               .setFooter({ text: `Error: ${error.message}` }),
           ],
-          ephemeral: true,
         });
         return false;
       }
@@ -124,7 +123,7 @@ module.exports = {
     if (values) {
       const ids = values.map((row) => row[0]);
       if (ids.includes(id)) {
-        return await interaction.reply({
+        return await interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setTitle(`:x: Wniosek został już wysłany`)
@@ -137,7 +136,6 @@ module.exports = {
               )
               .setTimestamp(),
           ],
-          ephemeral: true,
         });
       }
     }
@@ -207,7 +205,7 @@ module.exports = {
       )
       .setTimestamp();
 
-    await interaction.reply({ embeds: [responseEmbed], ephemeral: true });
+    await interaction.editReply({ embeds: [responseEmbed] });
 
     await channel.send({ embeds: [embed], components: [row] });
   },

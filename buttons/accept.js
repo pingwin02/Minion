@@ -77,10 +77,11 @@ module.exports = {
       .setTitle(`:white_check_mark: Wniosek został zaakceptowany`)
       .setColor("Green")
       .setDescription(
-        `Pamiętaj aby przestrzegać regulaminu serwera oraz Discorda. \
-        Polecamy zajrzeć na kanał  <#${process.env.KIEDY_KOLOS_ID}> \
+        `Witamy na nieoficjalnym serwerze kierunku Informatyka na PG!\n \
+        Pamiętaj aby przestrzegać regulaminu serwera oraz Discorda. \
+        Polecamy zajrzeć na kanał <#${process.env.KIEDY_KOLOS_ID}> \
         aby dowiedzieć się więcej o zbliżających się egzaminach i \
-        nie tylko.\n\nSerdecznie zapraszamy,\n\ Administracja.`
+        nie tylko.`
       )
       .setThumbnail(
         `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
