@@ -10,9 +10,10 @@ const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
 const { inspect } = require("util");
 
+// Load environment variables
 require("dotenv").config();
 
-const LOAD_SLASH = process.argv[2] == "load";
+const LOAD_SLASH = process.argv.includes("load");
 
 if (!LOAD_SLASH) {
   const keep_alive = require("./website/server.js");
@@ -70,13 +71,13 @@ function logInfo(info, error) {
     logMessage += `[INFO] ${info}`;
   }
 
+  console.log(logMessage);
+
   fs.appendFile("logs/log.log", `${logMessage}\n`, (err) => {
     if (err) {
       console.error("Error writing to log file:", err);
     }
   });
-
-  console.log(logMessage);
 }
 
 /**
@@ -124,7 +125,7 @@ const client = new Client({
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   presence: {
-    activities: [{ name: `studentów (debili)`, type: ActivityType.Listening }],
+    activities: [{ name: "studentów (debili)", type: ActivityType.Listening }],
     status: PresenceUpdateStatus.Online,
   },
 });

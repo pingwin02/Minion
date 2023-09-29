@@ -1,48 +1,30 @@
-const { SlashCommandBuilder } = require("discord.js");
-
-function activeMembersCounter(guild) {
-  return guild.members.cache.filter((m) => m.presence?.status == "online").size;
-}
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { msToTime } = require("../index.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("info")
-    .setDescription("Uzyskaj informacje o użytkowniku lub serwerze")
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("user")
-        .setDescription("Informacje o użytkowniku")
-        .addUserOption((option) =>
-          option.setName("nick").setDescription("Nick użytkownika")
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand.setName("server").setDescription("Informacje o serwerze")
-    )
-    .setDMPermission(false),
+    .setDescription("Wyświetla informacje o bocie"),
   async execute({ client, interaction }) {
-    if (interaction.options.getSubcommand() === "user") {
-      const user = interaction.options.getUser("nick");
-      if (user) {
-        await interaction.reply({
-          content: `Nick: **${user.username}**\nID: **${user.id}**`,
-          ephemeral: true,
-        });
-      } else {
-        await interaction.reply({
-          content: `Twój nick: **${interaction.user.username}**\nTwoje ID: **${interaction.user.id}**`,
-          ephemeral: true,
-        });
-      }
-    } else if (interaction.options.getSubcommand() === "server") {
-      await interaction.reply({
-        content: `Nazwa serwera: **${interaction.guild.name}**\nStworzony: **${
-          interaction.guild.createdAt
-        }**\nIlość użytkowników: **${
-          interaction.guild.memberCount
-        }** (w tym **${activeMembersCounter(interaction.guild)}** aktywnych)`,
-        ephemeral: true,
-      });
-    }
+    const ping = Math.max(Date.now() - interaction.createdTimestamp, 0);
+    const apiPing = Math.max(client.ws.ping, 0);
+    const uptime = msToTime(client.uptime);
+
+    const msg =
+      `:ping_pong: Ping wynosi **${ping}ms**\n` +
+      `:robot: Ping API wynosi **${apiPing}ms**\n` +
+      `:clock1: Uptime wynosi **${uptime}**\n` +
+      `Stworzony z :heart: przez <@${process.env.ADMIN_ID}>`;
+
+    await interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(`Informacje o ${client.user.username}`)
+          .setDescription(msg)
+          .setColor("Random")
+          .setTimestamp(),
+      ],
+      ephemeral: true,
+    });
   },
 };

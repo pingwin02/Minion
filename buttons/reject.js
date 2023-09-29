@@ -41,14 +41,14 @@ module.exports = {
     }
 
     const embed = new EmbedBuilder()
-      .setTitle(`:x: Wniosek został odrzucony`)
+      .setTitle(":x: Wniosek został odrzucony")
       .setColor("Red")
       .setDescription(
-        `Twoja prośba o weryfikację została odrzucona.\nJeśli chcesz dowiedzieć się więcej, \
-        napisz do <@${interaction.user.id}>.`
+        "Twoja prośba o weryfikację została odrzucona.\nJeśli chcesz dowiedzieć się więcej, " +
+          `napisz do <@${interaction.user.id}>.`
       )
       .setThumbnail(
-        `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+        "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
       )
       .setFooter({
         text: `Odrzucił ${interaction.user.username}`,
@@ -58,7 +58,7 @@ module.exports = {
     await _userChannel.send({ embeds: [embed] });
 
     const responseEmbed = new EmbedBuilder()
-      .setTitle(`:x: Wniosek został odrzucony`)
+      .setTitle(":x: Wniosek został odrzucony")
       .setColor("Red")
       .setDescription(`Wniosek użytkownika <@${_user}> został odrzucony.`)
       .setTimestamp();

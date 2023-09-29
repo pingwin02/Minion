@@ -75,7 +75,7 @@ module.exports = {
       return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
-            .setTitle(`:x: Komenda dostępna tylko w prywatnej konwersacji`)
+            .setTitle(":x: Komenda dostępna tylko w prywatnej konwersacji")
             .setColor("Red"),
         ],
       });
@@ -85,11 +85,11 @@ module.exports = {
         interaction.editReply({
           embeds: [
             new EmbedBuilder()
-              .setTitle(`:x: Brak uprawnień do wysyłania wiadomości prywatnych`)
+              .setTitle(":x: Brak uprawnień do wysyłania wiadomości prywatnych")
               .setDescription(
-                `Upewnij się, że włączyłeś prywatne wiadomości \
-                  w ustawieniach prywatności serwera. Więcej informacji: \
-                  https://support.discord.com/hc/pl/articles/360060145013`
+                "Upewnij się, że włączyłeś prywatne wiadomości " +
+                  "w ustawieniach prywatności serwera. Więcej informacji: " +
+                  "https://support.discord.com/hc/pl/articles/360060145013"
               )
               .setColor("Red")
               .setFooter({ text: `Error: ${error.message}` }),
@@ -126,13 +126,13 @@ module.exports = {
         return await interaction.editReply({
           embeds: [
             new EmbedBuilder()
-              .setTitle(`:x: Wniosek został już wysłany`)
+              .setTitle(":x: Wniosek został już wysłany")
               .setColor("Red")
               .setDescription(
-                "Jeśli masz jakieś pytania, skontaktuj się z jednym z moderatorów."
+                "Skontaktuj się z administracją, jeśli chcesz zmienić dane w wniosku."
               )
               .setThumbnail(
-                `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+                "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
               )
               .setTimestamp(),
           ],
@@ -163,7 +163,7 @@ module.exports = {
     });
 
     const embed = new EmbedBuilder()
-      .setTitle(`Wniosek o weryfikację`)
+      .setTitle("Wniosek o weryfikację")
       .setColor("Blue")
       .setAuthor({
         name: `${interaction.user.username}`,
@@ -195,13 +195,13 @@ module.exports = {
     );
 
     const responseEmbed = new EmbedBuilder()
-      .setTitle(`:incoming_envelope: Wniosek wysłano`)
+      .setTitle(":incoming_envelope: Wniosek wysłano")
       .setColor("Blue")
       .setDescription(
-        `Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź.`
+        "Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź."
       )
       .setThumbnail(
-        `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+        "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
       )
       .setTimestamp();
 

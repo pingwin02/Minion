@@ -11,7 +11,7 @@ module.exports = {
 
     if (!interaction.guild.members.me.permissions.has("ManageRoles")) {
       return logInfo(
-        `No permissions to manage roles`,
+        "No permissions to manage roles",
         new Error("Insufficient permissions")
       );
     }
@@ -74,17 +74,17 @@ module.exports = {
 
     const _userChannel = await client.users.fetch(_user);
     const embed = new EmbedBuilder()
-      .setTitle(`:white_check_mark: Wniosek został zaakceptowany`)
+      .setTitle(":white_check_mark: Wniosek został zaakceptowany")
       .setColor("Green")
       .setDescription(
-        `Witamy na nieoficjalnym serwerze kierunku Informatyka na PG!\n \
-        Pamiętaj aby przestrzegać regulaminu serwera oraz Discorda. \
-        Polecamy zajrzeć na kanał <#${process.env.KIEDY_KOLOS_ID}> \
-        aby dowiedzieć się więcej o zbliżających się egzaminach i \
-        nie tylko.`
+        "Witamy na nieoficjalnym serwerze kierunku Informatyka na PG!\n" +
+          "Pamiętaj aby przestrzegać regulaminu serwera oraz Discorda. " +
+          `Polecamy zajrzeć na kanał <#${process.env.KIEDY_KOLOS_ID}> ` +
+          "aby dowiedzieć się więcej o zbliżających się egzaminach i " +
+          "nie tylko."
       )
       .setThumbnail(
-        `https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg`
+        "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
       )
       .setFooter({
         text: `Zaakceptował ${interaction.user.username}`,
@@ -94,7 +94,7 @@ module.exports = {
     await _userChannel.send({ embeds: [embed] });
 
     const responseEmbed = new EmbedBuilder()
-      .setTitle(`:white_check_mark: Wniosek został zaakceptowany`)
+      .setTitle(":white_check_mark: Wniosek został zaakceptowany")
       .setColor("Green")
       .setDescription(`Wniosek użytkownika <@${_user}> został zaakceptowany.`)
       .setTimestamp();
