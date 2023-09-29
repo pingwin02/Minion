@@ -6,55 +6,43 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.author || interaction.user;
     const client = interaction.client;
-
-    if (interaction.guild === null)
-      logInfo(`${user.username} used ${interaction} in DMs`);
-    else if (interaction.isButton()) {
-      logInfo(
-        `${user.username} ${interaction.customId}ed in #${interaction.channel.name} at ${interaction.guild.name}`
-      );
-    } else
-      logInfo(
-        `${user.username} used ${interaction} in #${interaction.channel.name} at ${interaction.guild.name}`
-      );
-
-    const channel = client.channels.cache.get(interaction.channelId);
-    if (
-      interaction.guild &&
-      (!channel.permissionsFor(client.user).has("SendMessages") ||
-        !channel.permissionsFor(client.user).has("ViewChannel"))
-    ) {
-      return interaction.reply({
-        content:
-          ":x: Nie mam uprawnień do wysyłania wiadomości lub nie widzę tego kanału",
-        ephemeral: true,
-      });
-    }
-
-    const collection = interaction.isCommand()
-      ? client.slashcommands
-      : client.buttoncommands;
-    const commandName = interaction.commandName || interaction.customId;
-
-    const cmd = collection.get(commandName);
-
-    if (!cmd) {
-      logInfo("Unknown command/button", new Error(commandName));
-      return;
-    }
+    const channel = client.channels.cache.get(interaction.channelId) || null;
 
     try {
-      await cmd.execute({ client, interaction });
-    } catch (err) {
-      logInfo(`/${commandName} command`, err);
-      if (err.status != 404) {
-        const msg = `:x: Wystąpił nieoczekiwany błąd: \`${err}\``;
-        if (interaction.deferred || interaction.replied) {
-          interaction.editReply(msg);
-        } else {
-          interaction.reply(msg);
-        }
+      if (!interaction.guild)
+        logInfo(`[DM] @${user.username} used ${interaction}`);
+      else if (interaction.isButton()) {
+        logInfo(
+          `[${interaction.guild.name}] @${user.username} ${interaction.customId}ed in #${interaction.channel.name}`
+        );
+      } else
+        logInfo(
+          `[${interaction.guild.name}] @${user.username} used ${interaction} in #${interaction.channel.name}`
+        );
+
+      if (
+        interaction.guild &&
+        (!channel.permissionsFor(client.user).has("SendMessages") ||
+          !channel.permissionsFor(client.user).has("ViewChannel"))
+      ) {
+        return interaction.reply({
+          content:
+            ":x: Nie mam uprawnień do wysyłania wiadomości lub nie widzę tego kanału",
+          ephemeral: true,
+        });
       }
+
+      const collection = interaction.isCommand()
+        ? client.slashcommands
+        : client.buttoncommands;
+
+      await collection
+        .get(interaction.commandName || interaction.customId)
+        .execute({ client, interaction });
+    } catch (err) {
+      logInfo(`/${interaction.commandName} command`, err);
+      if (channel)
+        await channel.send(`:x: Wystąpił nieoczekiwany błąd: \`${err}\``);
     }
   },
 };

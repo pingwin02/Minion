@@ -102,7 +102,7 @@ module.exports = {
     interaction.channel.send({ embeds: [responseEmbed] }).then((msg) => {
       setTimeout(() => {
         msg.delete().catch((err) => logInfo("Deleting message", err));
-      }, 10000);
+      }, 5000);
     });
     interaction.message
       .delete()

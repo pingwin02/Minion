@@ -54,12 +54,11 @@ if (!fs.existsSync("logs")) {
  */
 
 function logInfo(info, error) {
-  /**
-   * @type {string}
-   * @description Current date and time in ISO format without milliseconds.
-   */
-  const currentdate =
-    new Date().toISOString().replace(/T/, " ").replace(/\..+/, "") + " UTC";
+  var currentdate = new Date()
+    .toLocaleString("pl-PL", {
+      timeZone: "Europe/Warsaw",
+    })
+    .replace(",", "");
 
   var logMessage = `[${currentdate}] - `;
 

@@ -11,7 +11,7 @@ module.exports = {
           console.error("Error clearing log file:", err);
         }
       });
-      logInfo(`Log file cleared by ${message.author.username}`);
+      logInfo(`Log file cleared by @${message.author.username}`);
       const channel = message.client.channels.cache.get(
         message.channelId.toString()
       );
