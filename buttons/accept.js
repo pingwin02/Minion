@@ -10,10 +10,7 @@ module.exports = {
     const grupa = interaction.message.embeds[0].fields[3].value;
 
     if (!interaction.guild.members.me.permissions.has("ManageRoles")) {
-      return logInfo(
-        "No permissions to manage roles",
-        new Error("Insufficient permissions")
-      );
+      throw new Error("Insufficient permissions");
     }
 
     const member = await interaction.guild.members.fetch(_user);

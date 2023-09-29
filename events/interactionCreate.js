@@ -13,7 +13,7 @@ module.exports = {
         logInfo(`[DM] @${user.username} used ${interaction}`);
       else if (interaction.isButton()) {
         logInfo(
-          `[${interaction.guild.name}] @${user.username} ${interaction.customId}ed in #${interaction.channel.name}`
+          `[${interaction.guild.name}] @${user.username} used ${interaction.customId} button in #${interaction.channel.name}`
         );
       } else
         logInfo(
@@ -40,7 +40,10 @@ module.exports = {
         .get(interaction.commandName || interaction.customId)
         .execute({ client, interaction });
     } catch (err) {
-      logInfo(`/${interaction.commandName} command`, err);
+      logInfo(
+        `/${interaction.commandName || interaction.customId} command`,
+        err
+      );
       if (channel)
         await channel.send(`:x: Wystąpił nieoczekiwany błąd: \`${err}\``);
     }

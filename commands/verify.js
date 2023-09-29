@@ -2,6 +2,7 @@ const {
   SlashCommandBuilder,
   EmbedBuilder,
   ButtonBuilder,
+  ButtonStyle,
   ActionRowBuilder,
 } = require("discord.js");
 const { google } = require("googleapis");
@@ -182,12 +183,12 @@ module.exports = {
     const acceptButton = new ButtonBuilder()
       .setCustomId("accept")
       .setLabel("Akceptuj")
-      .setStyle("Success");
+      .setStyle(ButtonStyle.Success);
 
     const rejectButton = new ButtonBuilder()
       .setCustomId("reject")
       .setLabel("Odrzuć")
-      .setStyle("Danger");
+      .setStyle(ButtonStyle.Danger);
 
     const row = new ActionRowBuilder().addComponents(
       acceptButton,
