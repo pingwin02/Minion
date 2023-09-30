@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const { logInfo } = require("..");
+const { logInfo, timedDelete } = require("../functions");
 const { google } = require("googleapis");
 
 module.exports = {
@@ -96,13 +96,12 @@ module.exports = {
       .setDescription(`Wniosek użytkownika <@${_user}> został zaakceptowany.`)
       .setTimestamp();
 
-    interaction.channel.send({ embeds: [responseEmbed] }).then((msg) => {
-      setTimeout(() => {
-        msg.delete().catch((err) => logInfo("Deleting message", err));
-      }, 5000);
+    const responseMessage = await interaction.channel.send({
+      embeds: [responseEmbed],
     });
-    interaction.message
-      .delete()
-      .catch((err) => logInfo("Deleting message", err));
+
+    timedDelete(responseMessage, 5000);
+
+    await interaction.deleteReply();
   },
 };

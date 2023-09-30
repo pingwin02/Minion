@@ -60,83 +60,75 @@ module.exports = {
       orderBy: "startTime",
     };
 
-    try {
-      const response = await calendar.events.list(params);
+    const response = await calendar.events.list(params);
 
-      const currentUnix = moment().unix();
-      const currentFormatted = `<t:${currentUnix}:R>`;
+    const currentUnix = moment().unix();
+    const currentFormatted = `<t:${currentUnix}:R>`;
 
-      const events = response.data.items;
+    const events = response.data.items;
 
-      const eventGroups = {
-        "EGZAMINY/KOLOKWIA": [],
-        POPRAWY: [],
-        PROJEKTY: [],
-        INNE: [],
-      };
+    const eventGroups = {
+      "EGZAMINY/KOLOKWIA": [],
+      POPRAWY: [],
+      PROJEKTY: [],
+      INNE: [],
+    };
 
-      if (events.length === 0) {
-        eventGroups.INNE.push(
-          ":tropical_drink: Brak nadchodzących wydarzeń w kalendarzu."
-        );
+    if (events.length === 0) {
+      eventGroups.INNE.push(
+        ":tropical_drink: Brak nadchodzących wydarzeń w kalendarzu."
+      );
+    }
+
+    events.forEach((event) => {
+      let startUnix, startFormatted;
+
+      if (event.start.dateTime) {
+        startUnix = moment(event.start.dateTime).unix();
+        startFormatted = `<t:${startUnix}:f>`;
+      } else {
+        startUnix = moment(event.start.date).unix();
+        startFormatted = `<t:${startUnix}:d>`;
       }
 
-      events.forEach((event) => {
-        let startUnix, startFormatted;
+      const countDownFormatted = `<t:${startUnix}:R>`;
+      const location = event.location || "Brak sali";
 
-        if (event.start.dateTime) {
-          startUnix = moment(event.start.dateTime).unix();
-          startFormatted = `<t:${startUnix}:f>`;
-        } else {
-          startUnix = moment(event.start.date).unix();
-          startFormatted = `<t:${startUnix}:d>`;
-        }
+      let eventType = "INNE"; // Domyślnie typ "INNE"
+      if (!event.summary) {
+        event.summary = "Brak nazwy wydarzenia";
+      }
+      if (event.summary.toLowerCase().includes("egzamin")) {
+        eventType = "EGZAMINY/KOLOKWIA";
+      } else if (event.summary.toLowerCase().includes("projekt")) {
+        eventType = "PROJEKTY";
+      } else if (event.summary.toLowerCase().includes("poprawa")) {
+        eventType = "POPRAWY";
+      }
 
-        const countDownFormatted = `<t:${startUnix}:R>`;
-        const location = event.location || "Brak sali";
+      eventGroups[eventType].push(
+        `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`
+      );
+    });
 
-        let eventType = "INNE"; // Domyślnie typ "INNE"
-        if (!event.summary) {
-          event.summary = "Brak nazwy wydarzenia";
-        }
-        if (event.summary.toLowerCase().includes("egzamin")) {
-          eventType = "EGZAMINY/KOLOKWIA";
-        } else if (event.summary.toLowerCase().includes("projekt")) {
-          eventType = "PROJEKTY";
-        } else if (event.summary.toLowerCase().includes("poprawa")) {
-          eventType = "POPRAWY";
-        }
-
-        eventGroups[eventType].push(
-          `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`
-        );
-      });
-
-      let formattedMessage = `# TERMINY EGZAMINÓW, KOLOKWIÓW, PROJEKTÓW I INNE (akt. ${currentFormatted})
+    let formattedMessage = `# TERMINY EGZAMINÓW, KOLOKWIÓW, PROJEKTÓW I INNE (akt. ${currentFormatted})
 ### *podane godziny są orientacyjne, zawsze lepiej przyjść ~15 minut wcześniej*`;
 
-      Object.entries(eventGroups).forEach(([eventType, events]) => {
-        if (events.length > 0) {
-          formattedMessage += `\n## ${eventType}\n${events.join("\n")}`;
-        }
-      });
-
-      if (mainMessage && mainMessage.editable) {
-        await mainMessage.edit(formattedMessage);
-      } else {
-        await channel.send(formattedMessage);
+    Object.entries(eventGroups).forEach(([eventType, events]) => {
+      if (events.length > 0) {
+        formattedMessage += `\n## ${eventType}\n${events.join("\n")}`;
       }
+    });
 
-      await interaction.reply({
-        content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.KIEDY_KOLOS_ID}> aby zobaczyć.`,
-        ephemeral: true,
-      });
-    } catch (error) {
-      await interaction.reply({
-        content: ":x: Wystąpił błąd podczas pobierania wydarzeń.",
-        ephemeral: true,
-      });
-      throw error;
+    if (mainMessage && mainMessage.editable) {
+      await mainMessage.edit(formattedMessage);
+    } else {
+      await channel.send(formattedMessage);
     }
+
+    await interaction.reply({
+      content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.KIEDY_KOLOS_ID}> aby zobaczyć.`,
+      ephemeral: true,
+    });
   },
 };

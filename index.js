@@ -8,7 +8,7 @@ const {
 } = require("discord.js");
 const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
-const { inspect } = require("util");
+const { logInfo } = require("./functions");
 
 // Load environment variables
 require("dotenv").config();
@@ -18,12 +18,6 @@ const LOAD_SLASH = process.argv.includes("load");
 if (!LOAD_SLASH) {
   const keep_alive = require("./website/server.js");
 }
-
-module.exports = {
-  logInfo,
-  sendError,
-  msToTime,
-};
 
 const TOKEN = process.env.TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -46,70 +40,6 @@ if (
 // Create logs folder if it doesn't exist
 if (!fs.existsSync("logs")) {
   fs.mkdirSync("logs");
-}
-/**
- * Logs information to the console and appends it to a log file.
- * @param {string} info - Information to log.
- * @param {Error} error - Error to log (optional)
- * @returns {void}
- */
-
-function logInfo(info, error) {
-  var currentdate = new Date()
-    .toLocaleString("pl-PL", {
-      timeZone: "Europe/Warsaw",
-    })
-    .replace(",", "");
-
-  var logMessage = `[${currentdate}] - `;
-
-  if (error) {
-    logMessage += `[ERROR] ${info}: ${inspect(error, {
-      depth: 0,
-    })}`;
-  } else {
-    logMessage += `[INFO] ${info}`;
-  }
-
-  console.log(logMessage);
-
-  fs.appendFile("logs/log.log", `${logMessage}\n`, (err) => {
-    if (err) {
-      console.error("Error writing to log file:", err);
-    }
-  });
-}
-
-/**
- * Converts a number of milliseconds to a human-readable time format.
- * @param {number} ms - Number of milliseconds to convert.
- * @returns {string} Human-readable time format.
- */
-
-function msToTime(ms) {
-  let seconds = (ms / 1000).toFixed(1);
-  let minutes = (ms / (1000 * 60)).toFixed(1);
-  let hours = (ms / (1000 * 60 * 60)).toFixed(1);
-  let days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
-  if (seconds < 60) return seconds + " sekund";
-  else if (minutes < 60) return minutes + " minut";
-  else if (hours < 24) return hours + " godzin";
-  else return days + " dni";
-}
-
-/**
- * Sends an error message to the channel and logs the error.
- * @param {string} title - Title of the error.
- * @param {Error} err - Error to log.
- * @param {Interaction} interaction - Interaction to reply to.
- * @returns {void}
- */
-
-function sendError(title, err, interaction) {
-  logInfo(title, err);
-  interaction.channel.send(
-    `:x: Wystąpił nieoczekiwany błąd: ${title}\n\`${err}\``
-  );
 }
 
 // Create a new client instance
@@ -200,6 +130,13 @@ if (LOAD_SLASH) {
       client.on(event.name, (...args) => event.execute(...args));
     }
   }
+
+  process.on("uncaughtException", (err) => {
+    logInfo("uncaughtException", err);
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
+  });
 
   // Login to Discord
   client.login(TOKEN);

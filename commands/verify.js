@@ -7,6 +7,7 @@ const {
 } = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment");
+const { logInfo } = require("../functions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -73,6 +74,7 @@ module.exports = {
     const uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (interaction.guild) {
+      logInfo("verify", new Error("/verify used in guild"));
       return await interaction.editReply({
         embeds: [
           new EmbedBuilder()
@@ -81,9 +83,10 @@ module.exports = {
         ],
       });
     }
-    const result = await interaction.user.send().catch((error) => {
+    const result = await interaction.user.send().catch(async (error) => {
       if (error.status === 403) {
-        interaction.editReply({
+        logInfo("verify 403 error", error);
+        await interaction.editReply({
           embeds: [
             new EmbedBuilder()
               .setTitle(":x: Brak uprawnień do wysyłania wiadomości prywatnych")
@@ -124,6 +127,7 @@ module.exports = {
     if (values) {
       const ids = values.map((row) => row[0]);
       if (ids.includes(id)) {
+        logInfo("verify", new Error("User already sent a request"));
         return await interaction.editReply({
           embeds: [
             new EmbedBuilder()
