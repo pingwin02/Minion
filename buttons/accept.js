@@ -54,18 +54,35 @@ module.exports = {
 
     const response = await sheets.spreadsheets.values.get(params);
     const values = response.data.values;
+    const ids = values.map((row) => row[0]);
+    const row = ids.indexOf(_user) + 2;
 
-    if (values) {
-      const ids = values.map((row) => row[0]);
-      const row = ids.indexOf(_user) + 2;
-      const updateData = {
-        values: [["Zaakceptowany"]],
-      };
+    if (row === 1) {
+      logInfo("/accept", new Error(`User ${_user} not found`));
+      _id = interaction.message.embeds[0].fields[0].value;
+      _name = interaction.message.embeds[0].fields[1].value;
+      _surname = interaction.message.embeds[0].fields[2].value;
+      _group = interaction.message.embeds[0].fields[3].value;
+      _notes = interaction.message.embeds[0].fields[5].value;
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "A2",
+        valueInputOption: "RAW",
+        resource: {
+          values: [
+            [_id, _name, _surname, _group, _user, _notes, "Zaakceptowany"],
+          ],
+        },
+      });
+    } else {
       await sheets.spreadsheets.values.update({
         spreadsheetId: process.env.SPREADSHEET_ID,
         range: `G${row}`,
         valueInputOption: "RAW",
-        resource: updateData,
+        resource: {
+          values: [["Zaakceptowany"]],
+        },
       });
     }
 
