@@ -6,7 +6,6 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const { google } = require("googleapis");
-const moment = require("moment");
 const { logInfo } = require("../functions");
 
 module.exports = {
@@ -146,18 +145,7 @@ module.exports = {
     }
 
     const updateData = {
-      values: [
-        [
-          indeks,
-          imie,
-          nazwisko,
-          grupa,
-          id,
-          uwagi,
-          "Oczekujący",
-          moment().format("DD.MM.YYYY HH:mm:ss"),
-        ],
-      ],
+      values: [[indeks, imie, nazwisko, grupa, id, uwagi, "Oczekujący"]],
     };
 
     await sheets.spreadsheets.values.append({
@@ -180,7 +168,8 @@ module.exports = {
         { name: "Nazwisko", value: nazwisko, inline: true },
         { name: "Grupa", value: grupa, inline: true },
         { name: "Discord ID", value: id, inline: true },
-        { name: "Uwagi", value: uwagi }
+        { name: "Uwagi", value: uwagi },
+        { name: "Ping", value: `<@${id}>` }
       )
       .setTimestamp();
 

@@ -71,7 +71,16 @@ module.exports = {
         valueInputOption: "RAW",
         resource: {
           values: [
-            [_id, _name, _surname, _group, _user, _notes, "Zaakceptowany"],
+            [
+              _id,
+              _name,
+              _surname,
+              _group,
+              _user,
+              _notes,
+              "Zaakceptowany",
+              `przez ${interaction.user.username}`,
+            ],
           ],
         },
       });
@@ -81,7 +90,7 @@ module.exports = {
         range: `G${row}`,
         valueInputOption: "RAW",
         resource: {
-          values: [["Zaakceptowany"]],
+          values: [["Zaakceptowany", `przez ${interaction.user.username}`]],
         },
       });
     }

@@ -41,7 +41,18 @@ module.exports = {
         range: "A2",
         valueInputOption: "RAW",
         resource: {
-          values: [[_id, _name, _surname, _group, _user, _notes, "Odrzucony"]],
+          values: [
+            [
+              _id,
+              _name,
+              _surname,
+              _group,
+              _user,
+              _notes,
+              "Odrzucony",
+              `przez ${interaction.user.username}`,
+            ],
+          ],
         },
       });
     } else {
@@ -50,7 +61,7 @@ module.exports = {
         range: `G${row}`,
         valueInputOption: "RAW",
         resource: {
-          values: [["Odrzucony"]],
+          values: [["Odrzucony", `przez ${interaction.user.username}`]],
         },
       });
     }
