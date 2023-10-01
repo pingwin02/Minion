@@ -5,7 +5,6 @@ const { google } = require("googleapis");
 module.exports = {
   name: "reject",
   async execute({ client, interaction }) {
-    interaction.deferUpdate();
     const _user = interaction.message.embeds[0].fields[4].value;
     const _userChannel = await client.users.fetch(_user);
 

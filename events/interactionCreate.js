@@ -4,10 +4,15 @@ const { logInfo, printError } = require("../functions");
 module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
-    const user = interaction.author || interaction.user;
-    const client = interaction.client;
-
     try {
+      if (interaction.isButton()) {
+        await interaction.deferUpdate();
+      } else {
+        await interaction.deferReply({ ephemeral: true });
+      }
+      const user = interaction.author || interaction.user;
+      const client = interaction.client;
+
       if (!interaction.guild)
         logInfo(`[DM] @${user.username} used ${interaction}`);
       else if (interaction.isButton()) {

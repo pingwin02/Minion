@@ -52,7 +52,6 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
     const channel = interaction.client.channels.cache.get(
       process.env.WNIOSKI_ID
     );

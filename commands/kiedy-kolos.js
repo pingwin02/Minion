@@ -35,10 +35,9 @@ module.exports = {
       // Jeśli wiadomość została zmieniona w ciągu ostatniej minuty, nie rób nic
       const editThreshold = 60; // Czas w sekundach
       if (currentTime.diff(lastEditTime, "seconds") <= editThreshold) {
-        await interaction.reply({
+        await interaction.editReply({
           content:
             ":stopwatch: Aktualizacja przeprowadzona niedawno. Spróbuj ponownie za chwilę.",
-          ephemeral: true,
         });
         return;
       }
@@ -126,9 +125,8 @@ module.exports = {
       await channel.send(formattedMessage);
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.KIEDY_KOLOS_ID}> aby zobaczyć.`,
-      ephemeral: true,
     });
   },
 };

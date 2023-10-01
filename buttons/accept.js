@@ -5,7 +5,6 @@ const { google } = require("googleapis");
 module.exports = {
   name: "accept",
   async execute({ client, interaction }) {
-    interaction.deferUpdate();
     const _user = interaction.message.embeds[0].fields[4].value;
     const grupa = interaction.message.embeds[0].fields[3].value;
 
@@ -16,26 +15,23 @@ module.exports = {
     const member = await interaction.guild.members.fetch(_user);
 
     if (grupa === "Brak") {
-      const role = interaction.guild.roles.cache.find(
+      const role = await interaction.guild.roles.cache.find(
         (r) => r.name === "Obserwator"
       );
-      member.roles.add(role).catch((err) => logInfo("Adding role", err));
+      await member.roles.add(role);
     } else {
       const strumien = grupa[1] === "S" ? "Systemiarz" : "Apkowicz";
-      const roles = [];
-      roles.push(
-        interaction.guild.roles.cache.find((r) => r.name === "Student")
+      await member.roles.add(
+        await interaction.guild.roles.cache.find((r) => r.name === "Student")
       );
-      roles.push(
-        interaction.guild.roles.cache.find((r) => r.name === strumien)
+      await member.roles.add(
+        await interaction.guild.roles.cache.find((r) => r.name === strumien)
       );
-      roles.push(
-        interaction.guild.roles.cache.find((r) => r.name === "Grupa " + grupa)
+      await member.roles.add(
+        await interaction.guild.roles.cache.find(
+          (r) => r.name === "Grupa " + grupa
+        )
       );
-
-      roles.forEach((role) => {
-        member.roles.add(role).catch((err) => logInfo("Adding role", err));
-      });
     }
 
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);

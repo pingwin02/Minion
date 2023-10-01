@@ -16,10 +16,12 @@ module.exports = {
   async execute({ client, interaction }) {
     const zasieg = interaction.options.getInteger("zasięg");
     const random = Math.floor(Math.random() * (zasieg + 1));
-    if (random > 0.75 * zasieg)
-      await interaction.reply(`:sunglasses: ${random}`);
+    let msg = `<:profesor:1045785569239781437> ${random}`;
+    if (random > 0.75 * zasieg) msg = `:sunglasses: ${random}`;
     else if (random > 0.5 * zasieg)
-      await interaction.reply(`<:dziubdziub:1052315768555061279> ${random}`);
-    else await interaction.reply(`<:profesor:1045785569239781437> ${random}`);
+      msg = `<:dziubdziub:1052315768555061279> ${random}`;
+
+    await interaction.channel.send(`<@${interaction.user.id}> ${msg}`);
+    await interaction.deleteReply();
   },
 };

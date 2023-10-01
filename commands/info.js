@@ -15,7 +15,7 @@ module.exports = {
       `:clock1: Uptime wynosi **${uptime}**\n` +
       `Stworzony z :heart: przez <@${process.env.ADMIN_ID}>`;
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [
         new EmbedBuilder()
           .setTitle(`Informacje o ${client.user.username}`)
@@ -23,7 +23,6 @@ module.exports = {
           .setColor("Random")
           .setTimestamp(),
       ],
-      ephemeral: true,
     });
   },
 };
