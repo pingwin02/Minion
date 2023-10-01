@@ -59,8 +59,9 @@ module.exports = {
                     `Trying to remove role ${role.name} from ${member.user.username}`
                   );
                   member.roles.remove(role).catch((err) => {
-                    console.error(
-                      `Error while removing role ${role.name} from ${member.user.username}: ${err}`
+                    logInfo(
+                      `Error while removing role ${role.name} from ${member.user.username}`,
+                      new Error(err.message)
                     );
                   });
                 }, 20);
