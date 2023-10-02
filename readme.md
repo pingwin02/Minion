@@ -13,13 +13,7 @@ Before running the bot, make sure you have the following dependencies installed:
 - `discord.js`
 - `dotenv`
 - `googleapis`
-- `moment`
-
-You can install these dependencies by running the following command:
-
-```
-npm install discord.js dotenv googleapis moment
-```
+- `moment-timezone`
 
 ## Commands
 

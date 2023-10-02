@@ -1,8 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { google } = require("googleapis");
-const moment = require("moment");
-
-require("dotenv").config();
+const moment = require("moment-timezone");
+moment.tz.setDefault("Europe/Warsaw");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -25,24 +24,6 @@ module.exports = {
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
     const mainMessage = fetchedMessages.last();
 
-    if (mainMessage && mainMessage.editable) {
-      // Sprawdź datę ostatniej edycji wiadomości
-      const lastEditTime = moment(
-        mainMessage.editedAt || mainMessage.createdAt
-      );
-      const currentTime = moment();
-
-      // Jeśli wiadomość została zmieniona w ciągu ostatniej minuty, nie rób nic
-      const editThreshold = 60; // Czas w sekundach
-      if (currentTime.diff(lastEditTime, "seconds") <= editThreshold) {
-        await interaction.editReply({
-          content:
-            ":stopwatch: Aktualizacja przeprowadzona niedawno. Spróbuj ponownie za chwilę.",
-        });
-        return;
-      }
-    }
-
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
     const auth = new google.auth.GoogleAuth({
@@ -54,7 +35,8 @@ module.exports = {
 
     const params = {
       calendarId: process.env.CALENDAR_ID,
-      timeMin: new Date().toISOString(),
+      timeMin: moment().toISOString(),
+      timeMax: moment().add(1, "months").toISOString(),
       singleEvents: true,
       orderBy: "startTime",
     };
@@ -97,11 +79,12 @@ module.exports = {
       if (!event.summary) {
         event.summary = "Brak nazwy wydarzenia";
       }
-      if (event.summary.toLowerCase().includes("egzamin")) {
+      const summary = event.summary.toLowerCase();
+      if (summary.includes("egzamin") || summary.includes("kolokwium")) {
         eventType = "EGZAMINY/KOLOKWIA";
-      } else if (event.summary.toLowerCase().includes("projekt")) {
+      } else if (summary.includes("projekt")) {
         eventType = "PROJEKTY";
-      } else if (event.summary.toLowerCase().includes("poprawa")) {
+      } else if (summary.includes("poprawa")) {
         eventType = "POPRAWY";
       }
 

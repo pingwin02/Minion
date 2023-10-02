@@ -10,18 +10,17 @@ module.exports = {
       } else {
         await interaction.deferReply({ ephemeral: true });
       }
-      const user = interaction.author || interaction.user;
       const client = interaction.client;
 
       if (!interaction.guild)
-        logInfo(`[DM] @${user.username} used ${interaction}`);
+        logInfo(`[DM] @${interaction.user.username} used ${interaction}`);
       else if (interaction.isButton()) {
         logInfo(
-          `[${interaction.guild.name}] @${user.username} used ${interaction.customId} button in #${interaction.channel.name}`
+          `[${interaction.guild.name}] @${interaction.user.username} used ${interaction.customId} button in #${interaction.channel.name}`
         );
       } else
         logInfo(
-          `[${interaction.guild.name}] @${user.username} used ${interaction} in #${interaction.channel.name}`
+          `[${interaction.guild.name}] @${interaction.user.username} used ${interaction} in #${interaction.channel.name}`
         );
 
       if (
@@ -41,7 +40,9 @@ module.exports = {
         .execute({ client, interaction });
     } catch (err) {
       logInfo(
-        `/${interaction.commandName || interaction.customId} command`,
+        `${interaction.user} used /${
+          interaction.commandName || interaction.customId
+        } command`,
         err
       );
       if (interaction.channel) {

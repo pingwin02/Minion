@@ -75,8 +75,8 @@ function timedDelete(message, timeout = 3000) {
 }
 
 /**
- * Sends embed with error message to the interaction channel,
- * then deletes it after 15s. If error is passed interaction must be a TextChannel.
+ * Sends embed with error message to the interaction channel.
+ * If error is passed, interaction must be a TextChannel.
  * @param {CommandInteraction | TextChannel} interaction - Interaction to reply to.
  * @param {string} description - Error message to send.
  * @param {Error} error - Error to log (optional)
@@ -104,8 +104,6 @@ async function printError(interaction, description, error = null) {
       const textChannel = interaction;
       reply = await textChannel.send({ embeds: [embed] });
     }
-
-    if (!error) timedDelete(reply, 15000);
   } catch (err) {
     logInfo("printError", err);
   }

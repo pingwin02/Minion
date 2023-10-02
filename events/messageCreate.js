@@ -46,27 +46,25 @@ module.exports = {
         message.author.id === process.env.ADMIN_ID
       ) {
         await message.react("⌚");
-        await message.guild.members.fetch().then((members) => {
-          members.forEach((member) => {
-            member.roles.cache.forEach((role) => {
-              if (
-                role.position <
-                  message.guild.members.me.roles.highest.position &&
-                role.name !== "@everyone"
-              ) {
-                setTimeout(() => {
-                  console.log(
-                    `Trying to remove role ${role.name} from ${member.user.username}`
+        const members = await message.guild.members.fetch();
+        members.forEach((member) => {
+          member.roles.cache.forEach((role) => {
+            if (
+              role.position < message.guild.members.me.roles.highest.position &&
+              role.name !== "@everyone"
+            ) {
+              setTimeout(() => {
+                console.log(
+                  `Trying to remove role ${role.name} from ${member.user.username}`
+                );
+                member.roles.remove(role).catch((err) => {
+                  logInfo(
+                    `Error while removing role ${role.name} from ${member.user.username}`,
+                    new Error(err.message)
                   );
-                  member.roles.remove(role).catch((err) => {
-                    logInfo(
-                      `Error while removing role ${role.name} from ${member.user.username}`,
-                      new Error(err.message)
-                    );
-                  });
-                }, 20);
-              }
-            });
+                });
+              }, 20);
+            }
           });
         });
         await message.reactions.removeAll();
