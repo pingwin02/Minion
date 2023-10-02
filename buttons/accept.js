@@ -5,6 +5,8 @@ const { google } = require("googleapis");
 module.exports = {
   name: "accept",
   async execute({ client, interaction }) {
+    await interaction.deleteReply();
+
     const _user = interaction.message.embeds[0].fields[4].value;
     const grupa = interaction.message.embeds[0].fields[3].value;
 
@@ -123,7 +125,5 @@ module.exports = {
     });
 
     timedDelete(responseMessage, 5000);
-
-    await interaction.deleteReply();
   },
 };
