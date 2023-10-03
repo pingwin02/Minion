@@ -67,7 +67,7 @@ module.exports = {
     const id = interaction.user.id;
     const imie = interaction.options.getString("imię");
     const nazwisko = interaction.options.getString("nazwisko");
-    const indeks = interaction.options.getInteger("indeks").toString();
+    const indeks = interaction.options.getInteger("indeks");
     const grupa = interaction.options.getString("grupa");
     const uwagi = interaction.options.getString("uwagi") || "Brak";
 
@@ -132,7 +132,7 @@ module.exports = {
               .setTitle(":x: Wniosek został już wysłany")
               .setColor("Red")
               .setDescription(
-                "Skontaktuj się z administracją, jeśli chcesz zmienić dane w wniosku."
+                "Skontaktuj się z administracją, jeśli chcesz zmienić dane we wniosku."
               )
               .setThumbnail(
                 "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
@@ -162,7 +162,7 @@ module.exports = {
         iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
       })
       .addFields(
-        { name: "Indeks", value: indeks, inline: true },
+        { name: "Indeks", value: indeks.toString(), inline: true },
         { name: "Imię", value: imie, inline: true },
         { name: "Nazwisko", value: nazwisko, inline: true },
         { name: "Grupa", value: grupa, inline: true },
