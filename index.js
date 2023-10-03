@@ -25,10 +25,14 @@ if (
   !process.env.KIEDY_KOLOS_ID ||
   !process.env.WNIOSKI_ID ||
   !process.env.CALENDAR_ID ||
+  !process.env.SPREADSHEET_ID ||
   !process.env.GOOGLE_AUTH
 ) {
-  console.log(
-    "[ERROR] Missing one or more required environment variables in .env file. Please add them and try again."
+  logInfo(
+    "Environment variables",
+    new Error(
+      "Missing one or more environment variables in .env file. Please add them and try again."
+    )
   );
   process.exit(1);
 }
@@ -67,8 +71,11 @@ for (const file of slashFiles) {
   if ("data" in slashcmd && "execute" in slashcmd) {
     client.slashcommands.set(slashcmd.data.name, slashcmd);
   } else {
-    console.log(
-      `[WARNING] The command at ./commands/${file} is missing a required "data" or "execute" property.`
+    logInfo(
+      "Loading slash commands",
+      new Error(
+        `The command at ./commands/${file} is missing a required "data" or "run" property.`
+      )
     );
   }
   if (LOAD_SLASH) commands.push(slashcmd.data.toJSON());
@@ -84,8 +91,11 @@ for (const file of buttonFiles) {
   if ("name" in buttoncmd && "execute" in buttoncmd) {
     client.buttoncommands.set(buttoncmd.name, buttoncmd);
   } else {
-    console.log(
-      `[WARNING] The button at ./buttons/${file} is missing a required "name" or "execute" property.`
+    logInfo(
+      "Loading button commands",
+      new Error(
+        `The command at ./buttons/${file} is missing a required "name" or "run" property.`
+      )
     );
   }
 }
@@ -96,18 +106,16 @@ if (LOAD_SLASH) {
 
   (async () => {
     try {
-      console.log(
+      logInfo(
         `Started refreshing ${commands.length} application (/) commands.`
       );
       const data = await rest.put(Routes.applicationCommands(CLIENT_ID), {
         body: commands,
       });
-      console.log(
-        `Successfully reloaded ${data.length} application (/) commands.`
-      );
+      logInfo(`Successfully reloaded ${data.length} application (/) commands.`);
       process.exit(0);
     } catch (error) {
-      console.error(error);
+      logInfo("Reloading slash commands", error);
       process.exit(1);
     }
   })();
@@ -135,5 +143,8 @@ if (LOAD_SLASH) {
   });
 
   // Login to Discord
-  client.login(TOKEN);
+  client.login(TOKEN).catch((err) => {
+    logInfo("Logging in", err);
+    process.exit(1);
+  });
 }
