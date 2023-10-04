@@ -32,6 +32,7 @@ module.exports = {
     if (row === 1) {
       logInfo("/reject", new Error(`User ${_user} not found`));
       _id = interaction.message.embeds[0].fields[0].value;
+      _nick = interaction.message.embeds[0].author.name;
       _name = interaction.message.embeds[0].fields[1].value;
       _surname = interaction.message.embeds[0].fields[2].value;
       _group = interaction.message.embeds[0].fields[3].value;
@@ -49,6 +50,7 @@ module.exports = {
               _surname,
               _group,
               _user,
+              _nick,
               _notes,
               "Odrzucony",
               `przez ${interaction.user.username}`,
@@ -59,7 +61,7 @@ module.exports = {
     } else {
       await sheets.spreadsheets.values.update({
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `G${row}`,
+        range: `H${row}`,
         valueInputOption: "RAW",
         resource: {
           values: [["Odrzucony", `przez ${interaction.user.username}`]],

@@ -65,6 +65,11 @@ module.exports = {
     }
 
     const id = interaction.user.id;
+    const nick =
+      interaction.user.username +
+      (interaction.user.discriminator != "0"
+        ? `#${interaction.user.discriminator}`
+        : "");
     const imie = interaction.options.getString("imię");
     const nazwisko = interaction.options.getString("nazwisko");
     const indeks = interaction.options.getInteger("indeks");
@@ -144,7 +149,7 @@ module.exports = {
     }
 
     const updateData = {
-      values: [[indeks, imie, nazwisko, grupa, id, uwagi, "Oczekujący"]],
+      values: [[indeks, imie, nazwisko, grupa, id, nick, uwagi, "Oczekujący"]],
     };
 
     await sheets.spreadsheets.values.append({
@@ -158,11 +163,11 @@ module.exports = {
       .setTitle("Wniosek o weryfikację")
       .setColor("Blue")
       .setAuthor({
-        name: `${interaction.user.username}`,
+        name: `${nick}`,
         iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
       })
       .addFields(
-        { name: "Indeks", value: indeks.toString(), inline: true },
+        { name: "Indeks", value: `${indeks}`, inline: true },
         { name: "Imię", value: imie, inline: true },
         { name: "Nazwisko", value: nazwisko, inline: true },
         { name: "Grupa", value: grupa, inline: true },
