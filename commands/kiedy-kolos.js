@@ -36,7 +36,6 @@ module.exports = {
     const params = {
       calendarId: process.env.CALENDAR_ID,
       timeMin: moment().toISOString(),
-      timeMax: moment().add(1, "months").toISOString(),
       singleEvents: true,
       orderBy: "startTime",
     };
@@ -53,6 +52,7 @@ module.exports = {
       POPRAWY: [],
       PROJEKTY: [],
       INNE: [],
+      PÓŹNIEJSZE: [],
     };
 
     if (events.length === 0) {
@@ -86,6 +86,11 @@ module.exports = {
         eventType = "PROJEKTY";
       } else if (summary.includes("poprawa")) {
         eventType = "POPRAWY";
+      }
+
+      //check if startunix is more than month from now
+      if (startUnix - currentUnix > moment.duration(1, "month").asSeconds()) {
+        eventType = "PÓŹNIEJSZE";
       }
 
       eventGroups[eventType].push(
