@@ -1,7 +1,7 @@
 # Discord Bot Readme
 
 <p align="center">
-  <img src="website/bot_logo.png" width="150" height="150">
+  <img src="bot_logo.png" width="150" height="150">
 </p>
 
 This readme provides instructions for running and configuring the Discord bot.
@@ -33,7 +33,6 @@ To run the bot, you need to have the following file:
 
 - `.env`: This file should contain the following variables:
   - `TOKEN`: Token of the bot.
-  - `PORT`: Port on which the website will be hosted. (default: 8080)
   - `CLIENT_ID`: Client ID of the bot.
   - `ADMIN_ID`: ID of the admin.
   - `KIEDY_KOLOS_ID`: ID of the channel for `/kiedy-kolos` command.
