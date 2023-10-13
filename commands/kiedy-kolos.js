@@ -65,10 +65,12 @@ module.exports = {
       let startUnix, startFormatted;
 
       if (event.start.dateTime) {
+        // Jeśli wydarzenie ma godzinę
         startUnix = moment(event.start.dateTime).unix();
         startFormatted = `<t:${startUnix}:f>`;
       } else {
-        startUnix = moment(event.start.date).unix();
+        // Jeśli wydarzenie jest całodniowe
+        startUnix = moment(event.end.date).unix() - 1;
         startFormatted = `<t:${startUnix}:d>`;
       }
 
@@ -84,11 +86,10 @@ module.exports = {
         eventType = "EGZAMINY/KOLOKWIA";
       } else if (summary.includes("projekt")) {
         eventType = "PROJEKTY";
-      } else if (summary.includes("poprawa")) {
+      } else if (summary.includes("popraw")) {
         eventType = "POPRAWY";
       }
 
-      //check if startunix is more than month from now
       if (startUnix - currentUnix > moment.duration(1, "month").asSeconds()) {
         eventType = "PÓŹNIEJSZE";
       }
