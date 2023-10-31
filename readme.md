@@ -1,10 +1,10 @@
-# Discord Bot Readme
+# Minion Readme
 
 <p align="center">
   <img src="bot_logo.png" width="150" height="150">
 </p>
 
-This readme provides instructions for running and configuring the Discord bot.
+This readme provides instructions for running and configuring Minion bot for Discord.
 
 ## Requirements
 
