@@ -91,18 +91,16 @@ async function printError(interaction, description, error = null) {
       .setColor("Red");
 
     if (error) {
-      embed.setFooter({ text: `${error}` });
+      embed.setFooter({ text: `${error.name}` });
     }
 
-    let reply;
-
     if (interaction.replied || interaction.deferred) {
-      reply = await interaction.followUp({ embeds: [embed] });
+      await interaction.followUp({ embeds: [embed] });
     } else if (!error) {
-      reply = await interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
     } else {
       const textChannel = interaction;
-      reply = await textChannel.send({ embeds: [embed] });
+      await textChannel.send({ embeds: [embed] });
     }
   } catch (err) {
     logInfo("printError", err);
