@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment-timezone");
+const _ = require("lodash");
 moment.tz.setDefault("Europe/Warsaw");
 
 module.exports = {
@@ -8,7 +9,6 @@ module.exports = {
     .setName("kiedy-kolos")
     .setDescription("Aktualizuje kalendarz kolokwiów"),
   async execute({ client, interaction }) {
-    // Pobierz ostatnią wiadomość z kanału
     const channel = interaction.client.channels.cache.get(
       process.env.KIEDY_KOLOS_ID
     );
@@ -22,7 +22,10 @@ module.exports = {
     }
 
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
-    const mainMessage = fetchedMessages.last();
+    // Znajdź wiadomość wysłaną przez bota, która jest edytowalna
+    const mainMessage = fetchedMessages.find(
+      (msg) => msg.author.id === client.user.id && msg.editable
+    );
 
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
@@ -55,8 +58,15 @@ module.exports = {
       PÓŹNIEJSZE: [],
     };
 
+    const categoryGroups = {
+      WSPÓLNE: _.cloneDeep(eventGroups),
+      APLIKACJE: _.cloneDeep(eventGroups),
+      SYSTEMY: _.cloneDeep(eventGroups),
+      PRZEDAWNIONE: _.cloneDeep(eventGroups),
+    };
+
     if (events.length === 0) {
-      eventGroups.INNE.push(
+      categoryGroups["WSPÓLNE"]["INNE"].push(
         ":tropical_drink: Brak nadchodzących wydarzeń w kalendarzu."
       );
     }
@@ -77,10 +87,12 @@ module.exports = {
       const countDownFormatted = `<t:${startUnix}:R>`;
       const location = event.location || "Brak sali";
 
-      let eventType = "INNE"; // Domyślnie typ "INNE"
       if (!event.summary) {
         event.summary = "Brak nazwy wydarzenia";
       }
+
+      let eventType = "INNE"; // Domyślnie typ "INNE"
+      let category = "WSPÓLNE"; // Domyślnie kategoria "WSPÓLNE"
       const summary = event.summary.toLowerCase();
       if (summary.includes("egzamin") || summary.includes("kolokwium")) {
         eventType = "EGZAMINY/KOLOKWIA";
@@ -90,32 +102,60 @@ module.exports = {
         eventType = "POPRAWY";
       }
 
+      if (summary.includes("[a]")) {
+        category = "APLIKACJE";
+      }
+      if (summary.includes("[s]")) {
+        category = "SYSTEMY";
+      }
+      if (summary.includes("[p]")) {
+        category = "PRZEDAWNIONE";
+      }
+
       if (startUnix - currentUnix > moment.duration(1, "month").asSeconds()) {
         eventType = "PÓŹNIEJSZE";
       }
 
-      eventGroups[eventType].push(
+      event.summary = event.summary.replace(/\[[asp]\]/g, "").trim();
+
+      categoryGroups[category][eventType].push(
         `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`
       );
     });
 
-    let formattedMessage = `# TERMINY EGZAMINÓW, KOLOKWIÓW, PROJEKTÓW I INNE (akt. ${currentFormatted})
-### *podane godziny są orientacyjne, zawsze lepiej przyjść ~15 minut wcześniej*`;
+    let formattedMessage = `# TERMINY EGZAMINÓW, KOLOKWIÓW, PROJEKTÓW I INNE (akt. ${currentFormatted})`;
 
-    Object.entries(eventGroups).forEach(([eventType, events]) => {
-      if (events.length > 0) {
-        formattedMessage += `\n## ${eventType}\n${events.join("\n")}`;
+    Object.entries(categoryGroups).forEach(([category, eventGroups]) => {
+      if (Object.values(eventGroups).every((events) => events.length === 0)) {
+        return;
       }
+      formattedMessage += `\n## ${category}`;
+      Object.entries(eventGroups).forEach(([eventType, events]) => {
+        if (events.length > 0) {
+          formattedMessage += `\n### ${eventType}\n${events.join("\n")}`;
+        }
+      });
     });
 
-    if (mainMessage && mainMessage.editable) {
+    // Jeśli wiadomość jest za długa
+    if (formattedMessage.length > 2000) {
+      throw new Error(
+        `Wiadomość jest za długa! (${formattedMessage.length} > 2000)` +
+          "\nSpróbuj usunąć niektóre wydarzenia z kalendarza lub zmniejszyć ilość znaków w nazwach wydarzeń."
+      );
+    }
+
+    let newMessage;
+    if (mainMessage) {
       await mainMessage.edit(formattedMessage);
     } else {
-      await channel.send(formattedMessage);
+      newMessage = await channel.send(formattedMessage);
     }
 
     await interaction.editReply({
-      content: `Zaktualizowano kalendarz kolokwiów. Przejdź do kanału <#${process.env.KIEDY_KOLOS_ID}> aby zobaczyć.`,
+      content: `Zaktualizowano kalendarz kolokwiów. Przejdź, by zobaczyć zmiany: ${
+        mainMessage?.url || newMessage?.url
+      }`,
     });
   },
 };

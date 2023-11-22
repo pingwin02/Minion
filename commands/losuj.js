@@ -12,7 +12,7 @@ module.exports = {
     if (random > 75) msg = `:sunglasses: ${random}%`;
     else if (random > 50) msg = `<:dziubdziub:1052315768555061279> ${random}%`;
 
-    await interaction.channel.send(`<@${interaction.user.id}>\t${msg}`);
+    await interaction.channel.send(`<@${interaction.user.id}>\n${msg}`);
     await interaction.deleteReply();
   },
 };

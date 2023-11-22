@@ -91,7 +91,7 @@ async function printError(interaction, description, error = null) {
       .setColor("Red");
 
     if (error) {
-      embed.setFooter({ text: `${error.name}` });
+      embed.setFooter({ text: `${error.name}: ${error.message}` });
     }
 
     if (interaction.replied || interaction.deferred) {
