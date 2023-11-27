@@ -55,7 +55,6 @@ module.exports = {
       POPRAWY: [],
       PROJEKTY: [],
       INNE: [],
-      PÓŹNIEJSZE: [],
     };
 
     const categoryGroups = {
@@ -112,10 +111,6 @@ module.exports = {
         category = "PRZEDAWNIONE";
       }
 
-      if (startUnix - currentUnix > moment.duration(1, "month").asSeconds()) {
-        eventType = "PÓŹNIEJSZE";
-      }
-
       event.summary = event.summary.replace(/\[[asp]\]/g, "").trim();
 
       categoryGroups[category][eventType].push(
@@ -123,7 +118,7 @@ module.exports = {
       );
     });
 
-    let formattedMessage = `# TERMINY EGZAMINÓW, KOLOKWIÓW, PROJEKTÓW I INNE (akt. ${currentFormatted})`;
+    let formattedMessage = `# TERMINARZ (akt. ${currentFormatted})`;
 
     Object.entries(categoryGroups).forEach(([category, eventGroups]) => {
       if (Object.values(eventGroups).every((events) => events.length === 0)) {
@@ -137,7 +132,12 @@ module.exports = {
       });
     });
 
-    // Jeśli wiadomość jest za długa
+    // Usuń wszystkie odnośniki do dat względnych (np. "za 2 dni") jeśli wiadomość jest za długa
+    if (formattedMessage.length > 2000) {
+      formattedMessage = formattedMessage.replace(/ \(<t:(\d+):R>\)/g, "");
+    }
+
+    // Jeśli wiadomość jest wciąż za długa
     if (formattedMessage.length > 2000) {
       throw new Error(
         `Wiadomość jest za długa! (${formattedMessage.length} > 2000)` +
@@ -153,9 +153,12 @@ module.exports = {
     }
 
     await interaction.editReply({
-      content: `Zaktualizowano kalendarz kolokwiów. Przejdź, by zobaczyć zmiany: ${
-        mainMessage?.url || newMessage?.url
-      }`,
+      content:
+        `Zaktualizowano kalendarz kolokwiów. Przejdź, by zobaczyć zmiany: ${
+          mainMessage?.url || newMessage?.url
+        }` +
+        `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
+        `\n:writing_hand: Długość wiadomości: ${formattedMessage.length}/2000`,
     });
   },
 };
