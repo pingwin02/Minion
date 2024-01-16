@@ -132,8 +132,12 @@ module.exports = {
       });
     });
 
+    let tooLongFlag = false;
+    let preLength = formattedMessage.length;
+
     // Usuń wszystkie odnośniki do dat względnych (np. "za 2 dni") jeśli wiadomość jest za długa
     if (formattedMessage.length > 2000) {
+      tooLongFlag = true;
       formattedMessage = formattedMessage.replace(/ \(<t:(\d+):R>\)/g, "");
     }
 
@@ -158,7 +162,9 @@ module.exports = {
           mainMessage?.url || newMessage?.url
         }` +
         `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
-        `\n:writing_hand: Długość wiadomości: ${formattedMessage.length}/2000`,
+        `\n:writing_hand: Długość wiadomości: ` +
+        `${formattedMessage.length}/2000` +
+        (tooLongFlag ? ` *(po kompresji z ${preLength} znaków)*` : ""),
     });
   },
 };
