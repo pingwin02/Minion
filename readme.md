@@ -52,7 +52,7 @@ CLIENT_ID=1234567890
 
 Follow the steps below to set up and run the bot:
 
-1. Run the script `npm run deploy` to load the slash commands into the bot.
+1. Run the script `npm run deploy` to register the bot's slash commands.
 2. Start the bot using a tool like nodemon or type `npm start`.
 
 That's it! The bot should now be up and running, ready to respond to commands on your Discord server.

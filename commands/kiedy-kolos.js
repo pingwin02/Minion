@@ -93,12 +93,12 @@ module.exports = {
       let eventType = "INNE"; // Domyślnie typ "INNE"
       let category = "WSPÓLNE"; // Domyślnie kategoria "WSPÓLNE"
       const summary = event.summary.toLowerCase();
-      if (summary.includes("egzamin") || summary.includes("kolokwium")) {
+      if (summary.includes("popraw")) {
+        eventType = "POPRAWY";
+      } else if (summary.includes("egzamin") || summary.includes("kolokwium")) {
         eventType = "EGZAMINY/KOLOKWIA";
       } else if (summary.includes("projekt")) {
         eventType = "PROJEKTY";
-      } else if (summary.includes("popraw")) {
-        eventType = "POPRAWY";
       }
 
       if (summary.includes("[a]")) {
