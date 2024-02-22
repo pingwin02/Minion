@@ -12,8 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "14.14.1",
-    "dotenv": "16.4.1",
-    "googleapis": "131.0.0",
-    "moment-timezone": "0.5.44"
+    "dotenv": "16.4.5",
+    "googleapis": "133.0.0",
+    "moment-timezone": "0.5.45"
   }
 }
