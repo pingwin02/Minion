@@ -15,6 +15,12 @@ Before running the bot, make sure you have the following dependencies installed:
 - `googleapis`
 - `moment-timezone`
 
+You can install these dependencies using the following command:
+
+```
+npm install
+```
+
 ## Commands
 
 The bot supports the following 6 slash commands and one prefix command:
@@ -32,6 +38,7 @@ Additionally, the bot supports the command `!clear`, which deletes messages sent
 To run the bot, you need to have the following file:
 
 - `.env`: This file should contain the following variables:
+
   - `TOKEN`: Token of the bot.
   - `CLIENT_ID`: Client ID of the bot.
   - `ADMIN_ID`: ID of the admin.
@@ -40,6 +47,11 @@ To run the bot, you need to have the following file:
   - `CALENDAR_ID`: ID of the Google Calendar.
   - `SPREADSHEET_ID`: ID of the Google Spreadsheet.
   - `GOOGLE_AUTH`: Whole google API key from the Google Cloud Platform.
+
+  Optional:
+
+  - `TOKEN_DEV`: Token of the bot for development purposes.
+  - `CLIENT_ID_DEV`: Client ID of the bot for development purposes.
 
 For example:
 
@@ -54,5 +66,7 @@ Follow the steps below to set up and run the bot:
 
 1. Run the script `npm run deploy` to register the bot's slash commands.
 2. Start the bot using a tool like nodemon or type `npm start`.
+
+For development purposes, you can run the bot using the command `npm run dev`.
 
 That's it! The bot should now be up and running, ready to respond to commands on your Discord server.

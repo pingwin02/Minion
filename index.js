@@ -14,9 +14,10 @@ const { logInfo } = require("./functions");
 require("dotenv").config();
 
 const LOAD_SLASH = process.argv.includes("load");
+const DEV = process.argv.includes("dev");
 
-const TOKEN = process.env.TOKEN;
-const CLIENT_ID = process.env.CLIENT_ID;
+const TOKEN = DEV ? process.env.TOKEN_DEV : process.env.TOKEN;
+const CLIENT_ID = DEV ? process.env.CLIENT_ID_DEV : process.env.CLIENT_ID;
 
 if (
   !TOKEN ||
@@ -34,7 +35,9 @@ if (
       "Missing one or more environment variables in .env file. Please add them and try again."
     )
   );
-  process.exit(1);
+  setTimeout(() => {
+    process.exit(1);
+  }, 1000);
 }
 
 // Create logs folder if it doesn't exist
@@ -94,7 +97,7 @@ for (const file of buttonFiles) {
     logInfo(
       "Loading button commands",
       new Error(
-        `The command at ./buttons/${file} is missing a required "name" or "run" property.`
+        `The command at ./buttons/${file} is missing a required "name" or "execute" property.`
       )
     );
   }
@@ -113,10 +116,14 @@ if (LOAD_SLASH) {
         body: commands,
       });
       logInfo(`Successfully reloaded ${data.length} application (/) commands.`);
-      process.exit(0);
+      setTimeout(() => {
+        process.exit(0);
+      }, 1000);
     } catch (error) {
       logInfo("Reloading slash commands", error);
-      process.exit(1);
+      setTimeout(() => {
+        process.exit(1);
+      }, 1000);
     }
   })();
 } else {
@@ -145,6 +152,8 @@ if (LOAD_SLASH) {
   // Login to Discord
   client.login(TOKEN).catch((err) => {
     logInfo("Logging in", err);
-    process.exit(1);
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
   });
 }

@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "deploy": "node index.js load"
+    "deploy": "node index.js load",
+    "dev": "node index.js dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "14.14.1",
+    "discord.js": "14.15.3",
     "dotenv": "16.4.5",
-    "googleapis": "133.0.0",
+    "googleapis": "140.0.1",
     "moment-timezone": "0.5.45"
   }
 }
