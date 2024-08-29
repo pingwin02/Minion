@@ -21,8 +21,8 @@ module.exports = {
           .setTitle(`Informacje o ${client.user.username}`)
           .setDescription(msg)
           .setColor("Random")
-          .setTimestamp(),
-      ],
+          .setTimestamp()
+      ]
     });
-  },
+  }
 };

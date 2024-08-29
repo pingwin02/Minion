@@ -6,7 +6,7 @@ module.exports = {
   logInfo,
   msToTime,
   timedDelete,
-  printError,
+  printError
 };
 
 /**
@@ -25,7 +25,7 @@ function logInfo(info, error) {
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
+      second: "2-digit"
     })
     .replace(",", "");
 

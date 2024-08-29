@@ -25,5 +25,5 @@ module.exports = {
     );
     timedDelete(msg);
     await interaction.deleteReply();
-  },
+  }
 };

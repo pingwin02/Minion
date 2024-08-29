@@ -31,7 +31,7 @@ module.exports = {
 
     const auth = new google.auth.GoogleAuth({
       credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
+      scopes: ["https://www.googleapis.com/auth/calendar.readonly"]
     });
 
     const calendar = google.calendar({ version: "v3", auth });
@@ -40,7 +40,7 @@ module.exports = {
       calendarId: process.env.CALENDAR_ID,
       timeMin: moment().toISOString(),
       singleEvents: true,
-      orderBy: "startTime",
+      orderBy: "startTime"
     };
 
     const response = await calendar.events.list(params);
@@ -54,14 +54,14 @@ module.exports = {
       "EGZAMINY/KOLOKWIA": [],
       POPRAWY: [],
       PROJEKTY: [],
-      INNE: [],
+      INNE: []
     };
 
     const categoryGroups = {
       WSPÓLNE: _.cloneDeep(eventGroups),
       APLIKACJE: _.cloneDeep(eventGroups),
       SYSTEMY: _.cloneDeep(eventGroups),
-      PRZEDAWNIONE: _.cloneDeep(eventGroups),
+      PRZEDAWNIONE: _.cloneDeep(eventGroups)
     };
 
     if (events.length === 0) {
@@ -164,7 +164,7 @@ module.exports = {
         `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
         `\n:writing_hand: Długość wiadomości: ` +
         `${formattedMessage.length}/2000` +
-        (tooLongFlag ? ` *(po kompresji z ${preLength} znaków)*` : ""),
+        (tooLongFlag ? ` *(po kompresji z ${preLength} znaków)*` : "")
     });
-  },
+  }
 };

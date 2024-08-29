@@ -14,5 +14,5 @@ module.exports = {
 
     await interaction.channel.send(`<@${interaction.user.id}>\n${msg}`);
     await interaction.deleteReply();
-  },
+  }
 };

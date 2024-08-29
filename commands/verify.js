@@ -3,7 +3,7 @@ const {
   EmbedBuilder,
   ButtonBuilder,
   ButtonStyle,
-  ActionRowBuilder,
+  ActionRowBuilder
 } = require("discord.js");
 const { google } = require("googleapis");
 const { logInfo } = require("../functions");
@@ -82,8 +82,8 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setTitle(":x: Komenda dostępna tylko w prywatnej konwersacji")
-            .setColor("Red"),
-        ],
+            .setColor("Red")
+        ]
       });
     }
     const result = await interaction.user.send().catch(async (error) => {
@@ -99,8 +99,8 @@ module.exports = {
                   "https://support.discord.com/hc/pl/articles/360060145013"
               )
               .setColor("Red")
-              .setFooter({ text: `Error: ${error.message}` }),
-          ],
+              .setFooter({ text: `Error: ${error.message}` })
+          ]
         });
         return false;
       }
@@ -115,14 +115,14 @@ module.exports = {
 
     const auth = new google.auth.GoogleAuth({
       credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"]
     });
 
     const sheets = google.sheets({ version: "v4", auth });
 
     const params = {
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: "E2:E",
+      range: "E2:E"
     };
 
     const response = await sheets.spreadsheets.values.get(params);
@@ -142,21 +142,21 @@ module.exports = {
               .setThumbnail(
                 "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
               )
-              .setTimestamp(),
-          ],
+              .setTimestamp()
+          ]
         });
       }
     }
 
     const updateData = {
-      values: [[indeks, imie, nazwisko, grupa, id, nick, uwagi, "Oczekujący"]],
+      values: [[indeks, imie, nazwisko, grupa, id, nick, uwagi, "Oczekujący"]]
     };
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.SPREADSHEET_ID,
       range: "A2",
       valueInputOption: "RAW",
-      resource: updateData,
+      resource: updateData
     });
 
     const embed = new EmbedBuilder()
@@ -164,7 +164,7 @@ module.exports = {
       .setColor("Blue")
       .setAuthor({
         name: `${nick}`,
-        iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`,
+        iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`
       })
       .addFields(
         { name: "Indeks", value: `${indeks}`, inline: true },
@@ -206,5 +206,5 @@ module.exports = {
     await interaction.editReply({ embeds: [responseEmbed] });
 
     await channel.send({ embeds: [embed], components: [row] });
-  },
+  }
 };

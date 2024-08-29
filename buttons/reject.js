@@ -14,14 +14,14 @@ module.exports = {
 
     const auth = new google.auth.GoogleAuth({
       credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"]
     });
 
     const sheets = google.sheets({ version: "v4", auth });
 
     const params = {
       spreadsheetId: process.env.SPREADSHEET_ID,
-      range: "E2:E",
+      range: "E2:E"
     };
 
     const response = await sheets.spreadsheets.values.get(params);
@@ -53,10 +53,10 @@ module.exports = {
               _nick,
               _notes,
               "Odrzucony",
-              `przez ${interaction.user.username}`,
-            ],
-          ],
-        },
+              `przez ${interaction.user.username}`
+            ]
+          ]
+        }
       });
     } else {
       await sheets.spreadsheets.values.update({
@@ -64,8 +64,8 @@ module.exports = {
         range: `H${row}`,
         valueInputOption: "RAW",
         resource: {
-          values: [["Odrzucony", `przez ${interaction.user.username}`]],
-        },
+          values: [["Odrzucony", `przez ${interaction.user.username}`]]
+        }
       });
     }
 
@@ -81,7 +81,7 @@ module.exports = {
       )
       .setFooter({
         text: `Odrzucił ${interaction.user.username}`,
-        iconURL: `https://cdn.discordapp.com/avatars/${interaction.user.id}/${interaction.user.avatar}.png`,
+        iconURL: `https://cdn.discordapp.com/avatars/${interaction.user.id}/${interaction.user.avatar}.png`
       })
       .setTimestamp();
     await _userChannel.send({ embeds: [embed] });
@@ -93,9 +93,9 @@ module.exports = {
       .setTimestamp();
 
     const responseMessage = await interaction.channel.send({
-      embeds: [responseEmbed],
+      embeds: [responseEmbed]
     });
 
     timedDelete(responseMessage, 5000);
-  },
+  }
 };

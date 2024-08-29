@@ -4,7 +4,7 @@ const {
   GatewayIntentBits,
   Collection,
   ActivityType,
-  PresenceUpdateStatus,
+  PresenceUpdateStatus
 } = require("discord.js");
 const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
@@ -54,13 +54,13 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildPresences
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   presence: {
     activities: [{ name: "studentów (debili)", type: ActivityType.Listening }],
-    status: PresenceUpdateStatus.Online,
-  },
+    status: PresenceUpdateStatus.Online
+  }
 });
 
 // Load slash commands from commands folder
@@ -113,7 +113,7 @@ if (LOAD_SLASH) {
         `Started refreshing ${commands.length} application (/) commands.`
       );
       const data = await rest.put(Routes.applicationCommands(CLIENT_ID), {
-        body: commands,
+        body: commands
       });
       logInfo(`Successfully reloaded ${data.length} application (/) commands.`);
       setTimeout(() => {
