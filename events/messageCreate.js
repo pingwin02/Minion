@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Events } = require("discord.js");
+const { Events, OverwriteType } = require("discord.js");
 const { logInfo, timedDelete } = require("../functions");
 
 module.exports = {
@@ -64,15 +64,36 @@ module.exports = {
           member.roles.cache.forEach((role) => {
             if (
               role.position < message.guild.members.me.roles.highest.position &&
-              role.name !== "@everyone"
+              role.name !== "@everyone" &&
+              role.managed === false
             ) {
               setTimeout(() => {
-                console.log(
-                  `Trying to remove role ${role.name} from ${member.user.username}`
+                logInfo(
+                  `Removing role @${role.name} from @${member.user.username}`
                 );
                 member.roles.remove(role).catch((err) => {
                   logInfo(
-                    `Error while removing role ${role.name} from ${member.user.username}`,
+                    `Error while removing role @${role.name} from @${member.user.username}`,
+                    new Error(err.message)
+                  );
+                });
+              }, 20);
+            }
+          });
+        });
+        const channels = await message.guild.channels.fetch();
+        channels.forEach((channel) => {
+          channel.permissionOverwrites.cache.forEach((perm) => {
+            if (perm.type === OverwriteType.Member) {
+              const memberUsername = message.guild.members.cache.get(perm.id)
+                .user.username;
+              setTimeout(() => {
+                logInfo(
+                  `Removing @${memberUsername} permissions from #${channel.name}`
+                );
+                channel.permissionOverwrites.delete(perm.id).catch((err) => {
+                  logInfo(
+                    `Error while removing @${memberUsername} permissions from #${channel.name}`,
                     new Error(err.message)
                   );
                 });

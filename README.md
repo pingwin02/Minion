@@ -50,8 +50,10 @@ To run the bot, you need to have the following file:
 
   Optional:
 
+  - `SUSPEND_VERIFY`: Set to `true` to disable the `/verify` command.
   - `TOKEN_DEV`: Token of the bot for development purposes.
   - `CLIENT_ID_DEV`: Client ID of the bot for development purposes.
+  - `DEV_CHANNEL_ID`: ID of the channel for development purposes.
 
 For example:
 

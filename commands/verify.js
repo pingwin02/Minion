@@ -6,7 +6,7 @@ const {
   ActionRowBuilder
 } = require("discord.js");
 const { google } = require("googleapis");
-const { logInfo } = require("../functions");
+const { logInfo, printError } = require("../functions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -32,16 +32,20 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("grupa")
-        .setDescription(
-          "Grupa dziekańska studenta (A - aplikacje, S - systemy)"
-        )
+        .setDescription("Grupa laboratoryjna studenta")
         .addChoices(
-          { name: "Grupa 1A", value: "1A" },
-          { name: "Grupa 2A", value: "2A" },
-          { name: "Grupa 3A", value: "3A" },
-          { name: "Grupa 4A", value: "4A" },
-          { name: "Grupa 1S", value: "1S" },
-          { name: "Grupa 2S", value: "2S" },
+          { name: "Grupa 1. KASK", value: "1.KASK" },
+          { name: "Grupa 2. KASK", value: "2.KASK" },
+          { name: "Grupa 3. KASK", value: "3.KASK" },
+          { name: "Grupa 1. KAIMS", value: "1.KAIMS" },
+          { name: "Grupa 2. KAIMS", value: "2.KAIMS" },
+          { name: "Grupa 3. KAIMS", value: "3.KAIMS" },
+          { name: "Grupa 1. KISI", value: "1.KISI" },
+          { name: "Grupa 2. KISI", value: "2.KISI" },
+          { name: "Grupa 1. BD", value: "1.BD" },
+          { name: "Grupa 2. BD", value: "2.BD" },
+          { name: "Grupa 1. TELE", value: "1.TELE" },
+          { name: "Grupa 1. GEO", value: "1.GEO" },
           { name: "Brak", value: "Brak" }
         )
         .setRequired(true)
@@ -52,8 +56,17 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
+    if (process.env.SUSPEND_VERIFY === "true") {
+      return printError(
+        interaction,
+        "Weryfikacja statusu studenta jest obecnie zawieszona. " +
+          "W razie pytań skontaktuj się z administracją."
+      );
+    }
     const channel = interaction.client.channels.cache.get(
-      process.env.WNIOSKI_ID
+      process.argv.includes("dev")
+        ? process.env.DEV_CHANNEL_ID
+        : process.env.WNIOSKI_ID
     );
 
     if (

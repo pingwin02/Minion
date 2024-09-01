@@ -8,7 +8,7 @@ module.exports = {
     await interaction.deleteReply();
 
     const _user = interaction.message.embeds[0].fields[4].value;
-    const grupa = interaction.message.embeds[0].fields[3].value;
+    const _grupa = interaction.message.embeds[0].fields[3].value;
 
     if (!interaction.guild.members.me.permissions.has("ManageRoles")) {
       throw new Error("Insufficient permissions");
@@ -16,22 +16,22 @@ module.exports = {
 
     const member = await interaction.guild.members.fetch(_user);
 
-    if (grupa === "Brak") {
+    if (_grupa === "Brak") {
       const role = await interaction.guild.roles.cache.find(
         (r) => r.name === "Obserwator"
       );
       await member.roles.add(role);
     } else {
-      const strumien = grupa[1] === "S" ? "Systemiarz" : "Apkowicz";
+      const katedra = _grupa.split(".")[1];
       await member.roles.add(
         await interaction.guild.roles.cache.find((r) => r.name === "Student")
       );
       await member.roles.add(
-        await interaction.guild.roles.cache.find((r) => r.name === strumien)
+        await interaction.guild.roles.cache.find((r) => r.name === katedra)
       );
       await member.roles.add(
         await interaction.guild.roles.cache.find(
-          (r) => r.name === "Grupa " + grupa
+          (r) => r.name === "Grupa " + _grupa
         )
       );
     }
@@ -61,7 +61,6 @@ module.exports = {
       _nick = interaction.message.embeds[0].author.name;
       _name = interaction.message.embeds[0].fields[1].value;
       _surname = interaction.message.embeds[0].fields[2].value;
-      _group = interaction.message.embeds[0].fields[3].value;
       _notes = interaction.message.embeds[0].fields[5].value;
 
       await sheets.spreadsheets.values.append({
@@ -74,7 +73,7 @@ module.exports = {
               _id,
               _name,
               _surname,
-              _group,
+              _grupa,
               _user,
               _nick,
               _notes,

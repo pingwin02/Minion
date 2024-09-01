@@ -40,9 +40,7 @@ module.exports = {
         .execute({ client, interaction });
     } catch (err) {
       logInfo(
-        `${interaction.user.username} used /${
-          interaction.commandName || interaction.customId
-        } command`,
+        `${interaction.user.username} used /${interaction.commandName || interaction.customId} command`,
         err
       );
       if (interaction.channel && err.status != 404) {

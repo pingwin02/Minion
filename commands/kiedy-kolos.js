@@ -10,7 +10,9 @@ module.exports = {
     .setDescription("Aktualizuje kalendarz kolokwiów"),
   async execute({ client, interaction }) {
     const channel = interaction.client.channels.cache.get(
-      process.env.KIEDY_KOLOS_ID
+      process.argv.includes("dev")
+        ? process.env.DEV_CHANNEL_ID
+        : process.env.KIEDY_KOLOS_ID
     );
 
     if (
@@ -51,7 +53,7 @@ module.exports = {
     const events = response.data.items;
 
     const eventGroups = {
-      "EGZAMINY/KOLOKWIA": [],
+      EGZAMINY: [],
       POPRAWY: [],
       PROJEKTY: [],
       INNE: []
@@ -61,6 +63,12 @@ module.exports = {
       WSPÓLNE: _.cloneDeep(eventGroups),
       APLIKACJE: _.cloneDeep(eventGroups),
       SYSTEMY: _.cloneDeep(eventGroups),
+      KASK: _.cloneDeep(eventGroups),
+      KAIMS: _.cloneDeep(eventGroups),
+      KISI: _.cloneDeep(eventGroups),
+      BD: _.cloneDeep(eventGroups),
+      TELE: _.cloneDeep(eventGroups),
+      GEO: _.cloneDeep(eventGroups),
       PRZEDAWNIONE: _.cloneDeep(eventGroups)
     };
 
@@ -96,22 +104,32 @@ module.exports = {
       if (summary.includes("popraw")) {
         eventType = "POPRAWY";
       } else if (summary.includes("egzamin") || summary.includes("kolokwium")) {
-        eventType = "EGZAMINY/KOLOKWIA";
+        eventType = "EGZAMINY";
       } else if (summary.includes("projekt")) {
         eventType = "PROJEKTY";
       }
 
-      if (summary.includes("[a]")) {
+      if (summary.includes("[kask]")) {
+        category = "KASK";
+      } else if (summary.includes("[kaims]")) {
+        category = "KAIMS";
+      } else if (summary.includes("[kisi]")) {
+        category = "KISI";
+      } else if (summary.includes("[bd]")) {
+        category = "BD";
+      } else if (summary.includes("[tele]")) {
+        category = "TELE";
+      } else if (summary.includes("[geo]")) {
+        category = "GEO";
+      } else if (summary.includes("[a]")) {
         category = "APLIKACJE";
-      }
-      if (summary.includes("[s]")) {
+      } else if (summary.includes("[s]")) {
         category = "SYSTEMY";
-      }
-      if (summary.includes("[p]")) {
+      } else if (summary.includes("[p]")) {
         category = "PRZEDAWNIONE";
       }
 
-      event.summary = event.summary.replace(/\[[asp]\]/g, "").trim();
+      event.summary = event.summary.replace(/\[.*\]/, "").trim();
 
       categoryGroups[category][eventType].push(
         `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`
