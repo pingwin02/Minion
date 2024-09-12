@@ -43,7 +43,6 @@ module.exports = {
           { name: "Grupa 1. KISI", value: "1.KISI" },
           { name: "Grupa 2. KISI", value: "2.KISI" },
           { name: "Grupa 1. BD", value: "1.BD" },
-          { name: "Grupa 2. BD", value: "2.BD" },
           { name: "Grupa 1. TELE", value: "1.TELE" },
           { name: "Grupa 1. GEO", value: "1.GEO" },
           { name: "Brak", value: "Brak" }
