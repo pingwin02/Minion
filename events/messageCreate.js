@@ -45,7 +45,7 @@ module.exports = {
       } else if (message.content === "student") {
         await message.reply("debil <:dziubdziub:1052315768555061279>");
       } else if (
-        message.content === "avatar_update" &&
+        message.content === "!avatar_update" &&
         message.author.id === process.env.ADMIN_ID
       ) {
         await message.react("⌚");
@@ -54,7 +54,7 @@ module.exports = {
         await message.reactions.removeAll();
         await message.react("✅");
       } else if (
-        message.content === "remove_all_roles" &&
+        message.content === "!remove_all_roles" &&
         message.guild &&
         message.author.id === process.env.ADMIN_ID
       ) {

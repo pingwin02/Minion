@@ -23,15 +23,19 @@ npm install
 
 ## Commands
 
-The bot supports the following 6 slash commands and one prefix command:
+The bot supports the following slash and prefix commands:
 
-1. `/info`: Provides information about the bot.
-2. `/kiedy-kolos`: Updates message with events from Google Calendar API.
-3. `/losuj`: Generates a random number within the given range.
-4. `/purge`: Deletes the specified number of messages.
-5. `/verify`: Command for student verification.
+- `/info`: Provides information about the bot.
+- `/kiedy-kolos`: Updates message with events from Google Calendar API.
+- `/losuj`: Generates a random number within the given range.
+- `/purge`: Deletes the specified number of messages.
+- `/verify`: Command for student verification.
 
-Additionally, the bot supports the command `!clear`, which deletes messages sent by the bot in the current channel.
+- `!clear`: Deletes messages sent by the bot in the current channel.
+- `!avatar_update`: Updates the bot's avatar and banner.\*
+- `!remove_all_roles`: Removes all roles and channel permission overrides from every member of the server.\*
+
+\*These commands are only available to the bot's admin.
 
 ## Prerequisites
 
