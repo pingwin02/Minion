@@ -42,9 +42,9 @@ module.exports = {
           { name: "Grupa KAIMS3", value: "3.KAIMS" },
           { name: "Grupa KISI1", value: "1.KISI" },
           { name: "Grupa KISI2", value: "2.KISI" },
-          { name: "Grupa BD", value: "1.BD" },
-          { name: "Grupa TELE", value: "1.TELE" },
-          { name: "Grupa GEO", value: "1.GEO" },
+          { name: "Grupa BD", value: "BD" },
+          { name: "Grupa TELE", value: "TELE" },
+          { name: "Grupa GEO", value: "GEO" },
           { name: "Brak", value: "Brak" }
         )
         .setRequired(true)

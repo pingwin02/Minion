@@ -5,10 +5,9 @@ const { google } = require("googleapis");
 module.exports = {
   name: "accept",
   async execute({ client, interaction }) {
-    await interaction.deleteReply();
-
     const _user = interaction.message.embeds[0].fields[4].value;
     const _grupa = interaction.message.embeds[0].fields[3].value;
+    const _nick = interaction.message.embeds[0].author.name;
 
     if (!interaction.guild.members.me.permissions.has("ManageRoles")) {
       throw new Error("Insufficient permissions");
@@ -17,12 +16,28 @@ module.exports = {
     const member = await interaction.guild.members.fetch(_user);
 
     if (_grupa === "Brak") {
-      const role = await interaction.guild.roles.cache.find(
-        (r) => r.name === "Obserwator"
+      logInfo("Added role @Obserwator to user @" + _nick);
+      await member.roles.add(
+        await interaction.guild.roles.cache.find((r) => r.name === "Obserwator")
       );
-      await member.roles.add(role);
+    } else if (!_grupa.includes(".")) {
+      logInfo("Added role @Student and @" + _grupa + " to user @" + _nick);
+      await member.roles.add(
+        await interaction.guild.roles.cache.find((r) => r.name === "Student")
+      );
+      await member.roles.add(
+        await interaction.guild.roles.cache.find((r) => r.name === _nick)
+      );
     } else {
       const katedra = _grupa.split(".")[1];
+      logInfo(
+        "Added role @Student, @" +
+          katedra +
+          " and @Grupa " +
+          _grupa +
+          " to user @" +
+          _nick
+      );
       await member.roles.add(
         await interaction.guild.roles.cache.find((r) => r.name === "Student")
       );
@@ -35,7 +50,7 @@ module.exports = {
         )
       );
     }
-
+    await interaction.deleteReply();
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
     const auth = new google.auth.GoogleAuth({
@@ -58,7 +73,6 @@ module.exports = {
     if (row === 1) {
       logInfo("/accept", new Error(`User ${_user} not found`));
       _id = interaction.message.embeds[0].fields[0].value;
-      _nick = interaction.message.embeds[0].author.name;
       _name = interaction.message.embeds[0].fields[1].value;
       _surname = interaction.message.embeds[0].fields[2].value;
       _notes = interaction.message.embeds[0].fields[5].value;
