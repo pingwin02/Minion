@@ -34,17 +34,17 @@ module.exports = {
         .setName("grupa")
         .setDescription("Grupa laboratoryjna studenta")
         .addChoices(
-          { name: "Grupa 1. KASK (1 l. a)", value: "1.KASK" },
-          { name: "Grupa 2. KASK (1 l. b)", value: "2.KASK" },
-          { name: "Grupa 3. KASK (2 l. a)", value: "3.KASK" },
-          { name: "Grupa 1. KAIMS (1 l. a)", value: "1.KAIMS" },
-          { name: "Grupa 2. KAIMS (1 l. b)", value: "2.KAIMS" },
-          { name: "Grupa 3. KAIMS (2 l. a)", value: "3.KAIMS" },
-          { name: "Grupa 1. KISI (1 l. a)", value: "1.KISI" },
-          { name: "Grupa 2. KISI (1 l. b)", value: "2.KISI" },
-          { name: "Grupa 1. BD (1 l. a)", value: "1.BD" },
-          { name: "Grupa 1. TELE (1 l. a)", value: "1.TELE" },
-          { name: "Grupa 1. GEO (1 l. a)", value: "1.GEO" },
+          { name: "Grupa KASK1", value: "1.KASK" },
+          { name: "Grupa KASK2", value: "2.KASK" },
+          { name: "Grupa KASK3", value: "3.KASK" },
+          { name: "Grupa KAIMS1", value: "1.KAIMS" },
+          { name: "Grupa KAIMS2", value: "2.KAIMS" },
+          { name: "Grupa KAIMS3", value: "3.KAIMS" },
+          { name: "Grupa KISI1", value: "1.KISI" },
+          { name: "Grupa KISI2", value: "2.KISI" },
+          { name: "Grupa BD", value: "1.BD" },
+          { name: "Grupa TELE", value: "1.TELE" },
+          { name: "Grupa GEO", value: "1.GEO" },
           { name: "Brak", value: "Brak" }
         )
         .setRequired(true)
