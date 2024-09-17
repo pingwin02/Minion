@@ -50,6 +50,8 @@ To run the bot, you need to have the following file:
   - `WNIOSKI_ID`: ID of the channel for `/verify` command.
   - `CALENDAR_ID`: ID of the Google Calendar.
   - `SPREADSHEET_ID`: ID of the Google Spreadsheet.
+  - `SPREADSHEET_DATA_ID`: ID of the Google Spreadsheet for automatic verification.
+  - `GUILD_ID`: ID of the server.
   - `GOOGLE_AUTH`: Whole google API key from the Google Cloud Platform.
 
   Optional:

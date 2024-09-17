@@ -25,7 +25,7 @@ module.exports = {
     };
 
     const response = await sheets.spreadsheets.values.get(params);
-    const values = response.data.values;
+    const values = response.data.values || [];
     const ids = values.map((row) => row[0]);
     const row = ids.indexOf(_user) + 2;
 

@@ -160,6 +160,121 @@ module.exports = {
       }
     }
 
+    if (process.env.SPREADSHEET_DATA_ID && process.env.GUILD_ID) {
+      const paramAutoVerify = {
+        spreadsheetId: process.env.SPREADSHEET_DATA_ID,
+        range: "Database!A2:D"
+      };
+
+      const responseAutoVerify =
+        await sheets.spreadsheets.values.get(paramAutoVerify);
+      const valuesAutoVerify = responseAutoVerify.data.values;
+
+      if (valuesAutoVerify) {
+        const row = valuesAutoVerify.findIndex(
+          (row) =>
+            row[2] === indeks.toString() &&
+            row[0] === imie &&
+            row[1] === nazwisko &&
+            row[3] === grupa
+        );
+
+        if (row !== -1) {
+          const guild = await interaction.client.guilds.fetch(
+            process.env.GUILD_ID
+          );
+          const member = await guild.members.fetch(id);
+          logInfo("Automatically accepted user @" + nick);
+          if (grupa === "Brak") {
+            logInfo("Added role @Obserwator to user @" + nick);
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === "Obserwator")
+            );
+          } else if (!grupa.includes(".")) {
+            logInfo("Added role @Student and @" + grupa + " to user @" + nick);
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === "Student")
+            );
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === grupa)
+            );
+          } else {
+            const katedra = grupa.split(".")[1];
+            logInfo(
+              "Added role @Student, @" +
+                katedra +
+                " and @Grupa " +
+                grupa +
+                " to user @" +
+                nick
+            );
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === "Student")
+            );
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === katedra)
+            );
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === "Grupa " + grupa)
+            );
+          }
+
+          const updateData = {
+            values: [
+              [
+                indeks,
+                imie,
+                nazwisko,
+                grupa,
+                id,
+                nick,
+                uwagi,
+                "Zaakceptowany",
+                "Automatycznie"
+              ]
+            ]
+          };
+
+          await sheets.spreadsheets.values.append({
+            spreadsheetId: process.env.SPREADSHEET_ID,
+            range: "A2",
+            valueInputOption: "RAW",
+            resource: updateData
+          });
+
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: process.env.SPREADSHEET_DATA_ID,
+            range: `Database!E${row + 2}`,
+            valueInputOption: "RAW",
+            resource: {
+              values: [["Zaakceptowany"]]
+            }
+          });
+
+          return await interaction.editReply({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle(
+                  ":white_check_mark: Wniosek zaakceptowany automatycznie"
+                )
+                .setColor("Green")
+                .setDescription(
+                  "Witamy na nieoficjalnym serwerze kierunku Informatyka na PG!\n" +
+                    "Pamiętaj aby przestrzegać regulaminu serwera oraz Discorda. " +
+                    `Polecamy zajrzeć na kanał <#${process.env.KIEDY_KOLOS_ID}> ` +
+                    "aby dowiedzieć się więcej o zbliżających się egzaminach i " +
+                    "nie tylko."
+                )
+                .setThumbnail(
+                  "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
+                )
+                .setTimestamp()
+            ]
+          });
+        }
+      }
+    }
+
     const updateData = {
       values: [[indeks, imie, nazwisko, grupa, id, nick, uwagi, "Oczekujący"]]
     };
