@@ -188,7 +188,9 @@ module.exports = {
 
         if (row !== -1) {
           const guild = await interaction.client.guilds.fetch(
-            process.env.GUILD_ID
+            process.argv.includes("dev")
+              ? process.env.DEV_GUILD_ID
+              : process.env.GUILD_ID
           );
           const member = await guild.members.fetch(id);
           logInfo("Automatically accepted user @" + nick);
