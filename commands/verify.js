@@ -82,8 +82,14 @@ module.exports = {
       (interaction.user.discriminator != "0"
         ? `#${interaction.user.discriminator}`
         : "");
-    const imie = interaction.options.getString("imię");
-    const nazwisko = interaction.options.getString("nazwisko");
+
+    const imieRaw = interaction.options.getString("imię");
+    const nazwiskoRaw = interaction.options.getString("nazwisko");
+
+    const imie =
+      imieRaw.charAt(0).toUpperCase() + imieRaw.slice(1).toLowerCase();
+    const nazwisko =
+      nazwiskoRaw.charAt(0).toUpperCase() + nazwiskoRaw.slice(1).toLowerCase();
     const indeks = interaction.options.getInteger("indeks");
     const grupa = interaction.options.getString("grupa");
     const uwagi = interaction.options.getString("uwagi") || "Brak";
@@ -163,7 +169,7 @@ module.exports = {
     if (process.env.SPREADSHEET_DATA_ID && process.env.GUILD_ID) {
       const paramAutoVerify = {
         spreadsheetId: process.env.SPREADSHEET_DATA_ID,
-        range: "Database!A2:D"
+        range: "Database!A2:E"
       };
 
       const responseAutoVerify =
@@ -176,7 +182,8 @@ module.exports = {
             row[2] === indeks.toString() &&
             row[0] === imie &&
             row[1] === nazwisko &&
-            row[3] === grupa
+            row[3] === grupa &&
+            row[4] === id
         );
 
         if (row !== -1) {
@@ -244,7 +251,7 @@ module.exports = {
 
           await sheets.spreadsheets.values.update({
             spreadsheetId: process.env.SPREADSHEET_DATA_ID,
-            range: `Database!E${row + 2}`,
+            range: `Database!F${row + 2}`,
             valueInputOption: "RAW",
             resource: {
               values: [["Zaakceptowany"]]
