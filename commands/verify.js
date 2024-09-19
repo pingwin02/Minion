@@ -34,17 +34,17 @@ module.exports = {
         .setName("grupa")
         .setDescription("Grupa laboratoryjna studenta")
         .addChoices(
-          { name: "Grupa KASK1", value: "1.KASK" },
-          { name: "Grupa KASK2", value: "2.KASK" },
-          { name: "Grupa KASK3", value: "3.KASK" },
-          { name: "Grupa KAIMS1", value: "1.KAIMS" },
-          { name: "Grupa KAIMS2", value: "2.KAIMS" },
-          { name: "Grupa KAIMS3", value: "3.KAIMS" },
-          { name: "Grupa KISI1", value: "1.KISI" },
-          { name: "Grupa KISI2", value: "2.KISI" },
-          { name: "Grupa BD", value: "BD" },
-          { name: "Grupa TELE", value: "TELE" },
-          { name: "Grupa GEO", value: "GEO" },
+          { name: "KASK1", value: "1.KASK" },
+          { name: "KASK2", value: "2.KASK" },
+          { name: "KASK3", value: "3.KASK" },
+          { name: "KAIMS1", value: "1.KAIMS" },
+          { name: "KAIMS2", value: "2.KAIMS" },
+          { name: "KAIMS3", value: "3.KAIMS" },
+          { name: "KISI1", value: "1.KISI" },
+          { name: "KISI2", value: "2.KISI" },
+          { name: "BD", value: "BD" },
+          { name: "TELE", value: "TELE" },
+          { name: "GEO", value: "GEO" },
           { name: "Brak", value: "Brak" }
         )
         .setRequired(true)
@@ -55,6 +55,7 @@ module.exports = {
         .setDescription("Dodatkowe uwagi dotyczące wniosku")
     ),
   async execute({ client, interaction }) {
+    await interaction.deferReply({ ephemeral: true });
     if (process.env.SUSPEND_VERIFY === "true") {
       return printError(
         interaction,

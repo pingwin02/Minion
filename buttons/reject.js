@@ -5,6 +5,7 @@ const { google } = require("googleapis");
 module.exports = {
   name: "reject",
   async execute({ client, interaction }) {
+    await interaction.deferUpdate();
     await interaction.deleteReply();
 
     const _user = interaction.message.embeds[0].fields[4].value;

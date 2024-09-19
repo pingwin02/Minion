@@ -9,6 +9,7 @@ module.exports = {
     .setName("kiedy-kolos")
     .setDescription("Aktualizuje kalendarz kolokwiów"),
   async execute({ client, interaction }) {
+    await interaction.deferReply({ ephemeral: true });
     const channel = interaction.client.channels.cache.get(
       process.argv.includes("dev")
         ? process.env.DEV_CHANNEL_ID

@@ -15,14 +15,15 @@ module.exports = {
       `:clock1: Uptime wynosi **${uptime}**\n` +
       `Stworzony z :heart: przez <@${process.env.ADMIN_ID}>`;
 
-    await interaction.editReply({
+    await interaction.reply({
       embeds: [
         new EmbedBuilder()
           .setTitle(`Informacje o ${client.user.username}`)
           .setDescription(msg)
           .setColor("Random")
           .setTimestamp()
-      ]
+      ],
+      ephemeral: true
     });
   }
 };

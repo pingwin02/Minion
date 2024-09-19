@@ -15,6 +15,7 @@ module.exports = {
     .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   async execute({ client, interaction }) {
+    await interaction.deferReply({ ephemeral: true });
     const amount = interaction.options.getInteger("ilość") + 1;
     await interaction.channel.bulkDelete(amount, true).catch((err) => {
       printError(interaction.channel, "Nie można usunąć wiadomości", err);

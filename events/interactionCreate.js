@@ -5,11 +5,6 @@ module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
     try {
-      if (interaction.isButton()) {
-        await interaction.deferUpdate();
-      } else {
-        await interaction.deferReply({ ephemeral: true });
-      }
       const client = interaction.client;
 
       if (!interaction.guild)
@@ -40,7 +35,9 @@ module.exports = {
         .execute({ client, interaction });
     } catch (err) {
       logInfo(
-        `${interaction.user.username} used /${interaction.commandName || interaction.customId} command`,
+        `${interaction.user.username} used /${
+          interaction.commandName || interaction.customId
+        } command`,
         err
       );
       if (interaction.channel && err.status != 404) {

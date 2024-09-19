@@ -5,6 +5,8 @@ const { google } = require("googleapis");
 module.exports = {
   name: "accept",
   async execute({ client, interaction }) {
+    await interaction.deferUpdate();
+
     const _user = interaction.message.embeds[0].fields[4].value;
     const _grupa = interaction.message.embeds[0].fields[3].value;
     const _nick = interaction.message.embeds[0].author.name;
