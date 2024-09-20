@@ -122,10 +122,6 @@ module.exports = {
         category = "TELE";
       } else if (summary.includes("[geo]")) {
         category = "GEO";
-      } else if (summary.includes("[a]")) {
-        category = "APLIKACJE";
-      } else if (summary.includes("[s]")) {
-        category = "SYSTEMY";
       } else if (summary.includes("[p]")) {
         category = "PRZEDAWNIONE";
       }
