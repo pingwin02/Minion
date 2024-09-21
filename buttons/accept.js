@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const { logInfo, timedDelete } = require("../functions");
+const { logInfo, timedDelete, appendRow } = require("../functions");
 const { google } = require("googleapis");
 
 module.exports = {
@@ -52,7 +52,6 @@ module.exports = {
         )
       );
     }
-    await interaction.deleteReply();
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
 
     const auth = new google.auth.GoogleAuth({
@@ -79,37 +78,30 @@ module.exports = {
       _surname = interaction.message.embeds[0].fields[2].value;
       _notes = interaction.message.embeds[0].fields[5].value;
 
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "A2",
-        valueInputOption: "RAW",
-        resource: {
-          values: [
-            [
-              _id,
-              _name,
-              _surname,
-              _grupa,
-              _user,
-              _nick,
-              _notes,
-              "Zaakceptowany",
-              `przez ${interaction.user.username}`
-            ]
-          ]
-        }
-      });
+      const updateData = [
+        _id,
+        _name,
+        _surname,
+        _grupa,
+        _user,
+        _nick,
+        _notes,
+        "Zaakceptowany",
+        `przez ${interaction.user.username}`
+      ];
+
+      await appendRow(sheets, process.env.SPREADSHEET_ID, "A2", updateData);
     } else {
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `H${row}`,
-        valueInputOption: "RAW",
-        resource: {
-          values: [["Zaakceptowany", `przez ${interaction.user.username}`]]
-        }
-      });
+      await appendRow(
+        sheets,
+        process.env.SPREADSHEET_ID,
+        "H",
+        ["Zaakceptowany", `przez ${interaction.user.username}`],
+        row
+      );
     }
 
+    await interaction.deleteReply();
     const _userChannel = await client.users.fetch(_user);
     const embed = new EmbedBuilder()
       .setTitle(":white_check_mark: Wniosek został zaakceptowany")

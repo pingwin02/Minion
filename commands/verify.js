@@ -6,7 +6,7 @@ const {
   ActionRowBuilder
 } = require("discord.js");
 const { google } = require("googleapis");
-const { logInfo, printError } = require("../functions");
+const { logInfo, printError, appendRow } = require("../functions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -229,37 +229,27 @@ module.exports = {
             );
           }
 
-          const updateData = {
-            values: [
-              [
-                indeks,
-                imie,
-                nazwisko,
-                grupa,
-                id,
-                nick,
-                uwagi,
-                "Zaakceptowany",
-                "Automatycznie"
-              ]
-            ]
-          };
+          const updateData = [
+            indeks,
+            imie,
+            nazwisko,
+            grupa,
+            id,
+            nick,
+            uwagi,
+            "Zaakceptowany",
+            "Automatycznie"
+          ];
 
-          await sheets.spreadsheets.values.append({
-            spreadsheetId: process.env.SPREADSHEET_ID,
-            range: "A2",
-            valueInputOption: "RAW",
-            resource: updateData
-          });
+          await appendRow(sheets, process.env.SPREADSHEET_ID, "A2", updateData);
 
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: process.env.SPREADSHEET_DATA_ID,
-            range: `Database!F${row + 2}`,
-            valueInputOption: "RAW",
-            resource: {
-              values: [["Zaakceptowany"]]
-            }
-          });
+          await appendRow(
+            sheets,
+            process.env.SPREADSHEET_DATA_ID,
+            "Database!F",
+            ["Zaakceptowany"],
+            row + 2
+          );
 
           return await interaction.editReply({
             embeds: [
@@ -285,16 +275,18 @@ module.exports = {
       }
     }
 
-    const updateData = {
-      values: [[indeks, imie, nazwisko, grupa, id, nick, uwagi, "Oczekujący"]]
-    };
+    const updateData = [
+      indeks,
+      imie,
+      nazwisko,
+      grupa,
+      id,
+      nick,
+      uwagi,
+      "Oczekujący"
+    ];
 
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      range: "A2",
-      valueInputOption: "RAW",
-      resource: updateData
-    });
+    await appendRow(sheets, process.env.SPREADSHEET_ID, "A2", updateData);
 
     const embed = new EmbedBuilder()
       .setTitle("Wniosek o weryfikację")

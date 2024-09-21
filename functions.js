@@ -1,12 +1,14 @@
 const fs = require("fs");
 const { inspect } = require("util");
 const { EmbedBuilder } = require("discord.js");
+const { sheets_v4 } = require("googleapis");
 
 module.exports = {
   logInfo,
+  printError,
   msToTime,
   timedDelete,
-  printError
+  appendRow
 };
 
 /**
@@ -51,6 +53,42 @@ function logInfo(info, error) {
 }
 
 /**
+ * Sends embed with error message to the interaction channel.
+ * If error is passed, interaction must be a TextChannel.
+ * @param {CommandInteraction | TextChannel} interaction - Interaction to reply to.
+ * @param {string} description - Error message to send.
+ * @param {Error} error - Error to log (optional)
+ * @returns {void}
+ */
+
+async function printError(interaction, description, error = null) {
+  try {
+    const embed = new EmbedBuilder()
+      .setTitle(":x: Błąd")
+      .setDescription(description)
+      .setColor("Red");
+
+    if (error) {
+      const footer = `${error.name || "Error"}: ${error.message || error.response?.statusText} (${error.status})`;
+      embed.setFooter({ text: footer });
+    } else {
+      logInfo("printError", Error(description));
+    }
+
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ embeds: [embed] });
+    } else if (!error) {
+      await interaction.reply({ embeds: [embed] });
+    } else {
+      const textChannel = interaction;
+      await textChannel.send({ embeds: [embed] });
+    }
+  } catch (err) {
+    logInfo("printError", err);
+  }
+}
+
+/**
  * Converts a number of milliseconds to a human-readable time format.
  * @param {number} ms - Number of milliseconds to convert.
  * @returns {string} Human-readable time format.
@@ -85,36 +123,51 @@ function timedDelete(message, timeout = 3000) {
 }
 
 /**
- * Sends embed with error message to the interaction channel.
- * If error is passed, interaction must be a TextChannel.
- * @param {CommandInteraction | TextChannel} interaction - Interaction to reply to.
- * @param {string} description - Error message to send.
- * @param {Error} error - Error to log (optional)
- * @returns {void}
+ * Appends or updates row in google spreadsheet.
+ * @param {sheets_v4.Sheets} sheets - Google Sheets API instance.
+ * @param {string} sheetId - ID of the spreadsheet.
+ * @param {string} range - Range to append.
+ * @param {Array} values - Values to append.
+ * @param {number} row - Row to update (optional). When provided, updates the row instead of appending.
  */
 
-async function printError(interaction, description, error = null) {
-  try {
-    const embed = new EmbedBuilder()
-      .setTitle(":x: Błąd")
-      .setDescription(description)
-      .setColor("Red");
+async function appendRow(sheets, sheetId, range, values, row = null) {
+  let retryCount = 0;
+  const maxRetries = 6;
+  const baseDelay = 2000;
 
-    if (error) {
-      embed.setFooter({ text: `${error.name}: ${error.message}` });
-    } else {
-      logInfo("printError", Error(description));
+  async function appendWithRetry() {
+    try {
+      if (row) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: sheetId,
+          range: `${range}${row}`,
+          valueInputOption: "RAW",
+          resource: { values: [values] }
+        });
+      } else {
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: sheetId,
+          range: range,
+          valueInputOption: "RAW",
+          resource: { values: [values] }
+        });
+      }
+    } catch (error) {
+      if (error.status === 502 && retryCount < maxRetries) {
+        const delay = baseDelay * Math.pow(2, retryCount);
+        retryCount++;
+        logInfo(
+          `appendRow: Error while appending ${values}. Retrying in ${delay / 1000} seconds`,
+          error
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        await appendWithRetry();
+      } else {
+        throw error;
+      }
     }
-
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ embeds: [embed] });
-    } else if (!error) {
-      await interaction.reply({ embeds: [embed] });
-    } else {
-      const textChannel = interaction;
-      await textChannel.send({ embeds: [embed] });
-    }
-  } catch (err) {
-    logInfo("printError", err);
   }
+
+  await appendWithRetry();
 }

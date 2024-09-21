@@ -1,12 +1,11 @@
 const { EmbedBuilder } = require("discord.js");
-const { timedDelete, logInfo } = require("../functions");
+const { timedDelete, logInfo, appendRow } = require("../functions");
 const { google } = require("googleapis");
 
 module.exports = {
   name: "reject",
   async execute({ client, interaction }) {
     await interaction.deferUpdate();
-    await interaction.deleteReply();
 
     const _user = interaction.message.embeds[0].fields[4].value;
     const _userChannel = await client.users.fetch(_user);
@@ -39,36 +38,30 @@ module.exports = {
       _group = interaction.message.embeds[0].fields[3].value;
       _notes = interaction.message.embeds[0].fields[5].value;
 
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "A2",
-        valueInputOption: "RAW",
-        resource: {
-          values: [
-            [
-              _id,
-              _name,
-              _surname,
-              _group,
-              _user,
-              _nick,
-              _notes,
-              "Odrzucony",
-              `przez ${interaction.user.username}`
-            ]
-          ]
-        }
-      });
+      const updateData = [
+        _id,
+        _name,
+        _surname,
+        _group,
+        _user,
+        _nick,
+        _notes,
+        "Odrzucony",
+        `przez ${interaction.user.username}`
+      ];
+
+      await appendRow(sheets, process.env.SPREADSHEET_ID, "A2", updateData);
     } else {
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: process.env.SPREADSHEET_ID,
-        range: `H${row}`,
-        valueInputOption: "RAW",
-        resource: {
-          values: [["Odrzucony", `przez ${interaction.user.username}`]]
-        }
-      });
+      await appendRow(
+        sheets,
+        process.env.SPREADSHEET_ID,
+        "H",
+        ["Odrzucony", `przez ${interaction.user.username}`],
+        row
+      );
     }
+
+    await interaction.deleteReply();
 
     const embed = new EmbedBuilder()
       .setTitle(":x: Wniosek został odrzucony")
