@@ -69,7 +69,7 @@ async function printError(interaction, description, error = null) {
       .setColor("Red");
 
     if (error) {
-      const footer = `${error.name || "Error"}: ${error.message || error.response?.statusText} (${error.status})`;
+      const footer = `${error.name || "Error"}: ${error.message || error.response?.statusText} ${error.status ? `(${error.status})` : ""}`;
       embed.setFooter({ text: footer });
     } else {
       logInfo("printError", Error(description));
@@ -158,8 +158,8 @@ async function appendRow(sheets, sheetId, range, values, row = null) {
         const delay = baseDelay * Math.pow(2, retryCount);
         retryCount++;
         logInfo(
-          `appendRow: Error while appending ${values}. Retrying in ${delay / 1000} seconds`,
-          error
+          `appendRow: Error while appending ${values}. Retrying in ${delay / 1000} seconds. ` +
+            `{${error.name}: ${error.response?.statusText} (${error.status})`
         );
         await new Promise((resolve) => setTimeout(resolve, delay));
         await appendWithRetry();
