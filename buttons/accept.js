@@ -28,7 +28,7 @@ module.exports = {
         await interaction.guild.roles.cache.find((r) => r.name === "Student")
       );
       await member.roles.add(
-        await interaction.guild.roles.cache.find((r) => r.name === _nick)
+        await interaction.guild.roles.cache.find((r) => r.name === _grupa)
       );
     } else {
       const katedra = _grupa.split(".")[1];
