@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment-timezone");
 const _ = require("lodash");
@@ -7,7 +7,8 @@ moment.tz.setDefault("Europe/Warsaw");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("kiedy-kolos")
-    .setDescription("Aktualizuje kalendarz kolokwiów"),
+    .setDescription("Aktualizuje kalendarz kolokwiów")
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
     const channel = interaction.client.channels.cache.get(

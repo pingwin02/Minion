@@ -29,6 +29,7 @@ The bot supports the following slash and prefix commands:
 - `/kiedy-kolos`: Updates message with events from Google Calendar API.
 - `/losuj`: Generates a random number within the given range.
 - `/purge`: Deletes the specified number of messages.
+- `/restore-requests`: Restores student verification requests.
 - `/verify`: Command for student verification.
 
 - `!clear`: Deletes messages sent by the bot in the current channel.
