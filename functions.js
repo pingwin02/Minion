@@ -159,7 +159,7 @@ async function appendRow(sheets, sheetId, range, values, row = null) {
         retryCount++;
         logInfo(
           `appendRow: Error while appending ${values}. Retrying in ${delay / 1000} seconds. ` +
-            `{${error.name}: ${error.response?.statusText} (${error.status})`
+            `${error.name}: ${error.response?.statusText} (${error.status})`
         );
         await new Promise((resolve) => setTimeout(resolve, delay));
         await appendWithRetry();
