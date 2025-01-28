@@ -26,6 +26,7 @@ npm install
 The bot supports the following slash and prefix commands:
 
 - `/info`: Provides information about the bot.
+- `/inzynier`: Adds the "Inżynier" role to the user.
 - `/kiedy-kolos`: Updates message with events from Google Calendar API.
 - `/losuj`: Generates a random number within the given range.
 - `/purge`: Deletes the specified number of messages.
@@ -49,6 +50,7 @@ To run the bot, you need to have the following file:
   - `ADMIN_ID`: ID of the admin.
   - `KIEDY_KOLOS_ID`: ID of the channel for `/kiedy-kolos` command.
   - `WNIOSKI_ID`: ID of the channel for `/verify` command.
+  - `INZYNIER_ID`: ID of the channel for `/inzynier` command.
   - `CALENDAR_ID`: ID of the Google Calendar.
   - `SPREADSHEET_ID`: ID of the Google Spreadsheet.
   - `SPREADSHEET_DATA_ID`: ID of the Google Spreadsheet for automatic verification.
