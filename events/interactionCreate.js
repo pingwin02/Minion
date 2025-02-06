@@ -1,5 +1,5 @@
 const { Events } = require("discord.js");
-const { logInfo, printError } = require("../functions");
+const utils = require("../utils");
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -8,13 +8,13 @@ module.exports = {
       const client = interaction.client;
 
       if (!interaction.guild)
-        logInfo(`[DM] @${interaction.user.username} used ${interaction}`);
+        utils.logInfo(`[DM] @${interaction.user.username} used ${interaction}`);
       else if (interaction.isButton()) {
-        logInfo(
+        utils.logInfo(
           `[${interaction.guild.name}] @${interaction.user.username} used ${interaction.customId} button in #${interaction.channel.name}`
         );
       } else
-        logInfo(
+        utils.logInfo(
           `[${interaction.guild.name}] @${interaction.user.username} used ${interaction} in #${interaction.channel.name}`
         );
 
@@ -23,7 +23,10 @@ module.exports = {
         (!interaction.channel.permissionsFor(client.user).has("SendMessages") ||
           !interaction.channel.permissionsFor(client.user).has("ViewChannel"))
       ) {
-        return printError(interaction, "Nie mam uprawnień do tego kanału!");
+        return utils.printError(
+          interaction,
+          "Nie mam uprawnień do tego kanału!"
+        );
       }
 
       const collection = interaction.isCommand()
@@ -34,14 +37,14 @@ module.exports = {
         .get(interaction.commandName || interaction.customId)
         .execute({ client, interaction });
     } catch (err) {
-      logInfo(
+      utils.logInfo(
         `${interaction.user.username} used /${
           interaction.commandName || interaction.customId
         } command`,
         err
       );
       if (interaction.channel && err.status != 404) {
-        return printError(
+        return utils.printError(
           interaction.channel,
           "Wystąpił błąd podczas wykonywania komendy! Spróbuj ponownie później.",
           err

@@ -8,32 +8,22 @@ const {
 } = require("discord.js");
 const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
-const { logInfo } = require("./functions");
+const utils = require("./utils");
 
 // Load environment variables
 require("dotenv").config();
 
 const LOAD_SLASH = process.argv.includes("load");
-const DEV = process.argv.includes("dev");
+const DEV = utils.isDev();
 
 const TOKEN = DEV ? process.env.TOKEN_DEV : process.env.TOKEN;
 const CLIENT_ID = DEV ? process.env.CLIENT_ID_DEV : process.env.CLIENT_ID;
+const isConfigCreated = fs.existsSync("config.json");
 
-if (
-  !TOKEN ||
-  !CLIENT_ID ||
-  !process.env.ADMIN_ID ||
-  !process.env.KIEDY_KOLOS_ID ||
-  !process.env.WNIOSKI_ID ||
-  !process.env.CALENDAR_ID ||
-  !process.env.SPREADSHEET_ID ||
-  !process.env.GOOGLE_AUTH
-) {
-  logInfo(
+if (!TOKEN || !CLIENT_ID || !process.env.GOOGLE_AUTH || !isConfigCreated) {
+  utils.logInfo(
     "Environment variables",
-    new Error(
-      "Missing one or more environment variables in .env file. Please add them and try again."
-    )
+    new Error("Missing environment variables in .env file or config.json.")
   );
   setTimeout(() => {
     process.exit(1);
@@ -74,7 +64,7 @@ for (const file of slashFiles) {
   if ("data" in slashcmd && "execute" in slashcmd) {
     client.slashcommands.set(slashcmd.data.name, slashcmd);
   } else {
-    logInfo(
+    utils.logInfo(
       "Loading slash commands",
       new Error(
         `The command at ./commands/${file} is missing a required "data" or "run" property.`
@@ -94,7 +84,7 @@ for (const file of buttonFiles) {
   if ("name" in buttoncmd && "execute" in buttoncmd) {
     client.buttoncommands.set(buttoncmd.name, buttoncmd);
   } else {
-    logInfo(
+    utils.logInfo(
       "Loading button commands",
       new Error(
         `The command at ./buttons/${file} is missing a required "name" or "execute" property.`
@@ -109,18 +99,20 @@ if (LOAD_SLASH) {
 
   (async () => {
     try {
-      logInfo(
+      utils.logInfo(
         `Started refreshing ${commands.length} application (/) commands.`
       );
       const data = await rest.put(Routes.applicationCommands(CLIENT_ID), {
         body: commands
       });
-      logInfo(`Successfully reloaded ${data.length} application (/) commands.`);
+      utils.logInfo(
+        `Successfully reloaded ${data.length} application (/) commands.`
+      );
       setTimeout(() => {
         process.exit(0);
       }, 1000);
     } catch (error) {
-      logInfo("Reloading slash commands", error);
+      utils.logInfo("Reloading slash commands", error);
       setTimeout(() => {
         process.exit(1);
       }, 1000);
@@ -143,7 +135,7 @@ if (LOAD_SLASH) {
   }
 
   process.on("uncaughtException", (err) => {
-    logInfo("uncaughtException", err);
+    utils.logInfo("uncaughtException", err);
     setTimeout(() => {
       process.exit(1);
     }, 1000);
@@ -151,7 +143,7 @@ if (LOAD_SLASH) {
 
   // Login to Discord
   client.login(TOKEN).catch((err) => {
-    logInfo("Logging in", err);
+    utils.logInfo("Logging in", err);
     setTimeout(() => {
       process.exit(1);
     }, 1000);

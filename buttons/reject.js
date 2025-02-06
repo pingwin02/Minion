@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
-const { timedDelete, logInfo, appendRow } = require("../functions");
+const utils = require("../utils");
 const { google } = require("googleapis");
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
   async execute({ client, interaction }) {
     await interaction.deferUpdate();
 
-    const _user = interaction.message.embeds[0].fields[4].value;
+    const _user = interaction.message.embeds[0].fields[5].value;
     const _userChannel = await client.users.fetch(_user);
 
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
@@ -19,29 +19,31 @@ module.exports = {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    const params = {
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      range: "E2:E"
-    };
+    const spreadsheetId = utils.getCommonConfig().spreadsheetId;
 
-    const response = await sheets.spreadsheets.values.get(params);
+    const idDiscordColumn = { spreadsheetId, range: "F2:F" };
+
+    const response = await sheets.spreadsheets.values.get(idDiscordColumn);
     const values = response.data.values || [];
     const ids = values.map((row) => row[0]);
     const row = ids.indexOf(_user) + 2;
 
+    _serwer = interaction.message.embeds[0].fields[3].value;
+
     if (row === 1) {
-      logInfo("/reject", new Error(`User ${_user} not found`));
+      utils.logInfo("/reject", new Error(`User ${_user} not found`));
       _id = interaction.message.embeds[0].fields[0].value;
       _nick = interaction.message.embeds[0].author.name;
       _name = interaction.message.embeds[0].fields[1].value;
       _surname = interaction.message.embeds[0].fields[2].value;
-      _group = interaction.message.embeds[0].fields[3].value;
-      _notes = interaction.message.embeds[0].fields[5].value;
+      _group = interaction.message.embeds[0].fields[4].value;
+      _notes = interaction.message.embeds[0].fields[6].value;
 
       const updateData = [
         _id,
         _name,
         _surname,
+        _serwer,
         _group,
         _user,
         _nick,
@@ -50,12 +52,12 @@ module.exports = {
         `przez ${interaction.user.username}`
       ];
 
-      await appendRow(sheets, process.env.SPREADSHEET_ID, "A2", updateData);
+      await utils.appendRow(sheets, spreadsheetId, "A2", updateData);
     } else {
-      await appendRow(
+      await utils.appendRow(
         sheets,
-        process.env.SPREADSHEET_ID,
-        "H",
+        spreadsheetId,
+        "I",
         ["Odrzucony", `przez ${interaction.user.username}`],
         row
       );
@@ -67,12 +69,11 @@ module.exports = {
       .setTitle(":x: Wniosek został odrzucony")
       .setColor("Red")
       .setDescription(
-        "Twoja prośba o weryfikację została odrzucona.\nJeśli chcesz dowiedzieć się więcej, " +
+        `Twoja prośba o weryfikację na serwer ${_serwer} została odrzucona.\n` +
+          "Jeśli chcesz dowiedzieć się więcej, " +
           `napisz do <@${interaction.user.id}>.`
       )
-      .setThumbnail(
-        "https://pg.edu.pl/files/styles/large/public/2021-06/pg_logo_kolor_podstawowa_2.jpg"
-      )
+      .setThumbnail(utils.getGuildConfig(interaction.guildId).logo)
       .setFooter({
         text: `Odrzucił ${interaction.user.username}`,
         iconURL: `https://cdn.discordapp.com/avatars/${interaction.user.id}/${interaction.user.avatar}.png`
@@ -90,6 +91,6 @@ module.exports = {
       embeds: [responseEmbed]
     });
 
-    timedDelete(responseMessage, 5000);
+    utils.timedDelete(responseMessage, 5000);
   }
 };

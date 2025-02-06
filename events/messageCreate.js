@@ -1,12 +1,12 @@
 const { Events, OverwriteType } = require("discord.js");
-const { logInfo, timedDelete } = require("../functions");
+const utils = require("../utils");
 
 module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     try {
       if (message.content === "!clear") {
-        logInfo(`Messages cleared by @${message.author.username}`);
+        utils.logInfo(`Messages cleared by @${message.author.username}`);
         const channel = message.client.channels.cache.get(
           message.channelId.toString()
         );
@@ -20,18 +20,18 @@ module.exports = {
           const msg1 = await message.reply({
             content: "Nie znaleziono żadnych wiadomości do usunięcia"
           });
-          timedDelete(msg1);
+          utils.timedDelete(msg1);
         } else {
           toDelete.forEach((msg) => {
-            timedDelete(channel.messages.cache.get(msg), 0);
+            utils.timedDelete(channel.messages.cache.get(msg), 0);
           });
 
           const msg2 = await message.reply({
             content: `Usunąłem **${toDelete.length}** moich wiadomości`
           });
-          timedDelete(msg2);
+          utils.timedDelete(msg2);
         }
-        if (message.guild) timedDelete(message);
+        if (message.guild) utils.timedDelete(message);
       } else if (message.content === "student") {
         await message.reply("debil <:dziubdziub:1052315768555061279>");
       } else if (
@@ -58,11 +58,11 @@ module.exports = {
               role.managed === false
             ) {
               setTimeout(() => {
-                logInfo(
+                utils.logInfo(
                   `Removing role @${role.name} from @${member.user.username}`
                 );
                 member.roles.remove(role).catch((err) => {
-                  logInfo(
+                  utils.logInfo(
                     `Error while removing role @${role.name} from @${member.user.username}`,
                     new Error(err.message)
                   );
@@ -78,11 +78,11 @@ module.exports = {
               const memberUsername = message.guild.members.cache.get(perm.id)
                 .user.username;
               setTimeout(() => {
-                logInfo(
+                utils.logInfo(
                   `Removing @${memberUsername} permissions from #${channel.name}`
                 );
                 channel.permissionOverwrites.delete(perm.id).catch((err) => {
-                  logInfo(
+                  utils.logInfo(
                     `Error while removing @${memberUsername} permissions from #${channel.name}`,
                     new Error(err.message)
                   );
@@ -95,7 +95,7 @@ module.exports = {
         await message.react("✅");
       }
     } catch (err) {
-      logInfo(`${message.content} message`, err);
+      utils.logInfo(`${message.content} message`, err);
     }
   }
 };

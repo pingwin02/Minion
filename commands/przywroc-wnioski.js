@@ -4,23 +4,25 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
-  PermissionFlagsBits
+  PermissionFlagsBits,
+  InteractionContextType
 } = require("discord.js");
 const { google } = require("googleapis");
-const { printError } = require("../functions");
+const utils = require("../utils");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("restore-requests")
+    .setName("przywroc-wnioski")
     .setDescription('Ponownie wysyła wnioski o statusie "Oczekujący"')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
+    const guildConfig = utils.getGuildConfig(interaction.guild.id);
+    const guildName = guildConfig.name;
     const channel = interaction.client.channels.cache.get(
-      process.argv.includes("dev")
-        ? process.env.DEV_CHANNEL_ID
-        : process.env.WNIOSKI_ID
+      guildConfig.wnioskiId
     );
 
     if (
@@ -29,6 +31,16 @@ module.exports = {
       !channel.permissionsFor(client.user).has("SendMessages")
     ) {
       throw new Error("Nie znaleziono kanału WNIOSKI lub brak uprawnień");
+    }
+
+    if (interaction.channelId !== channel.id) {
+      utils.logInfo("przywroc-wnioski", "Command used in wrong channel");
+      const embed = new EmbedBuilder()
+        .setColor("Red")
+        .setTitle(":x: Błąd")
+        .setDescription(`Komenda dostępna tylko na kanale <#${channel.id}>.`);
+
+      return interaction.editReply({ embeds: [embed] });
     }
 
     const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
@@ -40,26 +52,30 @@ module.exports = {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    const params = {
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      range: "A2:H"
-    };
+    const spreadsheetId = utils.getCommonConfig().spreadsheetId;
+
+    const params = { spreadsheetId, range: "A2:I" };
 
     const response = await sheets.spreadsheets.values.get(params);
     const rows = response.data.values;
 
     if (!rows) {
-      return printError(interaction, "Brak danych w arkuszu");
+      return utils.printError(interaction, "Brak danych w arkuszu");
     }
 
-    const pendingRequests = rows.filter((row) => row[7] === "Oczekujący");
+    const pendingRequests = rows
+      .filter((row) => row[8] === "Oczekujący")
+      .filter((row) => row[3] === guildName);
 
     if (pendingRequests.length === 0) {
-      return printError(interaction, "Brak wniosków o statusie `Oczekujący`");
+      return utils.printError(
+        interaction,
+        "Brak wniosków o statusie `Oczekujący`"
+      );
     }
 
     for (const request of pendingRequests) {
-      const [indeks, imie, nazwisko, grupa, id, nick, uwagi] = request;
+      const [indeks, imie, nazwisko, serwer, grupa, id, nick, uwagi] = request;
 
       const embed = new EmbedBuilder()
         .setTitle("Wniosek o weryfikację")
@@ -72,9 +88,10 @@ module.exports = {
           { name: "Indeks", value: `${indeks}`, inline: true },
           { name: "Imię", value: imie, inline: true },
           { name: "Nazwisko", value: nazwisko, inline: true },
+          { name: "Serwer", value: serwer, inline: true },
           { name: "Grupa", value: grupa, inline: true },
           { name: "Discord ID", value: id, inline: true },
-          { name: "Uwagi", value: uwagi || "Brak" },
+          { name: "Uwagi", value: uwagi },
           { name: "Ping", value: `<@${id}>` }
         )
         .setTimestamp();

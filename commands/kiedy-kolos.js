@@ -1,20 +1,25 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  InteractionContextType,
+  EmbedBuilder
+} = require("discord.js");
 const { google } = require("googleapis");
 const moment = require("moment-timezone");
 const _ = require("lodash");
 moment.tz.setDefault("Europe/Warsaw");
+const utils = require("../utils");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("kiedy-kolos")
     .setDescription("Aktualizuje kalendarz kolokwiów")
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
+
+    const guildConfig = utils.getGuildConfig(interaction.guild.id);
     const channel = interaction.client.channels.cache.get(
-      process.argv.includes("dev")
-        ? process.env.DEV_CHANNEL_ID
-        : process.env.KIEDY_KOLOS_ID
+      guildConfig.kiedyKolosId
     );
 
     if (
@@ -23,6 +28,20 @@ module.exports = {
       !channel.permissionsFor(client.user).has("SendMessages")
     ) {
       throw new Error("Nie znaleziono kanału KIEDY_KOLOS lub brak uprawnień");
+    }
+
+    const allowedChannelId = guildConfig.allowedKiedyKolosId;
+
+    if (interaction.channelId !== allowedChannelId) {
+      utils.logInfo("kiedy-kolos", "Command used in wrong channel");
+      const embed = new EmbedBuilder()
+        .setColor("Red")
+        .setTitle(":x: Błąd")
+        .setDescription(
+          `Komenda dostępna tylko na kanale <#${allowedChannelId}>.`
+        );
+
+      return interaction.editReply({ embeds: [embed] });
     }
 
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
@@ -41,7 +60,7 @@ module.exports = {
     const calendar = google.calendar({ version: "v3", auth });
 
     const params = {
-      calendarId: process.env.CALENDAR_ID,
+      calendarId: guildConfig.calendarId,
       timeMin: moment().toISOString(),
       singleEvents: true,
       orderBy: "startTime"
@@ -63,14 +82,13 @@ module.exports = {
 
     const categoryGroups = {
       WSPÓLNE: _.cloneDeep(eventGroups),
-      APLIKACJE: _.cloneDeep(eventGroups),
-      SYSTEMY: _.cloneDeep(eventGroups),
-      KASK: _.cloneDeep(eventGroups),
-      KAIMS: _.cloneDeep(eventGroups),
-      KISI: _.cloneDeep(eventGroups),
-      BD: _.cloneDeep(eventGroups),
-      TELE: _.cloneDeep(eventGroups),
-      GEO: _.cloneDeep(eventGroups),
+      UM: _.cloneDeep(eventGroups),
+      SK: _.cloneDeep(eventGroups),
+      ISI: _.cloneDeep(eventGroups),
+      ISINT: _.cloneDeep(eventGroups),
+      PRZ: _.cloneDeep(eventGroups),
+      TGM: _.cloneDeep(eventGroups),
+      ATI: _.cloneDeep(eventGroups),
       PRZEDAWNIONE: _.cloneDeep(eventGroups)
     };
 
@@ -82,6 +100,7 @@ module.exports = {
 
     events.forEach((event) => {
       let startUnix, startFormatted;
+      const summary = event.summary.toLowerCase();
 
       if (event.start.dateTime) {
         // Jeśli wydarzenie ma godzinę
@@ -89,8 +108,13 @@ module.exports = {
         startFormatted = `<t:${startUnix}:f>`;
       } else {
         // Jeśli wydarzenie jest całodniowe
-        startUnix = moment(event.end.date).unix() - 1;
-        startFormatted = `<t:${startUnix}:d>`;
+        if (summary.includes("{mid}")) {
+          startUnix = moment(event.start.date).unix();
+          startFormatted = `<t:${startUnix}:d>`;
+        } else {
+          startUnix = moment(event.end.date).unix() - 1;
+          startFormatted = `<t:${startUnix}:d>`;
+        }
       }
 
       const countDownFormatted = `<t:${startUnix}:R>`;
@@ -102,32 +126,40 @@ module.exports = {
 
       let eventType = "INNE"; // Domyślnie typ "INNE"
       let category = "WSPÓLNE"; // Domyślnie kategoria "WSPÓLNE"
-      const summary = event.summary.toLowerCase();
       if (summary.includes("popraw")) {
         eventType = "POPRAWY";
-      } else if (summary.includes("egzamin") || summary.includes("kolokwium")) {
+      } else if (
+        summary.includes("egzamin") ||
+        summary.includes("kolo") ||
+        summary.includes("zal")
+      ) {
         eventType = "EGZAMINY";
       } else if (summary.includes("projekt")) {
         eventType = "PROJEKTY";
       }
 
-      if (summary.includes("[kask]")) {
-        category = "KASK";
-      } else if (summary.includes("[kaims]")) {
-        category = "KAIMS";
-      } else if (summary.includes("[kisi]")) {
-        category = "KISI";
-      } else if (summary.includes("[bd]")) {
-        category = "BD";
-      } else if (summary.includes("[tele]")) {
-        category = "TELE";
-      } else if (summary.includes("[geo]")) {
-        category = "GEO";
+      if (summary.includes("[um]")) {
+        category = "UM";
+      } else if (summary.includes("[sk]")) {
+        category = "SK";
+      } else if (summary.includes("[isi]")) {
+        category = "ISI";
+      } else if (summary.includes("[isint]")) {
+        category = "ISINT";
+      } else if (summary.includes("[prz]")) {
+        category = "PRZ";
+      } else if (summary.includes("[tgm]")) {
+        category = "TGM";
+      } else if (summary.includes("[ati]")) {
+        category = "ATI";
       } else if (summary.includes("[p]")) {
         category = "PRZEDAWNIONE";
       }
 
-      event.summary = event.summary.replace(/\[.*\]/, "").trim();
+      event.summary = event.summary
+        .replace(/\[.*\]/, "")
+        .replace("{mid}", "")
+        .trim();
 
       categoryGroups[category][eventType].push(
         `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`

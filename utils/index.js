@@ -2,14 +2,7 @@ const fs = require("fs");
 const { inspect } = require("util");
 const { EmbedBuilder } = require("discord.js");
 const { sheets_v4 } = require("googleapis");
-
-module.exports = {
-  logInfo,
-  printError,
-  msToTime,
-  timedDelete,
-  appendRow
-};
+const config = require("../config.json");
 
 /**
  * Logs information to the console and appends it to a log file.
@@ -171,3 +164,77 @@ async function appendRow(sheets, sheetId, range, values, row = null) {
 
   await appendWithRetry();
 }
+
+/**
+ * Checks if dev mode is enabled.
+ * @returns {boolean} True if dev mode is enabled.
+ */
+
+function isDev() {
+  return process.argv.includes("dev");
+}
+
+/**
+ * Gets config for a specific guild.
+ * @param {string} guildId - ID of the guild.
+ * @returns {object} Config object for the guild.
+ */
+
+function getGuildConfig(guildId) {
+  const guildConfig = config.guilds[guildId];
+
+  if (!guildConfig) {
+    throw new Error(`Guild ${guildId} not found in config.`);
+  }
+
+  return guildConfig;
+}
+
+/** Get config for a specific guild by name.
+ * @param {string} guildName - Name of the guild.
+ * @returns {object} Config object for the guild.
+ */
+
+function getGuildConfigByName(guildName) {
+  const guildConfig = Object.values(config.guilds).find(
+    (guild) => guild.name === guildName
+  );
+
+  if (!guildConfig) {
+    throw new Error(`Guild ${guildName} not found in config.`);
+  }
+
+  return guildConfig;
+}
+
+/**
+ * Gets common config.
+ * @returns {object} Common config object.
+ */
+
+function getCommonConfig() {
+  return config.common;
+}
+
+/**
+ * Gets all guild IDs and names from the config file.
+ * @returns {{ name: string, value: string }[]} Array of guild ids and names.
+ */
+function getGuildIdsAndNames() {
+  return Object.entries(config.guilds)
+    .filter(([_, guild]) => guild.isDev !== true)
+    .map(([id, { name }]) => ({ name, value: id }));
+}
+
+module.exports = {
+  logInfo,
+  printError,
+  msToTime,
+  timedDelete,
+  appendRow,
+  isDev,
+  getGuildConfig,
+  getGuildConfigByName,
+  getCommonConfig,
+  getGuildIdsAndNames
+};
