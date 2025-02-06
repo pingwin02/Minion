@@ -20,6 +20,7 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
+
     const amount = interaction.options.getInteger("ilość") + 1;
     await interaction.channel.bulkDelete(amount, true).catch((err) => {
       utils.printError(interaction.channel, "Nie można usunąć wiadomości", err);
@@ -28,6 +29,7 @@ module.exports = {
     const msg = await interaction.channel.send(
       `Usunięto około **${amount - 1}** wiadomości.`
     );
+
     utils.timedDelete(msg);
     await interaction.deleteReply();
   }

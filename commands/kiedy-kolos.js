@@ -3,7 +3,6 @@ const {
   InteractionContextType,
   EmbedBuilder
 } = require("discord.js");
-const { google } = require("googleapis");
 const moment = require("moment-timezone");
 const _ = require("lodash");
 moment.tz.setDefault("Europe/Warsaw");
@@ -50,28 +49,10 @@ module.exports = {
       (msg) => msg.author.id === client.user.id && msg.editable
     );
 
-    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/calendar.readonly"]
-    });
-
-    const calendar = google.calendar({ version: "v3", auth });
-
-    const params = {
-      calendarId: guildConfig.calendarId,
-      timeMin: moment().toISOString(),
-      singleEvents: true,
-      orderBy: "startTime"
-    };
-
-    const response = await calendar.events.list(params);
-
     const currentUnix = moment().unix();
     const currentFormatted = `<t:${currentUnix}:R>`;
 
-    const events = response.data.items;
+    const events = await utils.fetchCalendarEvents(guildConfig.calendarId);
 
     const eventGroups = {
       EGZAMINY: [],
@@ -126,6 +107,7 @@ module.exports = {
 
       let eventType = "INNE"; // Domyślnie typ "INNE"
       let category = "WSPÓLNE"; // Domyślnie kategoria "WSPÓLNE"
+
       if (summary.includes("popraw")) {
         eventType = "POPRAWY";
       } else if (
@@ -183,13 +165,11 @@ module.exports = {
     let tooLongFlag = false;
     let preLength = formattedMessage.length;
 
-    // Usuń wszystkie odnośniki do dat względnych (np. "za 2 dni") jeśli wiadomość jest za długa
     if (formattedMessage.length > 2000) {
       tooLongFlag = true;
       formattedMessage = formattedMessage.replace(/ \(<t:(\d+):R>\)/g, "");
     }
 
-    // Jeśli wiadomość jest wciąż za długa
     if (formattedMessage.length > 2000) {
       throw new Error(
         `Wiadomość jest za długa! (${formattedMessage.length} > 2000)` +

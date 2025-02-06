@@ -1,6 +1,5 @@
 const { EmbedBuilder } = require("discord.js");
 const utils = require("../utils");
-const { google } = require("googleapis");
 
 module.exports = {
   name: "accept",
@@ -31,21 +30,9 @@ module.exports = {
         await guild.roles.cache.find((r) => r.name === "Student")
       );
     }
-    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"]
-    });
-
-    const sheets = google.sheets({ version: "v4", auth });
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
-
-    const idDiscordColumn = { spreadsheetId, range: "F2:F" };
-
-    const response = await sheets.spreadsheets.values.get(idDiscordColumn);
-    const values = response.data.values || [];
+    const values = await utils.fetchSheetData(spreadsheetId, "F2:F");
     const ids = values.map((row) => row[0]);
     const row = ids.indexOf(_user) + 2;
 
@@ -70,10 +57,9 @@ module.exports = {
         `przez ${interaction.user.username}`
       ];
 
-      await utils.appendRow(sheets, spreadsheetId, "A2", updateData);
+      await utils.appendRow(spreadsheetId, "A2", updateData);
     } else {
       await utils.appendRow(
-        sheets,
         spreadsheetId,
         "I",
         ["Zaakceptowany", `przez ${interaction.user.username}`],

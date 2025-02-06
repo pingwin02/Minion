@@ -6,7 +6,6 @@ const {
   ActionRowBuilder,
   InteractionContextType
 } = require("discord.js");
-const { google } = require("googleapis");
 const utils = require("../utils");
 
 module.exports = {
@@ -45,6 +44,35 @@ module.exports = {
     .setContexts(InteractionContextType.BotDM),
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
+
+    const id = interaction.user.id;
+
+    const guildId = interaction.options.getString("stopień");
+    const guild = await interaction.client.guilds.fetch(guildId);
+    const guildConfig = utils.getGuildConfig(guildId);
+    const channel = interaction.client.channels.cache.get(
+      guildConfig.wnioskiId
+    );
+
+    const nick =
+      interaction.user.username +
+      (interaction.user.discriminator != "0"
+        ? `#${interaction.user.discriminator}`
+        : "");
+
+    const imieRaw = interaction.options.getString("imię");
+    const nazwiskoRaw = interaction.options.getString("nazwisko");
+
+    const imie =
+      imieRaw.charAt(0).toUpperCase() + imieRaw.slice(1).toLowerCase();
+    const nazwisko =
+      nazwiskoRaw.charAt(0).toUpperCase() + nazwiskoRaw.slice(1).toLowerCase();
+
+    const indeks = interaction.options.getInteger("indeks");
+    const serwer = guildConfig.name;
+    const grupa = serwer === "inżynierski" ? "Brak" : "TBD";
+    const uwagi = interaction.options.getString("uwagi") || "Brak";
+
     if (process.env.SUSPEND_VERIFY === "true") {
       return utils.printError(
         interaction,
@@ -77,14 +105,6 @@ module.exports = {
       return;
     }
 
-    const guildId = interaction.options.getString("stopień");
-    const guild = await interaction.client.guilds.fetch(guildId);
-    const guildConfig = utils.getGuildConfig(guildId);
-    const channel = interaction.client.channels.cache.get(
-      guildConfig.wnioskiId
-    );
-
-    const id = interaction.user.id;
     let member;
     try {
       member = await guild.members.fetch(id);
@@ -107,46 +127,11 @@ module.exports = {
       throw new Error("Nie znaleziono kanału WNIOSKI lub brak uprawnień");
     }
 
-    const nick =
-      interaction.user.username +
-      (interaction.user.discriminator != "0"
-        ? `#${interaction.user.discriminator}`
-        : "");
+    const spreadsheetId = utils.getCommonConfig().spreadsheetId;
+    const spreadsheetDataId = utils.getCommonConfig().spreadsheetDataId;
 
-    const imieRaw = interaction.options.getString("imię");
-    const nazwiskoRaw = interaction.options.getString("nazwisko");
-
-    const imie =
-      imieRaw.charAt(0).toUpperCase() + imieRaw.slice(1).toLowerCase();
-    const nazwisko =
-      nazwiskoRaw.charAt(0).toUpperCase() + nazwiskoRaw.slice(1).toLowerCase();
-    const indeks = interaction.options.getInteger("indeks");
-    const serwer = guildConfig.name;
-    const grupa = serwer === "inżynierski" ? "Brak" : "TBD";
-    const uwagi = interaction.options.getString("uwagi") || "Brak";
-    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"]
-    });
-
-    const sheets = google.sheets({ version: "v4", auth });
-
-    const commonConfig = utils.getCommonConfig();
-    const spreadsheetId = commonConfig.spreadsheetId;
-    const spreadsheetDataId = commonConfig.spreadsheetDataId;
-
-    const idDiscordColumn = { spreadsheetId, range: "F2:F" };
-    const guildNameColumn = { spreadsheetId, range: "D2:D" };
-
-    const response = await sheets.spreadsheets.values.batchGet({
-      spreadsheetId,
-      ranges: [idDiscordColumn.range, guildNameColumn.range]
-    });
-
-    const ids = response.data.valueRanges[0].values || [];
-    const guildNames = response.data.valueRanges[1].values || [];
+    const ranges = ["D2:D", "F2:F"];
+    const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
 
     if (ids && ids.length > 0) {
       const matchingRequests = ids
@@ -177,15 +162,11 @@ module.exports = {
       }
     }
 
-    if (guildConfig?.autoVerify) {
-      const paramAutoVerify = {
-        spreadsheetId: spreadsheetDataId,
-        range: "Database!A2:D"
-      };
-
-      const responseAutoVerify =
-        await sheets.spreadsheets.values.get(paramAutoVerify);
-      const valuesAutoVerify = responseAutoVerify.data.values;
+    if (guildConfig?.autoVerify && uwagi === "Brak") {
+      const valuesAutoVerify = await utils.fetchSheetData(
+        spreadsheetDataId,
+        "Database!A2:D"
+      );
 
       if (valuesAutoVerify) {
         const row = valuesAutoVerify.findIndex(
@@ -215,10 +196,9 @@ module.exports = {
             "Automatycznie"
           ];
 
-          await utils.appendRow(sheets, spreadsheetId, "A2", updateData);
+          await utils.appendRow(spreadsheetId, "A2", updateData);
 
           await utils.appendRow(
-            sheets,
             spreadsheetDataId,
             "Database!E",
             ["Zaakceptowany"],
@@ -261,7 +241,7 @@ module.exports = {
       "Oczekujący"
     ];
 
-    await utils.appendRow(sheets, spreadsheetId, "A2", updateData);
+    await utils.appendRow(spreadsheetId, "A2", updateData);
 
     const embed = new EmbedBuilder()
       .setTitle("Wniosek o weryfikację")

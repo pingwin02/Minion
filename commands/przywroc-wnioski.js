@@ -7,7 +7,6 @@ const {
   PermissionFlagsBits,
   InteractionContextType
 } = require("discord.js");
-const { google } = require("googleapis");
 const utils = require("../utils");
 
 module.exports = {
@@ -43,21 +42,8 @@ module.exports = {
       return interaction.editReply({ embeds: [embed] });
     }
 
-    const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: authJSON,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"]
-    });
-
-    const sheets = google.sheets({ version: "v4", auth });
-
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
-
-    const params = { spreadsheetId, range: "A2:I" };
-
-    const response = await sheets.spreadsheets.values.get(params);
-    const rows = response.data.values;
+    const rows = await utils.fetchSheetData(spreadsheetId, "A2:I");
 
     if (!rows) {
       return utils.printError(interaction, "Brak danych w arkuszu");
