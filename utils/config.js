@@ -12,7 +12,8 @@ function isDev() {
  * Retrieves the configuration for a specific guild by its ID.
  * @param {string} guildId - The ID of the guild.
  * @returns {object} The configuration object for the specified guild.
- * @throws {Error} Throws an error if the guild is not found in the configuration.
+ * @throws {Error} Throws an error if the guild is
+ * not found in the configuration.
  */
 function getGuildConfig(guildId) {
   const guildConfig = config.guilds[guildId];
@@ -28,7 +29,8 @@ function getGuildConfig(guildId) {
  * Retrieves the configuration for a specific guild by its name.
  * @param {string} guildName - The name of the guild.
  * @returns {object} The configuration object for the specified guild.
- * @throws {Error} Throws an error if the guild is not found in the configuration.
+ * @throws {Error} Throws an error if the guild is
+ * not found in the configuration.
  */
 function getGuildConfigByName(guildName) {
   const guildConfig = Object.values(config.guilds).find(
@@ -52,7 +54,8 @@ function getCommonConfig() {
 
 /**
  * Retrieves all guild IDs and names from the configuration file.
- * @returns {{ name: string, value: string }[]} An array of objects containing guild names and their corresponding IDs.
+ * @returns {{ name: string, value: string }[]}
+ * An array of objects containing guild names and their corresponding IDs.
  */
 function getGuildIdsAndNames() {
   return Object.entries(config.guilds)

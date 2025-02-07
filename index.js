@@ -10,7 +10,6 @@ const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
 const utils = require("./utils");
 
-// Load environment variables
 require("dotenv").config();
 
 const LOAD_SLASH = process.argv.includes("load");
@@ -30,12 +29,10 @@ if (!TOKEN || !CLIENT_ID || !process.env.GOOGLE_AUTH || !isConfigCreated) {
   }, 1000);
 }
 
-// Create logs folder if it doesn't exist
 if (!fs.existsSync("logs")) {
   fs.mkdirSync("logs");
 }
 
-// Create a new client instance
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -53,9 +50,8 @@ const client = new Client({
   }
 });
 
-// Load slash commands from commands folder
 client.slashcommands = new Collection();
-let commands = [];
+const commands = [];
 const slashFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
@@ -67,14 +63,14 @@ for (const file of slashFiles) {
     utils.logInfo(
       "Loading slash commands",
       new Error(
-        `The command at ./commands/${file} is missing a required "data" or "run" property.`
+        `The command at ./commands/${file} is missing ` +
+          "a required \"data\" or \"run\" property."
       )
     );
   }
   if (LOAD_SLASH) commands.push(slashcmd.data.toJSON());
 }
 
-// Load button commands from buttons folder
 client.buttoncommands = new Collection();
 const buttonFiles = fs
   .readdirSync("./buttons")
@@ -87,13 +83,13 @@ for (const file of buttonFiles) {
     utils.logInfo(
       "Loading button commands",
       new Error(
-        `The command at ./buttons/${file} is missing a required "name" or "execute" property.`
+        `The command at ./buttons/${file} is missing ` +
+          "a required \"name\" or \"execute\" property."
       )
     );
   }
 }
 
-// If deploy argument is passed, load slash commands and exit
 if (LOAD_SLASH) {
   const rest = new REST({ version: "10" }).setToken(TOKEN);
 
@@ -119,7 +115,6 @@ if (LOAD_SLASH) {
     }
   })();
 } else {
-  // Otherwise, load events and login
   const eventFiles = fs
     .readdirSync("./events")
     .filter((file) => file.endsWith(".js"));
@@ -141,7 +136,6 @@ if (LOAD_SLASH) {
     }, 1000);
   });
 
-  // Login to Discord
   client.login(TOKEN).catch((err) => {
     utils.logInfo("Logging in", err);
     setTimeout(() => {

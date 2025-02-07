@@ -7,8 +7,10 @@ const { logInfo } = require("./logger");
  * @param {Function} func - The asynchronous function to execute.
  * @param {Array} args - Arguments to pass to the function.
  * @param {number} [maxRetries=6] - Maximum number of retry attempts.
- * @param {number} [baseDelay=2000] - Initial delay in milliseconds before retrying, doubles on each attempt.
- * @returns {Promise<*>} A promise that resolves with the function result or rejects with an error.
+ * @param {number} [baseDelay=2000] - Initial delay in milliseconds
+ * before retrying, doubles on each attempt.
+ * @returns {Promise<*>} A promise that resolves with the
+ * function result or rejects with an error.
  * @throws Will throw an error if all retries fail.
  */
 async function retryOnError5xx(func, args, maxRetries = 6, baseDelay = 2000) {
@@ -25,7 +27,8 @@ async function retryOnError5xx(func, args, maxRetries = 6, baseDelay = 2000) {
       ) {
         const delay = baseDelay * Math.pow(2, retryCount);
         logInfo(
-          `retryOnError5xx: Encountered error, retrying in ${delay / 1000} seconds. ` +
+          "retryOnError5xx: Encountered error, " +
+            `retrying in ${delay / 1000} seconds. ` +
             `${error.name}: ${error.response?.statusText} (${error.status})`
         );
         retryCount++;

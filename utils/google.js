@@ -6,8 +6,10 @@ moment.tz.setDefault("Europe/Warsaw");
 /**
  * Fetches upcoming events from a specified Google Calendar.
  *
- * @param {string} calendarId - The ID of the Google Calendar to retrieve events from.
- * @returns {Promise<Object[]>} A promise that resolves to an array of calendar events.
+ * @param {string} calendarId
+ * - The ID of the Google Calendar to retrieve events from.
+ * @returns {Promise<Object[]>}
+ * A promise that resolves to an array of calendar events.
  */
 async function fetchCalendarEvents(calendarId) {
   const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
@@ -26,10 +28,10 @@ async function fetchCalendarEvents(calendarId) {
     orderBy: "startTime"
   };
 
-  const response = await retryOnError5xx(
-    () => calendar.events.list(params),
-    []
-  );
+  const response = await retryOnError5xx(calendar.events.list.bind(calendar), [
+    params
+  ]);
+
   return response.data.items || [];
 }
 
@@ -53,8 +55,10 @@ function getSheetsInstance() {
  * @param {string} spreadsheetId - The ID of the Google Spreadsheet.
  * @param {string} range - The range to append/update.
  * @param {Array} values - The values to insert.
- * @param {number} [row=null] - The row to update (if provided, updates instead of appending).
- * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ * @param {number} [row=null]
+ * - The row to update (if provided, updates instead of appending).
+ * @returns {Promise<void>}
+ * A promise that resolves when the operation is complete.
  */
 async function appendRow(spreadsheetId, range, values, row = null) {
   const sheets = getSheetsInstance();
@@ -67,14 +71,13 @@ async function appendRow(spreadsheetId, range, values, row = null) {
         valueInputOption: "RAW",
         resource: { values: [values] }
       });
-    } else {
-      return sheets.spreadsheets.values.append({
-        spreadsheetId,
-        range: range,
-        valueInputOption: "RAW",
-        resource: { values: [values] }
-      });
     }
+    return sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: range,
+      valueInputOption: "RAW",
+      resource: { values: [values] }
+    });
   };
 
   await retryOnError5xx(updateOrAppend, []);
@@ -96,13 +99,12 @@ async function fetchSheetData(spreadsheetId, rangeOrRanges) {
         ranges: rangeOrRanges
       });
       return response.data.valueRanges.map((range) => range.values || []);
-    } else {
-      const response = await sheets.spreadsheets.values.get({
-        spreadsheetId,
-        range: rangeOrRanges
-      });
-      return response.data.values || [];
     }
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: rangeOrRanges
+    });
+    return response.data.values || [];
   };
 
   return await retryOnError5xx(fetchData, []);

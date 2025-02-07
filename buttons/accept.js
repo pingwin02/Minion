@@ -32,17 +32,23 @@ module.exports = {
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
-    const values = await utils.fetchSheetData(spreadsheetId, "F2:F");
-    const ids = values.map((row) => row[0]);
-    const row = ids.indexOf(_user) + 2;
+    const ranges = ["D2:D", "F2:F"];
+    const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
+
+    const guildName = guildConfig.name;
+    const row =
+      ids.findIndex(
+        (idRow, index) =>
+          idRow[0] === _user && guildNames[index][0] === guildName
+      ) + 2;
 
     if (row === 1) {
       utils.logInfo("/accept", new Error(`User ${_user} not found`));
-      _id = interaction.message.embeds[0].fields[0].value;
-      _name = interaction.message.embeds[0].fields[1].value;
-      _surname = interaction.message.embeds[0].fields[2].value;
-      _serwer = interaction.message.embeds[0].fields[3].value;
-      _notes = interaction.message.embeds[0].fields[6].value;
+      const _id = interaction.message.embeds[0].fields[0].value;
+      const _name = interaction.message.embeds[0].fields[1].value;
+      const _surname = interaction.message.embeds[0].fields[2].value;
+      const _serwer = interaction.message.embeds[0].fields[3].value;
+      const _notes = interaction.message.embeds[0].fields[6].value;
 
       const updateData = [
         _id,
@@ -73,18 +79,20 @@ module.exports = {
       .setTitle(":white_check_mark: Wniosek został zaakceptowany")
       .setColor("Green")
       .setDescription(
-        "Witamy na nieoficjalnym serwerze kierunku Informatyka stopień " +
-          `${guildConfig.name} na PG!\n` +
-          "- Zapoznaj się z regulaminem serwera dostępnym na kanale " +
-          `<#${guildConfig.regulaminId}>.\n` +
+        "Witamy na nieoficjalnym serwerze kierunku " +
+          `Informatyka stopień ${guildConfig.name} na PG!\n` +
+          "- Zapoznaj się z regulaminem serwera dostępnym " +
+          `na kanale <#${guildConfig.regulaminId}>.\n` +
           `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
-          "aby dowiedzieć się więcej o zbliżających się egzaminach i " +
-          "nie tylko."
+          "aby dowiedzieć się więcej o zbliżających się egzaminach " +
+          "i nie tylko."
       )
       .setThumbnail(guildConfig.logo)
       .setFooter({
         text: `Zaakceptował ${interaction.user.username}`,
-        iconURL: `https://cdn.discordapp.com/avatars/${interaction.user.id}/${interaction.user.avatar}.png`
+        iconURL:
+          "https://cdn.discordapp.com/avatars/" +
+          `${interaction.user.id}/${interaction.user.avatar}.png`
       })
       .setTimestamp();
     await _userChannel.send({ embeds: [embed] });

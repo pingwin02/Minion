@@ -63,7 +63,8 @@ module.exports = {
                 );
                 member.roles.remove(role).catch((err) => {
                   utils.logInfo(
-                    `Error while removing role @${role.name} from @${member.user.username}`,
+                    `Error while removing role @${role.name} ` +
+                      `from @${member.user.username}`,
                     new Error(err.message)
                   );
                 });
@@ -79,11 +80,13 @@ module.exports = {
                 .user.username;
               setTimeout(() => {
                 utils.logInfo(
-                  `Removing @${memberUsername} permissions from #${channel.name}`
+                  `Removing @${memberUsername} permissions ` +
+                    `from #${channel.name}`
                 );
                 channel.permissionOverwrites.delete(perm.id).catch((err) => {
                   utils.logInfo(
-                    `Error while removing @${memberUsername} permissions from #${channel.name}`,
+                    `Error while removing @${memberUsername} ` +
+                      `permissions from #${channel.name}`,
                     new Error(err.message)
                   );
                 });

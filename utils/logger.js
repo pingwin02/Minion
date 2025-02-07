@@ -8,7 +8,7 @@ const { inspect } = require("util");
  * @returns {void}
  */
 function logInfo(info, error) {
-  var currentdate = new Date()
+  const currentdate = new Date()
     .toLocaleString("pl-PL", {
       timeZone: "Europe/Warsaw",
       day: "2-digit",
@@ -20,14 +20,14 @@ function logInfo(info, error) {
     })
     .replace(",", "");
 
-  var logMessage = `[${currentdate}] - `;
+  let logMessage = `[${currentdate}] - `;
 
   if (error) {
     logMessage += `[ERROR] ${info}: ${inspect(error)}`;
     console.error(logMessage);
   } else {
     logMessage += `[INFO] ${info}`;
-    console.log(logMessage);
+    console.log(logMessage); // eslint-disable-line no-console
   }
 
   fs.appendFile(

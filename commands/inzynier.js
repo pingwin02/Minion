@@ -12,19 +12,17 @@ module.exports = {
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
     const guildConfig = utils.getGuildConfig(interaction.guildId);
-    const guildName = guildConfig.name;
+    const allowedChannelId = guildConfig.inzynierId;
 
-    if (guildName !== "inżynierski") {
+    if (!allowedChannelId) {
       utils.logInfo("inzynier", "Command used in wrong guild");
       const embed = new EmbedBuilder()
         .setColor("Red")
         .setTitle(":x: Błąd")
-        .setDescription(`Komenda nie jest dostępna na tym serwerze.`);
+        .setDescription("Komenda nie jest dostępna na tym serwerze.");
 
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
-
-    const allowedChannelId = guildConfig.inzynierId;
 
     if (interaction.channelId !== allowedChannelId) {
       utils.logInfo("inzynier", "Command used in wrong channel");
@@ -62,14 +60,20 @@ module.exports = {
       .setColor("Blue")
       .setTitle("Gratulacje!")
       .setDescription(
-        `Gratulujemy zdania egzaminu inżynierskiego! Pomyślnie przypisano rolę <@&${role.id}>.`
+        "Gratulujemy zdania egzaminu inżynierskiego! " +
+          `Pomyślnie przypisano rolę <@&${role.id}>.`
       )
       .setThumbnail(guildConfig.logo)
       .addFields({
         name: " ",
         value:
-          "<:profesor:1045785569239781437> <:konor:1122557089106112675> <:kuchta:1229551359473225738>" +
-          "<:dziubdziub:1052315768555061279> <:profdrhabin:1069695060561629284> <:nowicki:1119353299544588318> <:daciuk:1060192736533291060>"
+          "<:profesor:1045785569239781437>" +
+          "<:konor:1122557089106112675>" +
+          "<:kuchta:1229551359473225738>" +
+          "<:dziubdziub:1052315768555061279>" +
+          "<:profdrhabin:1069695060561629284>" +
+          "<:nowicki:1119353299544588318>" +
+          "<:daciuk:1060192736533291060>"
       });
 
     await interaction.reply({ embeds: [embed] });

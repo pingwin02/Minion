@@ -12,7 +12,7 @@ const utils = require("../utils");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("przywroc-wnioski")
-    .setDescription('Ponownie wysyła wnioski o statusie "Oczekujący"')
+    .setDescription("Ponownie wysyła wnioski o statusie \"Oczekujący\"")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
@@ -68,7 +68,9 @@ module.exports = {
         .setColor("Blue")
         .setAuthor({
           name: `${nick}`,
-          iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`
+          iconURL:
+            "https://cdn.discordapp.com/avatars/" +
+            `${id}/${interaction.user.avatar}.png`
         })
         .addFields(
           { name: "Indeks", value: `${indeks}`, inline: true },
@@ -101,7 +103,9 @@ module.exports = {
     }
 
     await interaction.editReply({
-      content: `Odtworzono **${pendingRequests.length}** wniosków o statusie \`Oczekujący\``
+      content:
+        `Odtworzono **${pendingRequests.length}**` +
+        " wniosków o statusie `Oczekujący`"
     });
   }
 };

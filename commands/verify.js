@@ -56,7 +56,7 @@ module.exports = {
 
     const nick =
       interaction.user.username +
-      (interaction.user.discriminator != "0"
+      (interaction.user.discriminator !== "0"
         ? `#${interaction.user.discriminator}`
         : "");
 
@@ -70,7 +70,7 @@ module.exports = {
 
     const indeks = interaction.options.getInteger("indeks");
     const serwer = guildConfig.name;
-    const grupa = serwer === "inżynierski" ? "Brak" : "TBD";
+    const grupa = serwer === guildConfig.autoVerify ? "TBD" : "Brak";
     const uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (process.env.SUSPEND_VERIFY === "true") {
@@ -153,7 +153,8 @@ module.exports = {
               .setTitle(":x: Wniosek został już wysłany")
               .setColor("Red")
               .setDescription(
-                "Skontaktuj się z administracją, jeśli chcesz zmienić dane we wniosku."
+                "Skontaktuj się z administracją, " +
+                  "jeśli chcesz zmienić dane we wniosku."
               )
               .setThumbnail(guildConfig.logo)
               .setTimestamp()
@@ -162,7 +163,7 @@ module.exports = {
       }
     }
 
-    if (guildConfig?.autoVerify && uwagi === "Brak") {
+    if (guildConfig.autoVerify && uwagi === "Brak") {
       const valuesAutoVerify = await utils.fetchSheetData(
         spreadsheetDataId,
         "Database!A2:D"
@@ -198,13 +199,6 @@ module.exports = {
 
           await utils.appendRow(spreadsheetId, "A2", updateData);
 
-          await utils.appendRow(
-            spreadsheetDataId,
-            "Database!E",
-            ["Zaakceptowany"],
-            row + 2
-          );
-
           return await interaction.editReply({
             embeds: [
               new EmbedBuilder()
@@ -213,13 +207,13 @@ module.exports = {
                 )
                 .setColor("Green")
                 .setDescription(
-                  "Witamy na nieoficjalnym serwerze kierunku Informatyka stopień " +
-                    `${serwer} na PG!\n` +
-                    "- Zapoznaj się z regulaminem serwera dostępnym na kanale " +
-                    `<#${guildConfig.regulaminId}>.\n` +
+                  "Witamy na nieoficjalnym serwerze kierunku " +
+                    `Informatyka stopień ${serwer} na PG!\n` +
+                    "- Zapoznaj się z regulaminem serwera dostępnym " +
+                    `na kanale <#${guildConfig.regulaminId}>.\n` +
                     `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
-                    "aby dowiedzieć się więcej o zbliżających się egzaminach i " +
-                    "nie tylko."
+                    "aby dowiedzieć się więcej o zbliżających się egzaminach " +
+                    "i nie tylko."
                 )
                 .setThumbnail(guildConfig.logo)
                 .setTimestamp()
@@ -248,7 +242,9 @@ module.exports = {
       .setColor("Blue")
       .setAuthor({
         name: `${nick}`,
-        iconURL: `https://cdn.discordapp.com/avatars/${id}/${interaction.user.avatar}.png`
+        iconURL:
+          "https://cdn.discordapp.com/avatars/" +
+          `${id}/${interaction.user.avatar}.png`
       })
       .addFields(
         { name: "Indeks", value: `${indeks}`, inline: true },

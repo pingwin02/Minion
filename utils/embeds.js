@@ -5,7 +5,8 @@ const { logInfo } = require("./logger");
  * Deletes a message after a specified delay.
  *
  * @param {Message} message - The Discord message to be deleted.
- * @param {number} [timeout=3000] - Time in milliseconds before the message is deleted (default: 3000ms).
+ * @param {number} [timeout=3000] - Time in milliseconds
+ * before the message is deleted (default: 3000ms).
  * @returns {void}
  */
 function timedDelete(message, timeout = 3000) {
@@ -21,9 +22,11 @@ function timedDelete(message, timeout = 3000) {
 /**
  * Sends an embedded error message to a Discord channel or interaction response.
  *
- * @param {CommandInteraction | TextChannel} interaction - The interaction or channel where the error message will be sent.
+ * @param {CommandInteraction | TextChannel} interaction
+ * - The interaction or channel where the error message will be sent.
  * @param {string} description - The error message content.
- * @param {Error} [error=null] - An optional error object to log and display additional details.
+ * @param {Error} [error=null]
+ * - An optional error object to log and display additional details.
  * @returns {Promise<void>}
  */
 async function printError(interaction, description, error = null) {
@@ -34,9 +37,10 @@ async function printError(interaction, description, error = null) {
       .setColor("Red");
 
     if (error) {
-      const footer = `${error.name || "Error"}: ${error.message || error.response?.statusText} ${
-        error.status ? `(${error.status})` : ""
-      }`;
+      const footer =
+        `${error.name || "Error"}: ` +
+        `${error.message || error.response?.statusText} ` +
+        `${error.status ? `(${error.status})` : ""}`;
       embed.setFooter({ text: footer });
     } else {
       logInfo("printError", new Error(description));

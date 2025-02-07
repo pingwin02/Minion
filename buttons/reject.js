@@ -7,23 +7,28 @@ module.exports = {
     await interaction.deferUpdate();
 
     const _user = interaction.message.embeds[0].fields[5].value;
+    const _serwer = interaction.message.embeds[0].fields[3].value;
     const _userChannel = await client.users.fetch(_user);
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
-    const values = await utils.fetchSheetData(spreadsheetId, "F2:F");
-    const ids = values.map((row) => row[0]);
-    const row = ids.indexOf(_user) + 2;
+    const ranges = ["D2:D", "F2:F"];
+    const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
 
-    _serwer = interaction.message.embeds[0].fields[3].value;
+    const guildName = utils.getGuildConfig(interaction.guild.id).name;
+    const row =
+      ids.findIndex(
+        (idRow, index) =>
+          idRow[0] === _user && guildNames[index][0] === guildName
+      ) + 2;
 
     if (row === 1) {
       utils.logInfo("/reject", new Error(`User ${_user} not found`));
-      _id = interaction.message.embeds[0].fields[0].value;
-      _nick = interaction.message.embeds[0].author.name;
-      _name = interaction.message.embeds[0].fields[1].value;
-      _surname = interaction.message.embeds[0].fields[2].value;
-      _group = interaction.message.embeds[0].fields[4].value;
-      _notes = interaction.message.embeds[0].fields[6].value;
+      const _id = interaction.message.embeds[0].fields[0].value;
+      const _nick = interaction.message.embeds[0].author.name;
+      const _name = interaction.message.embeds[0].fields[1].value;
+      const _surname = interaction.message.embeds[0].fields[2].value;
+      const _group = interaction.message.embeds[0].fields[4].value;
+      const _notes = interaction.message.embeds[0].fields[6].value;
 
       const updateData = [
         _id,
@@ -61,7 +66,9 @@ module.exports = {
       .setThumbnail(utils.getGuildConfig(interaction.guildId).logo)
       .setFooter({
         text: `Odrzucił ${interaction.user.username}`,
-        iconURL: `https://cdn.discordapp.com/avatars/${interaction.user.id}/${interaction.user.avatar}.png`
+        iconURL:
+          "https://cdn.discordapp.com/avatars/" +
+          `${interaction.user.id}/${interaction.user.avatar}.png`
       })
       .setTimestamp();
     await _userChannel.send({ embeds: [embed] });

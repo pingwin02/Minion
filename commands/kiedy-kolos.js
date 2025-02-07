@@ -44,7 +44,6 @@ module.exports = {
     }
 
     const fetchedMessages = await channel.messages.fetch({ limit: 10 });
-    // Znajdź wiadomość wysłaną przez bota, która jest edytowalna
     const mainMessage = fetchedMessages.find(
       (msg) => msg.author.id === client.user.id && msg.editable
     );
@@ -84,11 +83,11 @@ module.exports = {
       const summary = event.summary.toLowerCase();
 
       if (event.start.dateTime) {
-        // Jeśli wydarzenie ma godzinę
+        // When event has specific start time
         startUnix = moment(event.start.dateTime).unix();
         startFormatted = `<t:${startUnix}:f>`;
       } else {
-        // Jeśli wydarzenie jest całodniowe
+        // When event is all-day
         if (summary.includes("{mid}")) {
           startUnix = moment(event.start.date).unix();
           startFormatted = `<t:${startUnix}:d>`;
@@ -105,8 +104,8 @@ module.exports = {
         event.summary = "Brak nazwy wydarzenia";
       }
 
-      let eventType = "INNE"; // Domyślnie typ "INNE"
-      let category = "WSPÓLNE"; // Domyślnie kategoria "WSPÓLNE"
+      let eventType = "INNE"; // Default event type "INNE"
+      let category = "WSPÓLNE"; // Default category "WSPÓLNE"
 
       if (summary.includes("popraw")) {
         eventType = "POPRAWY";
@@ -144,7 +143,8 @@ module.exports = {
         .trim();
 
       categoryGroups[category][eventType].push(
-        `:calendar_spiral: ${startFormatted} - ${event.summary} **${location}** (${countDownFormatted})`
+        `:calendar_spiral: ${startFormatted} ` +
+          `- ${event.summary} **${location}** (${countDownFormatted})`
       );
     });
 
@@ -163,7 +163,7 @@ module.exports = {
     });
 
     let tooLongFlag = false;
-    let preLength = formattedMessage.length;
+    const preLength = formattedMessage.length;
 
     if (formattedMessage.length > 2000) {
       tooLongFlag = true;
@@ -173,7 +173,8 @@ module.exports = {
     if (formattedMessage.length > 2000) {
       throw new Error(
         `Wiadomość jest za długa! (${formattedMessage.length} > 2000)` +
-          "\nSpróbuj usunąć niektóre wydarzenia z kalendarza lub zmniejszyć ilość znaków w nazwach wydarzeń."
+          "\nSpróbuj usunąć niektóre wydarzenia z kalendarza " +
+          "lub zmniejszyć ilość znaków w nazwach wydarzeń."
       );
     }
 
@@ -186,11 +187,10 @@ module.exports = {
 
     await interaction.editReply({
       content:
-        `Zaktualizowano kalendarz kolokwiów. Przejdź, by zobaczyć zmiany: ${
-          mainMessage?.url || newMessage?.url
-        }` +
+        "Zaktualizowano kalendarz kolokwiów. Przejdź, " +
+        `by zobaczyć zmiany: ${mainMessage?.url || newMessage?.url}` +
         `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
-        `\n:writing_hand: Długość wiadomości: ` +
+        "\n:writing_hand: Długość wiadomości: " +
         `${formattedMessage.length}/2000` +
         (tooLongFlag ? ` *(po kompresji z ${preLength} znaków)*` : "")
     });

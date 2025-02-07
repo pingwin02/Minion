@@ -11,11 +11,14 @@ module.exports = {
         utils.logInfo(`[DM] @${interaction.user.username} used ${interaction}`);
       else if (interaction.isButton()) {
         utils.logInfo(
-          `[${interaction.guild.name}] @${interaction.user.username} used ${interaction.customId} button in #${interaction.channel.name}`
+          `[${interaction.guild.name}] @${interaction.user.username} ` +
+            `used ${interaction.customId} button ` +
+            `in #${interaction.channel.name}`
         );
       } else
         utils.logInfo(
-          `[${interaction.guild.name}] @${interaction.user.username} used ${interaction} in #${interaction.channel.name}`
+          `[${interaction.guild.name}] @${interaction.user.username} ` +
+            `used ${interaction} in #${interaction.channel.name}`
         );
 
       if (
@@ -38,15 +41,15 @@ module.exports = {
         .execute({ client, interaction });
     } catch (err) {
       utils.logInfo(
-        `${interaction.user.username} used /${
-          interaction.commandName || interaction.customId
-        } command`,
+        `${interaction.user.username} used ` +
+          `/${interaction.commandName || interaction.customId} command`,
         err
       );
-      if (interaction.channel && err.status != 404) {
+      if (interaction.channel && err.status !== 404) {
         return utils.printError(
           interaction.channel,
-          "Wystąpił błąd podczas wykonywania komendy! Spróbuj ponownie później.",
+          "Wystąpił błąd podczas wykonywania komendy! " +
+            "Spróbuj ponownie później.",
           err
         );
       }
