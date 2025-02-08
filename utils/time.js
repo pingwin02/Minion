@@ -1,3 +1,5 @@
+const { logInfo } = require("./logger");
+
 /**
  * Converts a number of milliseconds to a human-readable time format.
  * @param {number} ms - Number of milliseconds to convert.
@@ -15,4 +17,22 @@ function msToTime(ms) {
   return days + " dni";
 }
 
-module.exports = { msToTime };
+/**
+ * Deletes a message after a specified delay.
+ *
+ * @param {Message} message - The Discord message to be deleted.
+ * @param {number} [timeout=3000] - Time in milliseconds
+ * before the message is deleted (default: 3000ms).
+ * @returns {void}
+ */
+function timedDelete(message, timeout = 3000) {
+  setTimeout(async () => {
+    try {
+      await message.delete();
+    } catch (err) {
+      logInfo("timedDelete", err);
+    }
+  }, timeout);
+}
+
+module.exports = { msToTime, timedDelete };

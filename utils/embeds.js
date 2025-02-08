@@ -2,24 +2,6 @@ const { EmbedBuilder } = require("discord.js");
 const { logInfo } = require("./logger");
 
 /**
- * Deletes a message after a specified delay.
- *
- * @param {Message} message - The Discord message to be deleted.
- * @param {number} [timeout=3000] - Time in milliseconds
- * before the message is deleted (default: 3000ms).
- * @returns {void}
- */
-function timedDelete(message, timeout = 3000) {
-  setTimeout(async () => {
-    try {
-      await message.delete();
-    } catch (err) {
-      logInfo("timedDelete", err);
-    }
-  }, timeout);
-}
-
-/**
  * Sends an embedded error message to a Discord channel or interaction response.
  *
  * @param {CommandInteraction | TextChannel} interaction
@@ -58,4 +40,4 @@ async function printError(interaction, description, error = null) {
   }
 }
 
-module.exports = { printError, timedDelete };
+module.exports = { printError };

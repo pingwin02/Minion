@@ -2,9 +2,9 @@
 !buttons
 !commands
 !events
-!utils
 !img/bot_logo_anim.gif
 !img/bot_banner_anim.gif
+!utils
 !.env
 !config.json
 !index.js
