@@ -32,6 +32,7 @@ The bot supports the following slash and prefix commands:
 - `/przywroc-wnioski`: Restores student verification requests.
 - `/purge`: Deletes the specified number of messages.
 - `/verify`: Command for student verification.
+- `/wybor-specek`: Initiates the process of selecting specializations.
 
 - `!clear`: Deletes messages sent by the bot in the current channel.
 - `!avatar_update`: Updates the bot's avatar and banner.\*

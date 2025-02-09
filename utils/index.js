@@ -4,5 +4,6 @@ module.exports = {
   ...require("./google"),
   ...require("./logger"),
   ...require("./retry"),
+  ...require("./roles"),
   ...require("./time")
 };

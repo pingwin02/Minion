@@ -70,7 +70,7 @@ module.exports = {
 
     const indeks = interaction.options.getInteger("indeks");
     const serwer = guildConfig.name;
-    const grupa = serwer === guildConfig.autoVerify ? "TBD" : "Brak";
+    const grupa = guildConfig.autoVerify ? "TBD" : "Brak";
     const uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (process.env.SUSPEND_VERIFY === "true") {

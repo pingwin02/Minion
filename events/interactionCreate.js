@@ -32,6 +32,10 @@ module.exports = {
         );
       }
 
+      if (interaction.customId?.startsWith("spec#")) {
+        return await utils.manageRoles({ client, interaction });
+      }
+
       const collection = interaction.isCommand()
         ? client.slashcommands
         : client.buttoncommands;

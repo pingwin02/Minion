@@ -63,8 +63,8 @@ module.exports = {
     const categoryGroups = {
       WSPÓLNE: _.cloneDeep(eventGroups),
       UM: _.cloneDeep(eventGroups),
-      SK: _.cloneDeep(eventGroups),
       ISI: _.cloneDeep(eventGroups),
+      SK: _.cloneDeep(eventGroups),
       ISINT: _.cloneDeep(eventGroups),
       PRZ: _.cloneDeep(eventGroups),
       TGM: _.cloneDeep(eventGroups),
@@ -121,10 +121,10 @@ module.exports = {
 
       if (summary.includes("[um]")) {
         category = "UM";
-      } else if (summary.includes("[sk]")) {
-        category = "SK";
       } else if (summary.includes("[isi]")) {
         category = "ISI";
+      } else if (summary.includes("[sk]")) {
+        category = "SK";
       } else if (summary.includes("[isint]")) {
         category = "ISINT";
       } else if (summary.includes("[prz]")) {
