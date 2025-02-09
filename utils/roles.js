@@ -48,7 +48,7 @@ async function manageRoles({ client, interaction }) {
           new EmbedBuilder()
             .setColor("Red")
             .setTitle(":x: Brak roli do usunięcia")
-            .setDescription("Nie posiadasz roli specjalizacji.")
+            .setDescription("Nie posiadasz roli specjalności.")
         ],
         ephemeral: true
       });
@@ -75,7 +75,7 @@ async function manageRoles({ client, interaction }) {
         new EmbedBuilder()
           .setColor("Green")
           .setTitle(":white_check_mark: Usunięto rolę")
-          .setDescription("Usunięto rolę specjalizacji.")
+          .setDescription("Usunięto rolę specjalności.")
       ],
       ephemeral: true
     });
@@ -95,7 +95,7 @@ async function manageRoles({ client, interaction }) {
           .setColor("Red")
           .setTitle(":x: Masz już rolę")
           .setDescription(
-            "Masz już przypisaną rolę specjalizacji. " +
+            "Masz już przypisaną rolę specjalności. " +
               "Aby zmienić rolę, użyj przycisku \"Usuń\" przed wyborem innej."
           )
       ],

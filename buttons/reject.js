@@ -14,7 +14,7 @@ module.exports = {
     const ranges = ["D2:D", "F2:F"];
     const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
 
-    const guildName = utils.getGuildConfig(interaction.guild.id).name;
+    const guildName = utils.getGuildConfig(interaction.guildId).name;
     const row =
       ids.findIndex(
         (idRow, index) =>

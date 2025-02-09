@@ -13,7 +13,7 @@ const utils = require("../utils");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("wybor-specek")
-    .setDescription("Wysyła embed z przyciskami do wyboru specjalizacji")
+    .setDescription("Wysyła embed z przyciskami do wyboru specjalności")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addChannelOption((option) =>
       option
@@ -42,13 +42,14 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor("Blue")
-      .setTitle("Wybór specjalizacji")
+      .setTitle("Wybór specjalności")
       .setDescription(
-        "Wybierz specjalizację, klikając odpowiedni przycisk. " +
-          "Możesz wybrać maksymalnie **jedną** specjalizację. " +
+        "Wybierz specjalność, klikając odpowiedni przycisk. " +
+          "Możesz wybrać maksymalnie **jedną** specjalność. " +
           "Jeśli chcesz zmienić wybór, " +
           "użyj przycisku \"Usuń\" przed wyborem innej."
-      );
+      )
+      .setThumbnail(utils.getGuildConfig(interaction.guildId).logo);
 
     const rows = [
       new ActionRowBuilder().addComponents(
@@ -99,9 +100,7 @@ module.exports = {
         new EmbedBuilder()
           .setColor("Green")
           .setTitle(":white_check_mark: Wysłano")
-          .setDescription(
-            "Wysłano embed z przyciskami do wyboru specjalizacji."
-          )
+          .setDescription("Wysłano embed z przyciskami do wyboru specjalności.")
       ]
     });
   }

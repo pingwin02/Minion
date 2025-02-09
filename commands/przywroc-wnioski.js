@@ -18,7 +18,7 @@ module.exports = {
   async execute({ client, interaction }) {
     await interaction.deferReply({ ephemeral: true });
 
-    const guildConfig = utils.getGuildConfig(interaction.guild.id);
+    const guildConfig = utils.getGuildConfig(interaction.guildId);
     const guildName = guildConfig.name;
     const channel = interaction.client.channels.cache.get(
       guildConfig.wnioskiId
