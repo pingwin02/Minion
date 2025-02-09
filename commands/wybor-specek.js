@@ -54,35 +54,36 @@ module.exports = {
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("spec#UM")
-          .setLabel("Uczenie maszynowe")
+          .setLabel("Uczenie maszynowe [UM]")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#ISI")
-          .setLabel("Inżynieria systemów informacyjnych")
+          .setLabel("Inżynieria systemów informacyjnych [ISI]")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#SK")
-          .setLabel("Sieci komputerowe")
+          .setLabel("Sieci komputerowe [SK]")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#ISINT")
-          .setLabel("Inteligentne systemy interaktywne")
+          .setLabel("Inteligentne systemy interaktywne [ISINT]")
           .setStyle(ButtonStyle.Primary)
       ),
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("spec#PRZ")
           .setLabel(
-            "Przetwarzanie wysokiej wydajności i inteligencja obliczeniowa"
+            "Przetwarzanie wysokiej wydajności " +
+              "i inteligencja obliczeniowa [PRZ]"
           )
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#TGM")
-          .setLabel("Technologie geoinformatyczne i mobilne")
+          .setLabel("Technologie geoinformatyczne i mobilne [TGM]")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#ATI")
-          .setLabel("Algorytmy i technologie internetowe")
+          .setLabel("Algorytmy i technologie internetowe [ATI]")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#DELETE")
