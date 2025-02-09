@@ -18,7 +18,7 @@ module.exports = {
     const row =
       ids.findIndex(
         (idRow, index) =>
-          idRow[0] === _user && guildNames[index][0] === guildName
+          idRow[0] === _user && guildNames[index]?.[0] === guildName
       ) + 2;
 
     if (row === 1) {

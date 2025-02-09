@@ -137,7 +137,7 @@ module.exports = {
       const matchingRequests = ids
         .map((idRow, index) => ({
           id: idRow[0],
-          guildName: guildNames[index] ? guildNames[index][0] : null
+          guildName: guildNames[index] ? guildNames[index]?.[0] : null
         }))
         .filter(
           (request) =>

@@ -1,13 +1,27 @@
 const { EmbedBuilder } = require("discord.js");
 const { printError } = require("./embeds.js");
 const { logInfo } = require("./logger.js");
+const { getGuildConfig, getCommonConfig } = require("./config.js");
+const { appendRow, fetchSheetData } = require("./google.js");
 
 async function manageRoles({ client, interaction }) {
   await interaction.deferUpdate();
 
   const guild = interaction.guild;
+  const guildName = getGuildConfig(guild.id).name;
   const member = interaction.member;
+  const userId = member.id;
+  const nick = interaction.user.username;
   const role = interaction.customId.split("#")[1];
+
+  const spreadsheetId = getCommonConfig().spreadsheetId;
+  const ranges = ["D2:D", "F2:F"];
+  const [guildNames, ids] = await fetchSheetData(spreadsheetId, ranges);
+  const row =
+    ids.findIndex(
+      (idRow, index) =>
+        idRow[0] === userId && guildNames[index]?.[0] === guildName
+    ) + 2;
 
   if (!guild || !member) {
     return printError(
@@ -38,6 +52,20 @@ async function manageRoles({ client, interaction }) {
         ],
         ephemeral: true
       });
+    }
+
+    if (row === 1) {
+      await appendRow(spreadsheetId, "E2", [
+        null,
+        null,
+        null,
+        guildName,
+        "Usunięto",
+        userId,
+        nick
+      ]);
+    } else {
+      await appendRow(spreadsheetId, "E", ["Usunięto"], row);
     }
 
     await member.roles.remove(validRoles);
@@ -73,6 +101,20 @@ async function manageRoles({ client, interaction }) {
       ],
       ephemeral: true
     });
+  }
+
+  if (row === 1) {
+    await appendRow(spreadsheetId, "E2", [
+      null,
+      null,
+      null,
+      guildName,
+      role,
+      userId,
+      nick
+    ]);
+  } else {
+    await appendRow(spreadsheetId, "E", [role], row);
   }
 
   await member.roles.add(roleToAdd);
