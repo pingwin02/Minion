@@ -132,3 +132,11 @@ Follow the steps below to set up and run the bot:
 For development purposes, you can run the bot using the command `npm run dev`.
 
 That's it! The bot should now be up and running, ready to respond to commands on your Discord server.
+
+## License
+
+Minion is released under the [MIT License](LICENSE).
+
+## Credits
+
+Minion was created by pingwin02.
