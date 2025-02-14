@@ -14,15 +14,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "14.17.3",
+    "discord.js": "14.18.0",
     "dotenv": "16.4.7",
     "googleapis": "144.0.0",
     "moment-timezone": "0.5.47"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
-    "eslint": "^9.20.0",
-    "globals": "^15.14.0",
-    "prettier": "3.5.0"
+    "eslint": "^9.20.1",
+    "globals": "^15.15.0",
+    "prettier": "3.5.1"
   }
 }

@@ -2,10 +2,14 @@ FROM node:alpine
 
 WORKDIR /app
 
-COPY . .
+COPY package.json ./
 
 ENV NODE_ENV=production NODE_NO_WARNINGS=1
 
-RUN npm install && npm run deploy
+RUN npm install
+
+COPY . .
+
+RUN npm run deploy
 
 ENTRYPOINT [ "npm", "start" ]
