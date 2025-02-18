@@ -1,4 +1,5 @@
 const { google } = require("googleapis");
+const { getGoogleCredentials } = require("./config");
 const { retryOnError5xx } = require("./retry");
 const moment = require("moment-timezone");
 moment.tz.setDefault("Europe/Warsaw");
@@ -12,10 +13,8 @@ moment.tz.setDefault("Europe/Warsaw");
  * A promise that resolves to an array of calendar events.
  */
 async function fetchCalendarEvents(calendarId) {
-  const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
   const auth = new google.auth.GoogleAuth({
-    credentials: authJSON,
+    credentials: getGoogleCredentials(),
     scopes: ["https://www.googleapis.com/auth/calendar.readonly"]
   });
 
@@ -40,10 +39,8 @@ async function fetchCalendarEvents(calendarId) {
  * @returns {sheets_v4.Sheets} An authenticated Google Sheets API instance.
  */
 function getSheetsInstance() {
-  const authJSON = JSON.parse(process.env.GOOGLE_AUTH);
-
   const auth = new google.auth.GoogleAuth({
-    credentials: authJSON,
+    credentials: getGoogleCredentials(),
     scopes: ["https://www.googleapis.com/auth/spreadsheets"]
   });
 

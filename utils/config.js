@@ -45,6 +45,14 @@ function getGuildConfigByName(guildName) {
 }
 
 /**
+ * Retrieves google credentials from the configuration file.
+ * @returns {object} The google credentials object.
+ */
+function getGoogleCredentials() {
+  return config.auth;
+}
+
+/**
  * Retrieves the common configuration settings.
  * @returns {object} The common configuration object.
  */
@@ -69,6 +77,7 @@ module.exports = {
   isDev,
   getGuildConfig,
   getGuildConfigByName,
+  getGoogleCredentials,
   getCommonConfig,
   getGuildIdsAndNames
 };

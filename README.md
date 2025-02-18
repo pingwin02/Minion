@@ -49,11 +49,10 @@ To run the bot, you need to have the following files:
   - `TOKEN`: Token of the bot.
   - `CLIENT_ID`: Client ID of the bot.
   - `ADMIN_ID`: ID of the admin.
-  - `GOOGLE_AUTH`: Whole google API key from the Google Cloud Platform.
 
   Optional:
 
-  - `SUSPEND_VERIFY`: Set to `true` to disable the `/verify` command.
+  - `SUSPEND_VERIFY`: Set to `true` to disable the `/verify` command globally.
   - `TOKEN_DEV`: Token of the bot for development purposes.
   - `CLIENT_ID_DEV`: Client ID of the bot for development purposes.
 
@@ -61,6 +60,19 @@ To run the bot, you need to have the following files:
 
 ```json
 {
+  "auth": {
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "client_email": "<SERVICE_NAME>@<PROJECT_ID>.iam.gserviceaccount.com",
+    "client_id": "<CLIENT_ID>",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/<SERVICE_NAME>%40<PROJECT_ID>.iam.gserviceaccount.com",
+    "private_key": "<PRIVATE_KEY>",
+    "private_key_id": "<PRIVATE_KEY_ID>",
+    "project_id": "<PROJECT_ID>",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "type": "service_account",
+    "universe_domain": "googleapis.com"
+  },
   "common": {
     "spreadsheetDataId": "<SPREADSHEET_ID>",
     "spreadsheetId": "<SPREADSHEET_ID>"

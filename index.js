@@ -19,7 +19,7 @@ const TOKEN = DEV ? process.env.TOKEN_DEV : process.env.TOKEN;
 const CLIENT_ID = DEV ? process.env.CLIENT_ID_DEV : process.env.CLIENT_ID;
 const isConfigCreated = fs.existsSync("config.json");
 
-if (!TOKEN || !CLIENT_ID || !process.env.GOOGLE_AUTH || !isConfigCreated) {
+if (!TOKEN || !CLIENT_ID || !isConfigCreated) {
   utils.logInfo(
     "Environment variables",
     new Error("Missing environment variables in .env file or config.json.")
