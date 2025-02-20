@@ -69,6 +69,7 @@ async function manageRoles({ client, interaction }) {
     }
 
     await member.roles.remove(validRoles);
+    logInfo(`Removed roles from user @${nick}`);
 
     return await interaction.followUp({
       embeds: [
@@ -118,6 +119,7 @@ async function manageRoles({ client, interaction }) {
   }
 
   await member.roles.add(roleToAdd);
+  logInfo(`Added role @${roleToAdd.name} to user @${nick}`);
 
   return await interaction.followUp({
     embeds: [

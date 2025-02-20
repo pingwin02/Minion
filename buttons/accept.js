@@ -20,15 +20,15 @@ module.exports = {
     const member = await guild.members.fetch(_user);
 
     if (_grupa === "Brak") {
-      utils.logInfo("Added role @Obserwator to user @" + _nick);
       await member.roles.add(
         await guild.roles.cache.find((r) => r.name === "Obserwator")
       );
+      utils.logInfo(`Added role @Obserwator to user @${_nick}`);
     } else {
-      utils.logInfo("Added role @Student to user @" + _nick);
       await member.roles.add(
         await guild.roles.cache.find((r) => r.name === "Student")
       );
+      utils.logInfo(`Added role @Student to user @${_nick}`);
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;

@@ -180,10 +180,11 @@ module.exports = {
 
         if (row !== -1) {
           if (uwagi === "Brak") {
-            utils.logInfo("Automatically accepted user @" + nick);
             await member.roles.add(
               await guild.roles.cache.find((r) => r.name === "Student")
             );
+            utils.logInfo(`Added role @Student to user @${nick}`);
+            utils.logInfo(`User @${nick} verified automatically`);
 
             const updateData = [
               indeks,
