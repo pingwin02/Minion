@@ -66,7 +66,7 @@ module.exports = {
       ISI: _.cloneDeep(eventGroups),
       SK: _.cloneDeep(eventGroups),
       ISINT: _.cloneDeep(eventGroups),
-      PRZ: _.cloneDeep(eventGroups),
+      PWWIO: _.cloneDeep(eventGroups),
       TGM: _.cloneDeep(eventGroups),
       ATI: _.cloneDeep(eventGroups),
       PRZEDAWNIONE: _.cloneDeep(eventGroups)
@@ -127,8 +127,8 @@ module.exports = {
         category = "SK";
       } else if (summary.includes("[isint]")) {
         category = "ISINT";
-      } else if (summary.includes("[prz]")) {
-        category = "PRZ";
+      } else if (summary.includes("[pwwio]")) {
+        category = "PWWIO";
       } else if (summary.includes("[tgm]")) {
         category = "TGM";
       } else if (summary.includes("[ati]")) {

@@ -72,10 +72,10 @@ module.exports = {
       ),
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId("spec#PRZ")
+          .setCustomId("spec#PWWIO")
           .setLabel(
             "Przetwarzanie wysokiej wydajności " +
-              "i inteligencja obliczeniowa [PRZ]"
+              "i inteligencja obliczeniowa [PWWIO]"
           )
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
