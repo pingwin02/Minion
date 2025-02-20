@@ -43,7 +43,7 @@ module.exports = {
     )
     .setContexts(InteractionContextType.BotDM),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     const id = interaction.user.id;
 
@@ -71,7 +71,7 @@ module.exports = {
     const indeks = interaction.options.getInteger("indeks");
     const serwer = guildConfig.name;
     const grupa = guildConfig.autoVerify ? "TBD" : "Brak";
-    const uwagi = interaction.options.getString("uwagi") || "Brak";
+    let uwagi = interaction.options.getString("uwagi") || "Brak";
 
     if (process.env.SUSPEND_VERIFY === "true") {
       return utils.printError(
@@ -163,7 +163,7 @@ module.exports = {
       }
     }
 
-    if (guildConfig.autoVerify && uwagi === "Brak") {
+    if (guildConfig.autoVerify) {
       const valuesAutoVerify = await utils.fetchSheetData(
         spreadsheetDataId,
         "Database!A2:D"
@@ -179,46 +179,51 @@ module.exports = {
         );
 
         if (row !== -1) {
-          utils.logInfo("Automatically accepted user @" + nick);
-          await member.roles.add(
-            await guild.roles.cache.find((r) => r.name === "Student")
-          );
+          if (uwagi === "Brak") {
+            utils.logInfo("Automatically accepted user @" + nick);
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === "Student")
+            );
 
-          const updateData = [
-            indeks,
-            imie,
-            nazwisko,
-            serwer,
-            grupa,
-            id,
-            nick,
-            uwagi,
-            "Zaakceptowany",
-            "Automatycznie"
-          ];
+            const updateData = [
+              indeks,
+              imie,
+              nazwisko,
+              serwer,
+              grupa,
+              id,
+              nick,
+              uwagi,
+              "Zaakceptowany",
+              "Automatycznie"
+            ];
 
-          await utils.appendRow(spreadsheetId, "A2", updateData);
+            await utils.appendRow(spreadsheetId, "A2", updateData);
 
-          return await interaction.editReply({
-            embeds: [
-              new EmbedBuilder()
-                .setTitle(
-                  ":white_check_mark: Wniosek zaakceptowany automatycznie"
-                )
-                .setColor("Green")
-                .setDescription(
-                  "Witamy na nieoficjalnym serwerze kierunku " +
-                    `Informatyka stopień ${serwer} na PG!\n` +
-                    "- Zapoznaj się z regulaminem serwera dostępnym " +
-                    `na kanale <#${guildConfig.regulaminId}>.\n` +
-                    `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
-                    "aby dowiedzieć się więcej o zbliżających się egzaminach " +
-                    "i nie tylko."
-                )
-                .setThumbnail(guildConfig.logo)
-                .setTimestamp()
-            ]
-          });
+            return await interaction.editReply({
+              embeds: [
+                new EmbedBuilder()
+                  .setTitle(
+                    ":white_check_mark: Wniosek zaakceptowany automatycznie"
+                  )
+                  .setColor("Green")
+                  .setDescription(
+                    "Witamy na nieoficjalnym serwerze kierunku " +
+                      `Informatyka stopień ${serwer} na PG!\n` +
+                      "- Zapoznaj się z regulaminem serwera dostępnym " +
+                      `na kanale <#${guildConfig.regulaminId}>.\n` +
+                      `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
+                      "aby dowiedzieć się więcej o zbliżających się " +
+                      "egzaminach i nie tylko."
+                  )
+                  .setThumbnail(guildConfig.logo)
+                  .setTimestamp()
+              ]
+            });
+          }
+          uwagi =
+            "Użytkownik zostałby zaakceptowany automatycznie, " +
+            `ale dodano dodatkowe uwagi do wniosku:\n${uwagi}`;
         }
       }
     }

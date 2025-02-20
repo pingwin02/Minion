@@ -34,7 +34,7 @@ The bot supports the following slash and prefix commands:
 - `/verify`: Command for student verification.
 - `/wybor-specek`: Initiates the process of selecting specialities.
 
-- `!clear`: Deletes messages sent by the bot in the current channel.
+- `!clear`: Deletes messages sent by the bot in the current channel.\*
 - `!avatar_update`: Updates the bot's avatar and banner.\*
 - `!remove_all_roles`: Removes all roles and channel permission overrides from every member of the server.\*
 

@@ -5,7 +5,10 @@ module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     try {
-      if (message.content === "!clear") {
+      if (
+        message.content === "!clear" &&
+        message.author.id === process.env.ADMIN_ID
+      ) {
         utils.logInfo(`Messages cleared by @${message.author.username}`);
         const channel = message.client.channels.cache.get(
           message.channelId.toString()
