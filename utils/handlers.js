@@ -26,6 +26,20 @@ async function handleUnpinCommand(message) {
     logInfo("handleUnpinCommand", "Message not found");
     return;
   }
+
+  if (msgToUnpin.author.id !== message.author.id) {
+    logInfo(
+      "handleUnpinCommand",
+      "Cannot unpin message not authored by the user"
+    );
+    const reply = await message.reply(
+      "Nie możesz odpiąć wiadomości, której nie jesteś autorem"
+    );
+    timedDelete(reply);
+    if (message.guild) timedDelete(message, 5000);
+    return;
+  }
+
   await msgToUnpin.unpin();
 
   const systemMessages = await channel.messages.fetch({ limit: 10 });
