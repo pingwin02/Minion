@@ -7,19 +7,29 @@ async function handlePinCommand(message) {
   const refMessageId = message.reference.messageId;
   if (!refMessageId) return;
 
+  logInfo(
+    `Message ${refMessageId} in #${channel.name || "DM"} ` +
+      `pinned by @${message.author.username}`
+  );
+
   const msgToPin = await channel.messages.fetch(refMessageId);
   if (!msgToPin) {
     logInfo("handlePinCommand", "Message not found");
     return;
   }
   await msgToPin.pin();
-  if (message.guild) await message.delete();
+  if (message.guild) timedDelete(message, 1000);
 }
 
 async function handleUnpinCommand(message) {
   const channel = message.channel;
   const refMessageId = message.reference?.messageId;
   if (!refMessageId) return;
+
+  logInfo(
+    `Message ${refMessageId} in #${channel.name || "DM"} ` +
+      `unpinned by @${message.author.username}`
+  );
 
   const msgToUnpin = await channel.messages.fetch(refMessageId);
   if (!msgToUnpin) {
