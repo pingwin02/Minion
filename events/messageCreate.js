@@ -9,26 +9,26 @@ module.exports = {
 
       const lowerContent = message.content.toLowerCase();
 
-      if (lowerContent === "pin" && message.reference) {
+      if (lowerContent === "!pin" && message.reference) {
         await utils.handlePinCommand(message);
-      } else if (lowerContent === "unpin" && message.reference) {
+      } else if (lowerContent === "!unpin" && message.reference) {
         await utils.handleUnpinCommand(message);
       } else if (
-        message.content === "!clear" &&
+        lowerContent === "!clear" &&
         message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleClearCommand(message);
-      } else if (message.content === "student") {
+      } else if (lowerContent === "student") {
         await utils.handleStudentCommand(message);
-      } else if (message.content.includes("obszar")) {
+      } else if (lowerContent.includes("obszar")) {
         await utils.handleObszarCommand(message);
       } else if (
-        message.content === "!avatar_update" &&
+        lowerContent === "!avatar_update" &&
         message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleAvatarUpdateCommand(message);
       } else if (
-        message.content === "!remove_all_roles" &&
+        lowerContent === "!remove_all_roles" &&
         message.guild &&
         message.author.id === process.env.ADMIN_ID
       ) {
