@@ -6,8 +6,8 @@ module.exports = {
   async execute({ client, interaction }) {
     await interaction.deferUpdate();
 
-    const _user = interaction.message.embeds[0].fields[5].value;
-    const _serwer = interaction.message.embeds[0].fields[3].value;
+    const _user = interaction.message.embeds[0].fields[4].value;
+    const _server = interaction.message.embeds[0].fields[2].value;
     const _userChannel = await client.users.fetch(_user);
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
@@ -25,22 +25,21 @@ module.exports = {
       utils.logInfo("/reject", new Error(`User ${_user} not found`));
       const _id = interaction.message.embeds[0].fields[0].value;
       const _nick = interaction.message.embeds[0].author.name;
-      const _name = interaction.message.embeds[0].fields[1].value;
-      const _surname = interaction.message.embeds[0].fields[2].value;
-      const _group = interaction.message.embeds[0].fields[4].value;
-      const _notes = interaction.message.embeds[0].fields[6].value;
+      const _fullName = interaction.message.embeds[0].fields[1].value;
+      const _group = interaction.message.embeds[0].fields[3].value;
+      const _remarks = interaction.message.embeds[0].fields[5].value;
 
       const updateData = [
         _id,
-        _name,
-        _surname,
-        _serwer,
+        _fullName.split(" ")[0],
+        _fullName.split(" ")[1],
+        _server,
         _group,
         _user,
         _nick,
-        _notes,
-        "Odrzucony",
-        `przez ${interaction.user.username}`
+        _remarks,
+        "Rejected",
+        `by ${interaction.user.username}`
       ];
 
       await utils.appendRow(spreadsheetId, "A2", updateData);
@@ -48,7 +47,7 @@ module.exports = {
       await utils.appendRow(
         spreadsheetId,
         "I",
-        ["Odrzucony", `przez ${interaction.user.username}`],
+        ["Rejected", `by ${interaction.user.username}`],
         row
       );
     }
@@ -56,16 +55,17 @@ module.exports = {
     await interaction.deleteReply();
 
     const embed = new EmbedBuilder()
-      .setTitle(":x: Wniosek został odrzucony")
+      .setTitle(":x: Request has been rejected")
       .setColor("Red")
       .setDescription(
-        `Twoja prośba o weryfikację na serwer ${_serwer} została odrzucona.\n` +
-          "Jeśli chcesz dowiedzieć się więcej, " +
-          `napisz do <@${interaction.user.id}>.`
+        "Your verification request for the server " +
+          `${_server} has been rejected.\n` +
+          "If you'd like to know more, " +
+          `contact <@${interaction.user.id}>.`
       )
       .setThumbnail(utils.getGuildConfig(interaction.guildId).logo)
       .setFooter({
-        text: `Odrzucił ${interaction.user.username}`,
+        text: `Rejected by ${interaction.user.username}`,
         iconURL:
           "https://cdn.discordapp.com/avatars/" +
           `${interaction.user.id}/${interaction.user.avatar}.png`
@@ -74,9 +74,9 @@ module.exports = {
     await _userChannel.send({ embeds: [embed] });
 
     const responseEmbed = new EmbedBuilder()
-      .setTitle(":x: Wniosek został odrzucony")
+      .setTitle(":x: Request has been rejected")
       .setColor("Red")
-      .setDescription(`Wniosek użytkownika <@${_user}> został odrzucony.`)
+      .setDescription(`The request from user <@${_user}> has been rejected.`)
       .setTimestamp();
 
     const responseMessage = await interaction.channel.send({

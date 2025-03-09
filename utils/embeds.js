@@ -14,7 +14,7 @@ const { logInfo } = require("./logger");
 async function printError(interaction, description, error = null) {
   try {
     const embed = new EmbedBuilder()
-      .setTitle(":x: Błąd")
+      .setTitle(":x: Error")
       .setDescription(description)
       .setColor("Red");
 

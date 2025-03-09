@@ -6,8 +6,8 @@ module.exports = {
   async execute({ client, interaction }) {
     await interaction.deferUpdate();
 
-    const _user = interaction.message.embeds[0].fields[5].value;
-    const _grupa = interaction.message.embeds[0].fields[4].value;
+    const _user = interaction.message.embeds[0].fields[4].value;
+    const _group = interaction.message.embeds[0].fields[3].value;
     const _nick = interaction.message.embeds[0].author.name;
 
     const guild = interaction.guild;
@@ -19,16 +19,20 @@ module.exports = {
 
     const member = await guild.members.fetch(_user);
 
-    if (_grupa === "Brak") {
+    if (_group === "Gość") {
       await member.roles.add(
-        await guild.roles.cache.find((r) => r.name === "Obserwator")
+        await guild.roles.cache.find((r) => r.name === "Gość")
       );
-      utils.logInfo(`Added role @Obserwator to user @${_nick}`);
+      utils.logInfo(`Added role @Gość to user @${_nick}`);
     } else {
       await member.roles.add(
         await guild.roles.cache.find((r) => r.name === "Student")
       );
       utils.logInfo(`Added role @Student to user @${_nick}`);
+      await member.roles.add(
+        await guild.roles.cache.find((r) => r.name === _group)
+      );
+      utils.logInfo(`Added role @${_group} to user @${_nick}`);
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
@@ -45,22 +49,21 @@ module.exports = {
     if (row === 1) {
       utils.logInfo("/accept", new Error(`User ${_user} not found`));
       const _id = interaction.message.embeds[0].fields[0].value;
-      const _name = interaction.message.embeds[0].fields[1].value;
-      const _surname = interaction.message.embeds[0].fields[2].value;
-      const _serwer = interaction.message.embeds[0].fields[3].value;
-      const _notes = interaction.message.embeds[0].fields[6].value;
+      const _fullName = interaction.message.embeds[0].fields[1].value;
+      const _server = interaction.message.embeds[0].fields[2].value;
+      const _remarks = interaction.message.embeds[0].fields[5].value;
 
       const updateData = [
         _id,
-        _name,
-        _surname,
-        _serwer,
-        _grupa,
+        _fullName.split(" ")[0],
+        _fullName.split(" ")[1],
+        _server,
+        _group,
         _user,
         _nick,
-        _notes,
-        "Zaakceptowany",
-        `przez ${interaction.user.username}`
+        _remarks,
+        "Accepted",
+        `by ${interaction.user.username}`
       ];
 
       await utils.appendRow(spreadsheetId, "A2", updateData);
@@ -68,7 +71,7 @@ module.exports = {
       await utils.appendRow(
         spreadsheetId,
         "I",
-        ["Zaakceptowany", `przez ${interaction.user.username}`],
+        ["Accepted", `by ${interaction.user.username}`],
         row
       );
     }
@@ -76,20 +79,20 @@ module.exports = {
     await interaction.deleteReply();
     const _userChannel = await client.users.fetch(_user);
     const embed = new EmbedBuilder()
-      .setTitle(":white_check_mark: Wniosek został zaakceptowany")
+      .setTitle(":white_check_mark: Request has been accepted")
       .setColor("Green")
       .setDescription(
-        "Witamy na nieoficjalnym serwerze kierunku " +
-          `Informatyka stopień ${guildConfig.name} na PG!\n` +
-          "- Zapoznaj się z regulaminem serwera dostępnym " +
-          `na kanale <#${guildConfig.regulaminId}>.\n` +
-          `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
-          "aby dowiedzieć się więcej o zbliżających się egzaminach " +
-          "i nie tylko."
+        "Welcome to the unofficial server for the " +
+          `**Computer Science ${guildConfig.name} degree ` +
+          "at Gdańsk Tech!**\n" +
+          "- Please read the server rules available on " +
+          `<#${guildConfig.regulaminId}>.\n` +
+          `- Check out <#${guildConfig.kiedyKolosId}> ` +
+          "to stay updated on upcoming exams and more."
       )
       .setThumbnail(guildConfig.logo)
       .setFooter({
-        text: `Zaakceptował ${interaction.user.username}`,
+        text: `Accepted by ${interaction.user.username}`,
         iconURL:
           "https://cdn.discordapp.com/avatars/" +
           `${interaction.user.id}/${interaction.user.avatar}.png`
@@ -98,9 +101,9 @@ module.exports = {
     await _userChannel.send({ embeds: [embed] });
 
     const responseEmbed = new EmbedBuilder()
-      .setTitle(":white_check_mark: Wniosek został zaakceptowany")
+      .setTitle(":white_check_mark: Request has been accepted")
       .setColor("Green")
-      .setDescription(`Wniosek użytkownika <@${_user}> został zaakceptowany.`)
+      .setDescription(`The request from user <@${_user}> has been accepted.`)
       .setTimestamp();
 
     const responseMessage = await interaction.channel.send({

@@ -11,86 +11,125 @@ const utils = require("../utils");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("verify")
-    .setDescription("Wysyła wniosek o weryfikację statusu studenta")
+    .setDescription("Sends a request to verify student status")
     .addIntegerOption((option) =>
       option
-        .setName("indeks")
-        .setDescription("6-cyfrowy numer indeksu")
+        .setName("index")
+        .setDescription("Index number")
         .setMinValue(100000)
         .setMaxValue(999999)
         .setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName("imię").setDescription("Imię studenta").setRequired(true)
-    )
-    .addStringOption((option) =>
       option
-        .setName("nazwisko")
-        .setDescription("Nazwisko studenta")
+        .setName("first_name")
+        .setDescription("First name")
         .setRequired(true)
     )
     .addStringOption((option) =>
+      option.setName("last_name").setDescription("Last name").setRequired(true)
+    )
+    .addStringOption((option) =>
       option
-        .setName("stopień")
-        .setDescription("Wybór stopnia studiów")
+        .setName("specialization")
+        .setDescription("Student specialization")
+        .setRequired(true)
+        .setChoices([
+          { name: "Uczenie maszynowe [UM]", value: "UM" },
+          { name: "Inżynieria systemów informacyjnych [ISI]", value: "ISI" },
+          { name: "Sieci komputerowe [SK]", value: "SK" },
+          {
+            name: "Inteligentne systemy informatyczne [ISINT]",
+            value: "ISINT"
+          },
+          {
+            name:
+              "Przetwarzanie wysokiej wydajności " +
+              "i inteligencja obliczeniowa [PWWIO]",
+            value: "PWWIO"
+          },
+          {
+            name: "Technologie geoinformatyczne i mobilne [TGM]",
+            value: "TGM"
+          },
+          { name: "Algorytmy i technologie internetowe [ATI]", value: "ATI" },
+          { name: "Informatics in English [English]", value: "English" },
+          { name: "Guest", value: "Gość" }
+        ])
+    )
+    .addStringOption((option) =>
+      option
+        .setName("degree")
+        .setDescription("Current studies degree")
         .addChoices(utils.getGuildIdsAndNames())
         .setRequired(true)
     )
     .addStringOption((option) =>
       option
-        .setName("uwagi")
-        .setDescription("Dodatkowe uwagi dotyczące wniosku")
+        .setName("remarks")
+        .setDescription("Additional remarks regarding the request")
     )
     .setContexts(InteractionContextType.BotDM),
   async execute({ client, interaction }) {
     await interaction.deferReply();
 
-    const id = interaction.user.id;
-
-    const guildId = interaction.options.getString("stopień");
+    const userId = interaction.user.id;
+    const guildId = interaction.options.getString("degree");
     const guild = await interaction.client.guilds.fetch(guildId);
     const guildConfig = utils.getGuildConfig(guildId);
-    const channel = interaction.client.channels.cache.get(
+    const requestChannel = interaction.client.channels.cache.get(
       guildConfig.wnioskiId
     );
 
-    const nick =
+    const username =
       interaction.user.username +
       (interaction.user.discriminator !== "0"
         ? `#${interaction.user.discriminator}`
         : "");
 
-    const imieRaw = interaction.options.getString("imię");
-    const nazwiskoRaw = interaction.options.getString("nazwisko");
+    const firstNameRaw = interaction.options.getString("first_name");
+    const lastNameRaw = interaction.options.getString("last_name");
 
-    const imie =
-      imieRaw.charAt(0).toUpperCase() + imieRaw.slice(1).toLowerCase();
-    const nazwisko =
-      nazwiskoRaw.charAt(0).toUpperCase() + nazwiskoRaw.slice(1).toLowerCase();
+    const firstName =
+      firstNameRaw.charAt(0).toUpperCase() +
+      firstNameRaw.slice(1).toLowerCase();
+    const lastName =
+      lastNameRaw.charAt(0).toUpperCase() + lastNameRaw.slice(1).toLowerCase();
 
-    const indeks = interaction.options.getInteger("indeks");
-    const serwer = guildConfig.name;
-    const grupa = guildConfig.autoVerify ? "TBD" : "Brak";
-    let uwagi = interaction.options.getString("uwagi") || "Brak";
+    const indexNumber = interaction.options.getInteger("index");
+    const serverName = guildConfig.name;
+    const group = interaction.options.getString("specialization");
+
+    if (!guild.roles.cache.find((r) => r.name === group)) {
+      return utils.printError(
+        interaction,
+        "Selected specialization does not exist for " +
+          "the selected degree of studies. " +
+          "Please contact the administration for further assistance."
+      );
+    }
+
+    let remarks = interaction.options.getString("remarks") || "None";
 
     if (process.env.SUSPEND_VERIFY === "true") {
       return utils.printError(
         interaction,
-        "Weryfikacja statusu studenta jest obecnie zawieszona. " +
-          "W razie pytań skontaktuj się z administracją."
+        "Student status verification is currently suspended. " +
+          "For questions, please contact the administration."
       );
     }
+
     const result = await interaction.user.send().catch(async (error) => {
       if (error.status === 403) {
         utils.logInfo("verify 403 error", error);
         await interaction.editReply({
           embeds: [
             new EmbedBuilder()
-              .setTitle(":x: Brak uprawnień do wysyłania wiadomości prywatnych")
+              .setTitle(":x: Unable to send direct messages")
               .setDescription(
-                "Upewnij się, że włączyłeś prywatne wiadomości " +
-                  "w ustawieniach prywatności serwera. Więcej informacji: " +
-                  "https://support.discord.com/hc/pl/articles/360060145013"
+                "Make sure you have enabled direct messages " +
+                  "in your server privacy settings. More info: " +
+                  "https://support.discord.com/hc/en-us/articles/360060145013"
               )
               .setColor("Red")
               .setFooter({ text: `Error: ${error.message}` })
@@ -101,30 +140,28 @@ module.exports = {
       return true;
     });
 
-    if (!result) {
-      return;
-    }
+    if (!result) return;
 
     let member;
     try {
-      member = await guild.members.fetch(id);
+      member = await guild.members.fetch(userId);
     } catch (error) {
       if (error.status === 404) {
         return utils.printError(
           interaction,
-          "Nie znajdujesz się na serwerze, do którego wysyłasz wniosek. " +
-            `By dołączyć, użyj [tego zaproszenia](${guildConfig.inviteLink}).`
+          "You are not on the server you are sending the request to. " +
+            `To join, use [this invite](${guildConfig.inviteLink}).`
         );
       }
       throw error;
     }
 
     if (
-      !channel ||
-      !channel.permissionsFor(client.user).has("ViewChannel") ||
-      !channel.permissionsFor(client.user).has("SendMessages")
+      !requestChannel ||
+      !requestChannel.permissionsFor(client.user).has("ViewChannel") ||
+      !requestChannel.permissionsFor(client.user).has("SendMessages")
     ) {
-      throw new Error("Nie znaleziono kanału WNIOSKI lub brak uprawnień");
+      throw new Error("Requests channel not found or missing permissions");
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
@@ -141,7 +178,7 @@ module.exports = {
         }))
         .filter(
           (request) =>
-            request.id === id && request.guildName === guildConfig.name
+            request.id === userId && request.guildName === guildConfig.name
         );
 
       if (matchingRequests.length > 0) {
@@ -150,11 +187,10 @@ module.exports = {
         return await interaction.editReply({
           embeds: [
             new EmbedBuilder()
-              .setTitle(":x: Wniosek został już wysłany")
+              .setTitle(":x: Request already submitted")
               .setColor("Red")
               .setDescription(
-                "Skontaktuj się z administracją, " +
-                  "jeśli chcesz zmienić dane we wniosku."
+                "Contact the administration if you need to update your request."
               )
               .setThumbnail(guildConfig.logo)
               .setTimestamp()
@@ -164,39 +200,45 @@ module.exports = {
     }
 
     if (guildConfig.autoVerify) {
-      const valuesAutoVerify = await utils.fetchSheetData(
+      const autoVerifyData = await utils.fetchSheetData(
         spreadsheetDataId,
-        "Database!A2:D"
+        "Database!A2:F"
       );
 
-      if (valuesAutoVerify) {
-        const row = valuesAutoVerify.findIndex(
+      if (autoVerifyData) {
+        const rowIndex = autoVerifyData.findIndex(
           (row) =>
-            row[2] === indeks.toString() &&
-            row[0] === imie &&
-            row[1] === nazwisko &&
-            row[3] === id
+            row[0] === indexNumber.toString() &&
+            row[1] === firstName &&
+            row[2] === lastName &&
+            row[3] === serverName &&
+            row[4] === group &&
+            row[5] === userId
         );
 
-        if (row !== -1) {
-          if (uwagi === "Brak") {
+        if (rowIndex !== -1) {
+          if (remarks === "None") {
             await member.roles.add(
               await guild.roles.cache.find((r) => r.name === "Student")
             );
-            utils.logInfo(`Added role @Student to user @${nick}`);
-            utils.logInfo(`User @${nick} verified automatically`);
+            utils.logInfo(`Added role @Student to user @${username}`);
+            await member.roles.add(
+              await guild.roles.cache.find((r) => r.name === group)
+            );
+            utils.logInfo(`Added role @${group} to user @${username}`);
+            utils.logInfo(`User @${username} verified automatically`);
 
             const updateData = [
-              indeks,
-              imie,
-              nazwisko,
-              serwer,
-              grupa,
-              id,
-              nick,
-              uwagi,
-              "Zaakceptowany",
-              "Automatycznie"
+              indexNumber,
+              firstName,
+              lastName,
+              serverName,
+              group,
+              userId,
+              username,
+              remarks,
+              "Accepted",
+              "Automatically"
             ];
 
             await utils.appendRow(spreadsheetId, "A2", updateData);
@@ -204,74 +246,72 @@ module.exports = {
             return await interaction.editReply({
               embeds: [
                 new EmbedBuilder()
-                  .setTitle(
-                    ":white_check_mark: Wniosek zaakceptowany automatycznie"
-                  )
+                  .setTitle(":white_check_mark: Request automatically accepted")
                   .setColor("Green")
                   .setDescription(
-                    "Witamy na nieoficjalnym serwerze kierunku " +
-                      `Informatyka stopień ${serwer} na PG!\n` +
-                      "- Zapoznaj się z regulaminem serwera dostępnym " +
-                      `na kanale <#${guildConfig.regulaminId}>.\n` +
-                      `- Zajrzyj na kanał <#${guildConfig.kiedyKolosId}> ` +
-                      "aby dowiedzieć się więcej o zbliżających się " +
-                      "egzaminach i nie tylko."
+                    "Welcome to the unofficial server for the " +
+                      `**Computer Science ${serverName} degree ` +
+                      "at Gdańsk Tech!**\n" +
+                      "- Please read the server rules available on " +
+                      `<#${guildConfig.regulaminId}>.\n` +
+                      `- Check out <#${guildConfig.kiedyKolosId}> ` +
+                      "to stay updated on upcoming exams and more."
                   )
                   .setThumbnail(guildConfig.logo)
                   .setTimestamp()
               ]
             });
           }
-          uwagi =
-            "Użytkownik zostałby zaakceptowany automatycznie, " +
-            `ale dodano dodatkowe uwagi do wniosku:\n${uwagi}`;
+          remarks =
+            "User would have been automatically accepted, " +
+            "but additional remarks were added:\n" +
+            remarks;
         }
       }
     }
 
     const updateData = [
-      indeks,
-      imie,
-      nazwisko,
-      serwer,
-      grupa,
-      id,
-      nick,
-      uwagi,
-      "Oczekujący"
+      indexNumber,
+      firstName,
+      lastName,
+      serverName,
+      group,
+      userId,
+      username,
+      remarks,
+      "Pending"
     ];
 
     await utils.appendRow(spreadsheetId, "A2", updateData);
 
     const embed = new EmbedBuilder()
-      .setTitle("Wniosek o weryfikację")
+      .setTitle("Verification Request")
       .setColor("Blue")
       .setAuthor({
-        name: `${nick}`,
+        name: `${username}`,
         iconURL:
           "https://cdn.discordapp.com/avatars/" +
-          `${id}/${interaction.user.avatar}.png`
+          `${userId}/${interaction.user.avatar}.png`
       })
       .addFields(
-        { name: "Indeks", value: `${indeks}`, inline: true },
-        { name: "Imię", value: imie, inline: true },
-        { name: "Nazwisko", value: nazwisko, inline: true },
-        { name: "Serwer", value: serwer, inline: true },
-        { name: "Grupa", value: grupa, inline: true },
-        { name: "Discord ID", value: id, inline: true },
-        { name: "Uwagi", value: uwagi },
-        { name: "Ping", value: `<@${id}>` }
+        { name: "Index", value: `${indexNumber}`, inline: true },
+        { name: "Full name", value: `${firstName} ${lastName}`, inline: true },
+        { name: "Server", value: serverName, inline: true },
+        { name: "Group", value: group, inline: true },
+        { name: "Discord ID", value: userId, inline: true },
+        { name: "Remarks", value: remarks },
+        { name: "Ping", value: `<@${userId}>` }
       )
       .setTimestamp();
 
     const acceptButton = new ButtonBuilder()
       .setCustomId("accept")
-      .setLabel("Akceptuj")
+      .setLabel("Accept")
       .setStyle(ButtonStyle.Success);
 
     const rejectButton = new ButtonBuilder()
       .setCustomId("reject")
-      .setLabel("Odrzuć")
+      .setLabel("Reject")
       .setStyle(ButtonStyle.Danger);
 
     const row = new ActionRowBuilder().addComponents(
@@ -279,17 +319,20 @@ module.exports = {
       rejectButton
     );
 
-    const responseEmbed = new EmbedBuilder()
-      .setTitle(":incoming_envelope: Wniosek wysłano")
-      .setColor("Blue")
-      .setDescription(
-        "Wniosek został wysłany do weryfikacji.\nCzekaj na odpowiedź."
-      )
-      .setThumbnail(guildConfig.logo)
-      .setTimestamp();
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle(":incoming_envelope: Request Sent")
+          .setColor("Blue")
+          .setDescription(
+            "Your request has been submitted for verification. " +
+              "Please wait for a response."
+          )
+          .setThumbnail(guildConfig.logo)
+          .setTimestamp()
+      ]
+    });
 
-    await interaction.editReply({ embeds: [responseEmbed] });
-
-    await channel.send({ embeds: [embed], components: [row] });
+    await requestChannel.send({ embeds: [embed], components: [row] });
   }
 };
