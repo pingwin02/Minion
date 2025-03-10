@@ -212,7 +212,7 @@ module.exports = {
             row[1] === firstName &&
             row[2] === lastName &&
             row[3] === serverName &&
-            row[4] === group &&
+            // row[4] === group &&
             row[5] === userId
         );
 
