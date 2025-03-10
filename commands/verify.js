@@ -35,25 +35,25 @@ module.exports = {
         .setDescription("Student specialization")
         .setRequired(true)
         .setChoices([
-          { name: "Uczenie maszynowe [UM]", value: "UM" },
-          { name: "Inżynieria systemów informacyjnych [ISI]", value: "ISI" },
-          { name: "Sieci komputerowe [SK]", value: "SK" },
+          { name: "[UM] Uczenie maszynowe", value: "UM" },
+          { name: "[ISI] Inżynieria systemów informacyjnych", value: "ISI" },
+          { name: "[SK] Sieci komputerowe", value: "SK" },
           {
-            name: "Inteligentne systemy informatyczne [ISINT]",
+            name: "[ISINT] Inteligentne systemy informatyczne",
             value: "ISINT"
           },
           {
             name:
-              "Przetwarzanie wysokiej wydajności " +
-              "i inteligencja obliczeniowa [PWWIO]",
+              "[PWWIO] Przetwarzanie wysokiej wydajności " +
+              "i inteligencja obliczeniowa",
             value: "PWWIO"
           },
           {
-            name: "Technologie geoinformatyczne i mobilne [TGM]",
+            name: "[TGM] Technologie geoinformatyczne i mobilne",
             value: "TGM"
           },
-          { name: "Algorytmy i technologie internetowe [ATI]", value: "ATI" },
-          { name: "Informatics in English [English]", value: "English" },
+          { name: "[ATI] Algorytmy i technologie internetowe", value: "ATI" },
+          { name: "[English] Informatics in English", value: "English" },
           { name: "Guest", value: "Gość" }
         ])
     )
@@ -100,15 +100,6 @@ module.exports = {
     const serverName = guildConfig.name;
     const group = interaction.options.getString("specialization");
 
-    if (!guild.roles.cache.find((r) => r.name === group)) {
-      return utils.printError(
-        interaction,
-        "Selected specialization does not exist for " +
-          "the selected degree of studies. " +
-          "Please contact the administration for further assistance."
-      );
-    }
-
     let remarks = interaction.options.getString("remarks") || "None";
 
     if (process.env.SUSPEND_VERIFY === "true") {
@@ -149,7 +140,7 @@ module.exports = {
       if (error.status === 404) {
         return utils.printError(
           interaction,
-          "You are not on the server you are sending the request to. " +
+          "You are not a member of the server to which the request is sent. " +
             `To join, use [this invite](${guildConfig.inviteLink}).`
         );
       }
@@ -162,6 +153,15 @@ module.exports = {
       !requestChannel.permissionsFor(client.user).has("SendMessages")
     ) {
       throw new Error("Requests channel not found or missing permissions");
+    }
+
+    if (!guild.roles.cache.find((r) => r.name === group)) {
+      return utils.printError(
+        interaction,
+        "Selected specialization does not exist for " +
+          "the selected degree of studies. " +
+          "Please contact the administration for further assistance."
+      );
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
