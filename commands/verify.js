@@ -251,7 +251,7 @@ module.exports = {
                   .setDescription(
                     "Welcome to the unofficial server for the " +
                       `**Computer Science ${serverName} degree ` +
-                      "at Gdańsk Tech!**\n" +
+                      "at Gdansk Tech!**\n" +
                       "- Please read the server rules available on " +
                       `<#${guildConfig.regulaminId}>.\n` +
                       `- Check out <#${guildConfig.kiedyKolosId}> ` +

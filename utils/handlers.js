@@ -1,6 +1,8 @@
 const { logInfo } = require("./logger");
 const { timedDelete } = require("./time");
 const { OverwriteType, MessageType } = require("discord.js");
+const { appendRow, fetchSheetData } = require("./google");
+const { getCommonConfig } = require("./config");
 
 async function handlePinCommand(message) {
   const channel = message.channel;
@@ -161,6 +163,61 @@ async function handleRemoveAllRolesCommand(message) {
   await message.react("✅");
 }
 
+async function handleGuests(message) {
+  await message.react("⌚");
+  const { spreadsheetId } = getCommonConfig();
+
+  const sheetName = "Wnioski";
+  const range = `${sheetName}!A2:F`;
+
+  const data = await fetchSheetData(spreadsheetId, range);
+
+  const guestsToUpdate = data
+    .map((row, index) => ({ row, index }))
+    .filter(({ row }) => row[4] === "Gość" && row[5])
+    .map(({ row, index }) => ({
+      discordId: row[5],
+      rowIndex: index + 2
+    }));
+
+  for (const { discordId, rowIndex } of guestsToUpdate) {
+    const member = await message.guild.members.cache.get(discordId);
+
+    if (!member) {
+      logInfo("handleGuests", `Member not found for discordId: ${discordId}`);
+      continue;
+    }
+
+    const studentRole = message.guild.roles.cache.find(
+      (role) => role.name === "Student"
+    );
+    const guestRole = message.guild.roles.cache.find(
+      (role) => role.name === "Gość"
+    );
+
+    if (!studentRole || !guestRole) {
+      logInfo("handleGuests", "Roles not found");
+      continue;
+    }
+
+    if (studentRole) {
+      await member.roles.remove(studentRole);
+    }
+
+    if (guestRole) {
+      await member.roles.add(guestRole);
+    }
+
+    const updatedValue = "#" + discordId;
+    const updateRange = `${sheetName}!F`;
+
+    await appendRow(spreadsheetId, updateRange, [updatedValue], rowIndex);
+  }
+
+  await message.reactions.removeAll();
+  await message.react("✅");
+}
+
 module.exports = {
   handlePinCommand,
   handleUnpinCommand,
@@ -168,5 +225,6 @@ module.exports = {
   handleStudentCommand,
   handleObszarCommand,
   handleAvatarUpdateCommand,
-  handleRemoveAllRolesCommand
+  handleRemoveAllRolesCommand,
+  handleGuests
 };
