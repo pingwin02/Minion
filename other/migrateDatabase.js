@@ -41,7 +41,7 @@ async function migrateData() {
           tRow[0] === index &&
           tRow[1] === name &&
           tRow[2] === surname &&
-          tRow[5] === discordId
+          tRow[5] === discordId.replace(/\D/g, "")
       );
 
       if (targetRowIndex !== -1) {

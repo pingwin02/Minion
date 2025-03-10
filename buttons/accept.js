@@ -18,6 +18,7 @@ module.exports = {
     }
 
     const member = await guild.members.fetch(_user);
+    await utils.cleanPermissions([member], guild);
 
     if (_group === "Gość") {
       await member.roles.add(

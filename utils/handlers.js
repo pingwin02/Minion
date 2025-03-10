@@ -1,8 +1,9 @@
 const { logInfo } = require("./logger");
 const { timedDelete } = require("./time");
-const { OverwriteType, MessageType } = require("discord.js");
+const { MessageType } = require("discord.js");
 const { appendRow, fetchSheetData } = require("./google");
 const { getCommonConfig } = require("./config");
+const { cleanPermissions } = require("./roles");
 
 async function handlePinCommand(message) {
   const channel = message.channel;
@@ -116,49 +117,9 @@ async function handleAvatarUpdateCommand(message) {
 async function handleRemoveAllRolesCommand(message) {
   await message.react("⌚");
   const members = await message.guild.members.fetch();
-  members.forEach((member) => {
-    member.roles.cache.forEach((role) => {
-      if (
-        role.position < message.guild.members.me.roles.highest.position &&
-        role.name !== "@everyone" &&
-        role.managed === false
-      ) {
-        setTimeout(() => {
-          logInfo(`Removing role @${role.name} from @${member.user.username}`);
-          member.roles.remove(role).catch((err) => {
-            logInfo(
-              `Error while removing role @${role.name} ` +
-                `from @${member.user.username}`,
-              new Error(err.message)
-            );
-          });
-        }, 20);
-      }
-    });
-  });
-  const channels = await message.guild.channels.fetch();
-  channels.forEach((channel) => {
-    channel.permissionOverwrites.cache.forEach((perm) => {
-      if (perm.type === OverwriteType.Member) {
-        const member = message.guild.members.cache.get(perm.id);
-        if (member) {
-          const memberUsername = member.user.username;
-          setTimeout(() => {
-            logInfo(
-              `Removing @${memberUsername} permissions from #${channel.name}`
-            );
-            channel.permissionOverwrites.delete(perm.id).catch((err) => {
-              logInfo(
-                `Error while removing @${memberUsername} ` +
-                  `permissions from #${channel.name}`,
-                new Error(err.message)
-              );
-            });
-          }, 20);
-        }
-      }
-    });
-  });
+
+  await cleanPermissions(members, message.guild);
+
   await message.reactions.removeAll();
   await message.react("✅");
 }

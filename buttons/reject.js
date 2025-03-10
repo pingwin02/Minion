@@ -9,6 +9,10 @@ module.exports = {
     const _user = interaction.message.embeds[0].fields[4].value;
     const _server = interaction.message.embeds[0].fields[2].value;
     const _userChannel = await client.users.fetch(_user);
+    const guild = interaction.guild;
+
+    const member = await guild.members.fetch(_user);
+    await utils.cleanPermissions([member], guild);
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
     const ranges = ["D2:D", "F2:F"];

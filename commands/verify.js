@@ -66,7 +66,7 @@ module.exports = {
     )
     .addStringOption((option) =>
       option
-        .setName("comments")
+        .setName("comment")
         .setDescription("Additional information regarding the request")
     )
     .setContexts(InteractionContextType.BotDM),
@@ -100,7 +100,7 @@ module.exports = {
     const serverName = guildConfig.name;
     const group = interaction.options.getString("specialization");
 
-    let remarks = interaction.options.getString("comments") || "None";
+    let remarks = interaction.options.getString("comment") || "None";
 
     if (process.env.SUSPEND_VERIFY === "true") {
       return utils.printError(
@@ -218,6 +218,8 @@ module.exports = {
 
         if (rowIndex !== -1) {
           if (remarks === "None") {
+            await utils.cleanPermissions([member], guild);
+
             await member.roles.add(
               await guild.roles.cache.find((r) => r.name === "Student")
             );
