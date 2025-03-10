@@ -39,7 +39,7 @@ module.exports = {
           { name: "[ISI] Inżynieria systemów informacyjnych", value: "ISI" },
           { name: "[SK] Sieci komputerowe", value: "SK" },
           {
-            name: "[ISINT] Inteligentne systemy informatyczne",
+            name: "[ISINT] Inteligentne systemy interaktywne",
             value: "ISINT"
           },
           {
