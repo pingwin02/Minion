@@ -66,8 +66,8 @@ module.exports = {
     )
     .addStringOption((option) =>
       option
-        .setName("remarks")
-        .setDescription("Additional remarks regarding the request")
+        .setName("comments")
+        .setDescription("Additional information regarding the request")
     )
     .setContexts(InteractionContextType.BotDM),
   async execute({ client, interaction }) {
@@ -100,7 +100,7 @@ module.exports = {
     const serverName = guildConfig.name;
     const group = interaction.options.getString("specialization");
 
-    let remarks = interaction.options.getString("remarks") || "None";
+    let remarks = interaction.options.getString("comments") || "None";
 
     if (process.env.SUSPEND_VERIFY === "true") {
       return utils.printError(
