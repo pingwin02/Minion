@@ -98,7 +98,7 @@ module.exports = {
       }
 
       const countDownFormatted = `<t:${startUnix}:R>`;
-      const location = event.location || "Brak sali";
+      const location = event.location ? `**${event.location}** ` : "";
 
       if (!event.summary) {
         event.summary = "Brak nazwy wydarzenia";
@@ -115,7 +115,7 @@ module.exports = {
         summary.includes("zal")
       ) {
         eventType = "EGZAMINY";
-      } else if (summary.includes("projekt")) {
+      } else if (summary.includes("projekt") || summary.includes("deadline")) {
         eventType = "PROJEKTY";
       }
 
@@ -144,7 +144,7 @@ module.exports = {
 
       categoryGroups[category][eventType].push(
         `:calendar_spiral: ${startFormatted} ` +
-          `- ${event.summary} **${location}** (${countDownFormatted})`
+          `- ${event.summary} ${location}(${countDownFormatted})`
       );
     });
 
