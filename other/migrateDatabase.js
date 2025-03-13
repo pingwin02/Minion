@@ -51,7 +51,14 @@ async function migrateData() {
           values: [[server, group]]
         });
       } else {
-        newEntries.push([index, name, surname, server, group, discordId]);
+        newEntries.push([
+          index,
+          name,
+          surname,
+          server,
+          group,
+          discordId.replace(/\D/g, "")
+        ]);
       }
     }
 
