@@ -87,14 +87,8 @@ module.exports = {
         ? `#${interaction.user.discriminator}`
         : "");
 
-    const firstNameRaw = interaction.options.getString("first_name");
-    const lastNameRaw = interaction.options.getString("last_name");
-
-    const firstName =
-      firstNameRaw.charAt(0).toUpperCase() +
-      firstNameRaw.slice(1).toLowerCase();
-    const lastName =
-      lastNameRaw.charAt(0).toUpperCase() + lastNameRaw.slice(1).toLowerCase();
+    const firstName = interaction.options.getString("first_name");
+    const lastName = interaction.options.getString("last_name");
 
     const indexNumber = interaction.options.getInteger("index");
     const serverName = guildConfig.name;
@@ -209,8 +203,8 @@ module.exports = {
         const rowIndex = autoVerifyData.findIndex(
           (row) =>
             row[0] === indexNumber.toString() &&
-            row[1] === firstName &&
-            row[2] === lastName &&
+            row[1].toLowerCase() === firstName.toLowerCase() &&
+            row[2].toLowerCase() === lastName.toLowerCase() &&
             // row[3] === serverName &&
             // row[4] === group &&
             row[5] === userId
