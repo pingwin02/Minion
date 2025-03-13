@@ -220,14 +220,21 @@ module.exports = {
           if (remarks === "None") {
             await utils.cleanPermissions([member], guild);
 
-            await member.roles.add(
-              await guild.roles.cache.find((r) => r.name === "Student")
-            );
-            utils.logInfo(`Added role @Student to user @${username}`);
-            await member.roles.add(
-              await guild.roles.cache.find((r) => r.name === group)
-            );
-            utils.logInfo(`Added role @${group} to user @${username}`);
+            if (group === "Gość") {
+              await member.roles.add(
+                await guild.roles.cache.find((r) => r.name === "Gość")
+              );
+              utils.logInfo(`Added role @Gość to user @${username}`);
+            } else {
+              await member.roles.add(
+                await guild.roles.cache.find((r) => r.name === "Student")
+              );
+              utils.logInfo(`Added role @Student to user @${username}`);
+              await member.roles.add(
+                await guild.roles.cache.find((r) => r.name === group)
+              );
+              utils.logInfo(`Added role @${group} to user @${username}`);
+            }
             utils.logInfo(`User @${username} verified automatically`);
 
             const updateData = [
