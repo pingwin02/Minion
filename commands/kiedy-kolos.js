@@ -74,13 +74,13 @@ module.exports = {
 
     if (events.length === 0) {
       categoryGroups["WSPÓLNE"]["INNE"].push(
-        ":tropical_drink: Brak nadchodzących wydarzeń w kalendarzu."
+        ":tropical_drink: Brak nadchodzących wydarzeń"
       );
     }
 
     events.forEach((event) => {
       let startUnix, startFormatted;
-      const summary = event.summary.toLowerCase();
+      const summary = event.summary?.toLowerCase() || "brak nazwy wydarzenia";
 
       if (event.start.dateTime) {
         // When event has specific start time
@@ -100,10 +100,6 @@ module.exports = {
       const countDownFormatted = `<t:${startUnix}:R>`;
       const location = event.location ? `**${event.location}** ` : "";
 
-      if (!event.summary) {
-        event.summary = "Brak nazwy wydarzenia";
-      }
-
       let eventType = "INNE"; // Default event type "INNE"
       let category = "WSPÓLNE"; // Default category "WSPÓLNE"
 
@@ -119,80 +115,78 @@ module.exports = {
         eventType = "PROJEKTY";
       }
 
-      if (summary.includes("[um]")) {
-        category = "UM";
-      } else if (summary.includes("[isi]")) {
-        category = "ISI";
-      } else if (summary.includes("[sk]")) {
-        category = "SK";
-      } else if (summary.includes("[isint]")) {
-        category = "ISINT";
-      } else if (summary.includes("[pwwio]")) {
-        category = "PWWIO";
-      } else if (summary.includes("[tgm]")) {
-        category = "TGM";
-      } else if (summary.includes("[ati]")) {
-        category = "ATI";
-      } else if (summary.includes("[p]")) {
-        category = "PRZEDAWNIONE";
-      }
+      if (summary.includes("[um]")) category = "UM";
+      else if (summary.includes("[isi]")) category = "ISI";
+      else if (summary.includes("[sk]")) category = "SK";
+      else if (summary.includes("[isint]")) category = "ISINT";
+      else if (summary.includes("[pwwio]")) category = "PWWIO";
+      else if (summary.includes("[tgm]")) category = "TGM";
+      else if (summary.includes("[ati]")) category = "ATI";
+      else if (summary.includes("[p]")) category = "PRZEDAWNIONE";
 
-      event.summary = event.summary
+      const cleanSummary = event.summary
         .replace(/\[.*\]/, "")
         .replace("{mid}", "")
         .trim();
 
       categoryGroups[category][eventType].push(
-        `:calendar_spiral: ${startFormatted} ` +
-          `- ${event.summary} ${location}(${countDownFormatted})`
+        `:calendar_spiral: ${startFormatted} - ${cleanSummary} ` +
+          `${location}(${countDownFormatted})`
       );
     });
 
-    let formattedMessage = `# TERMINARZ (akt. ${currentFormatted})`;
+    let formattedMessage = `# :date: TERMINARZ (akt. ${currentFormatted})\n`;
 
     Object.entries(categoryGroups).forEach(([category, eventGroups]) => {
-      if (Object.values(eventGroups).every((events) => events.length === 0)) {
-        return;
-      }
-      formattedMessage += `\n## ${category}`;
+      const categoryContent = [];
+
       Object.entries(eventGroups).forEach(([eventType, events]) => {
         if (events.length > 0) {
-          formattedMessage += `\n### ${eventType}\n${events.join("\n")}`;
+          categoryContent.push(`### **${eventType}**\n${events.join("\n")}`);
         }
       });
+
+      if (categoryContent.length > 0) {
+        formattedMessage +=
+          `## **${category}**\n` + `${categoryContent.join("\n")}\n`;
+      }
     });
 
-    let tooLongFlag = false;
-    const preLength = formattedMessage.length;
+    const preTruncLength = formattedMessage.length;
+    let wasTruncated = false;
 
-    if (formattedMessage.length > 2000) {
-      tooLongFlag = true;
+    if (formattedMessage.length > 4096) {
+      wasTruncated = true;
       formattedMessage = formattedMessage.replace(/ \(<t:(\d+):R>\)/g, "");
     }
 
-    if (formattedMessage.length > 2000) {
+    if (formattedMessage.length > 4096) {
       throw new Error(
-        `Wiadomość jest za długa! (${formattedMessage.length} > 2000)` +
+        `Wiadomość jest za długa! (${formattedMessage.length} > 4096)` +
           "\nSpróbuj usunąć niektóre wydarzenia z kalendarza " +
           "lub zmniejszyć ilość znaków w nazwach wydarzeń."
       );
     }
 
-    let newMessage;
+    const embed = new EmbedBuilder()
+      .setColor("Blue")
+      .setDescription(formattedMessage);
+
+    let messageToSend;
     if (mainMessage) {
-      await mainMessage.edit(formattedMessage);
+      await mainMessage.edit({ embeds: [embed] });
+      messageToSend = mainMessage;
     } else {
-      newMessage = await channel.send(formattedMessage);
+      messageToSend = await channel.send({ embeds: [embed] });
     }
 
     await interaction.editReply({
       content:
-        "Zaktualizowano kalendarz kolokwiów. Przejdź, " +
-        `by zobaczyć zmiany: ${mainMessage?.url || newMessage?.url}` +
+        ":white_check_mark: Zaktualizowano kalendarz kolokwiów.\n" +
+        `Przejdź, by zobaczyć zmiany: ${messageToSend.url}` +
         `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
-        "\n:writing_hand: Długość wiadomości: " +
-        `${formattedMessage.length}/2000` +
-        (tooLongFlag ? ` *(po kompresji z ${preLength} znaków)*` : "")
+        `\n:writing_hand: Długość wiadomości: ${formattedMessage.length}/4096` +
+        (wasTruncated ? ` *(po kompresji z ${preTruncLength} znaków)*` : "")
     });
   }
 };
