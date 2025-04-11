@@ -174,7 +174,7 @@ module.exports = {
 
     let messageToSend;
     if (mainMessage) {
-      await mainMessage.edit({ embeds: [embed] });
+      await mainMessage.edit({ content: null, embeds: [embed] });
       messageToSend = mainMessage;
     } else {
       messageToSend = await channel.send({ embeds: [embed] });
