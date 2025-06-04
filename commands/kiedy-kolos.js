@@ -103,15 +103,16 @@ module.exports = {
       let eventType = "INNE"; // Default event type "INNE"
       let category = "WSPÓLNE"; // Default category "WSPÓLNE"
 
-      if (summary.includes("popraw")) {
+      if (summary.includes("popraw") || summary.includes("retake")) {
         eventType = "POPRAWY";
       } else if (
-        summary.includes("egzamin") ||
+        summary.includes("egz") ||
         summary.includes("kolo") ||
-        summary.includes("zal")
+        summary.includes("zal") ||
+        summary.includes("exam")
       ) {
         eventType = "EGZAMINY";
-      } else if (summary.includes("projekt") || summary.includes("deadline")) {
+      } else if (summary.includes("proj") || summary.includes("deadline")) {
         eventType = "PROJEKTY";
       }
 
@@ -182,7 +183,7 @@ module.exports = {
 
     await interaction.editReply({
       content:
-        ":white_check_mark: Zaktualizowano kalendarz kolokwiów.\n" +
+        ":white_check_mark: Zaktualizowano terminarz.\n" +
         `Przejdź, by zobaczyć zmiany: ${messageToSend.url}` +
         `\n\n:calendar_spiral: Ilość wydarzeń: ${events.length}` +
         `\n:writing_hand: Długość wiadomości: ${formattedMessage.length}/4096` +
