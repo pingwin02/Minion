@@ -53,7 +53,10 @@ module.exports = {
             value: "TGM"
           },
           { name: "[ATI] Algorytmy i technologie internetowe", value: "ATI" },
-          { name: "[English] Informatics in English", value: "English" },
+          {
+            name: "[English] Distributed Applications and Internet Services",
+            value: "English"
+          },
           { name: "Guest", value: "Gość" }
         ])
     )

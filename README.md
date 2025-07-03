@@ -48,13 +48,11 @@ The bot supports the following slash and prefix commands:
 To run the bot, you need to have the following files:
 
 - `.env`:
-
   - `TOKEN`: Token of the bot.
   - `CLIENT_ID`: Client ID of the bot.
   - `ADMIN_ID`: ID of the admin.
 
   Optional:
-
   - `SUSPEND_VERIFY`: Set to `true` to disable the `/verify` command globally.
   - `TOKEN_DEV`: Token of the bot for development purposes.
   - `CLIENT_ID_DEV`: Client ID of the bot for development purposes.
