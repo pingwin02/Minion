@@ -10,7 +10,7 @@ const { REST, Routes } = require("discord.js");
 const fs = require("node:fs");
 const utils = require("./utils");
 
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 const LOAD_SLASH = process.argv.includes("load");
 const DEV = utils.isDev();
