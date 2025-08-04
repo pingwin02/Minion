@@ -9,7 +9,7 @@ const utils = require("../utils");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("purge")
-    .setDescription("Kasuje wiadomości, które są młodsze niż 14 dni.")
+    .setDescription("Kasuje wiadomości, które są młodsze niż 14 dni")
     .addIntegerOption((option) =>
       option
         .setName("ilość")

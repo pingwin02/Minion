@@ -4,7 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("losuj")
     .setDescription(
-      "Ze 100% skutecznością podaje twój wynik z najbliższego kolosa."
+      "Z 99.99% skutecznością podaje twój wynik z najbliższego kolosa"
     ),
   async execute({ client, interaction }) {
     await interaction.deferReply();
