@@ -6,7 +6,8 @@ const {
   ButtonStyle,
   PermissionFlagsBits,
   ChannelType,
-  InteractionContextType
+  InteractionContextType,
+  MessageFlags
 } = require("discord.js");
 const utils = require("../utils");
 
@@ -23,7 +24,7 @@ module.exports = {
     )
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const channel = interaction.options.getChannel("kanał");
 

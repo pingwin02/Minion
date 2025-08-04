@@ -1,7 +1,8 @@
 const {
   SlashCommandBuilder,
   PermissionFlagsBits,
-  InteractionContextType
+  InteractionContextType,
+  MessageFlags
 } = require("discord.js");
 const utils = require("../utils");
 
@@ -19,18 +20,16 @@ module.exports = {
     .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const amount = interaction.options.getInteger("ilość") + 1;
     await interaction.channel.bulkDelete(amount, true).catch((err) => {
       utils.printError(interaction.channel, "Nie można usunąć wiadomości", err);
     });
 
-    const msg = await interaction.channel.send(
-      `Usunięto około **${amount - 1}** wiadomości.`
-    );
-
-    utils.timedDelete(msg);
-    await interaction.deleteReply();
+    await interaction.editReply({
+      content: `Usunięto około **${amount - 1}** wiadomości.`,
+      flags: MessageFlags.Ephemeral
+    });
   }
 };

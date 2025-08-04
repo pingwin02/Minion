@@ -5,7 +5,8 @@ const {
   ButtonStyle,
   ActionRowBuilder,
   PermissionFlagsBits,
-  InteractionContextType
+  InteractionContextType,
+  MessageFlags
 } = require("discord.js");
 const utils = require("../utils");
 
@@ -16,7 +17,7 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const guildConfig = utils.getGuildConfig(interaction.guildId);
     const guildName = guildConfig.name;

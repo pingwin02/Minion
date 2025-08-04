@@ -25,7 +25,7 @@ async function printError(interaction, description, error = null) {
         `${error.status ? `(${error.status})` : ""}`;
       embed.setFooter({ text: footer });
     } else {
-      logInfo("printError", new Error(description));
+      logInfo("printError", description);
     }
 
     if (interaction.replied || interaction.deferred) {

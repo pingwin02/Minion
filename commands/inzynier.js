@@ -1,7 +1,8 @@
 const {
   SlashCommandBuilder,
   EmbedBuilder,
-  InteractionContextType
+  InteractionContextType,
+  MessageFlags
 } = require("discord.js");
 const utils = require("../utils");
 
@@ -21,7 +22,10 @@ module.exports = {
         .setTitle(":x: Błąd")
         .setDescription("Komenda nie jest dostępna na tym serwerze.");
 
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({
+        embeds: [embed],
+        flags: MessageFlags.Ephemeral
+      });
     }
 
     if (interaction.channelId !== allowedChannelId) {
@@ -33,7 +37,10 @@ module.exports = {
           `Komenda dostępna tylko na kanale <#${allowedChannelId}>.`
         );
 
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({
+        embeds: [embed],
+        flags: MessageFlags.Ephemeral
+      });
     }
 
     const roleName = "Inżynier";
@@ -51,7 +58,10 @@ module.exports = {
         .setTitle(":x: Błąd")
         .setDescription(`Masz już rolę <@&${role.id}>.`);
 
-      return interaction.reply({ embeds: [embed], ephemeral: true });
+      return interaction.reply({
+        embeds: [embed],
+        flags: MessageFlags.Ephemeral
+      });
     }
 
     await member.roles.add(role);

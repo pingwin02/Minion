@@ -1,7 +1,8 @@
 const {
   SlashCommandBuilder,
   InteractionContextType,
-  EmbedBuilder
+  EmbedBuilder,
+  MessageFlags
 } = require("discord.js");
 const moment = require("moment-timezone");
 const _ = require("lodash");
@@ -14,7 +15,7 @@ module.exports = {
     .setDescription("Aktualizuje kalendarz kolokwiów")
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const guildConfig = utils.getGuildConfig(interaction.guildId);
     const channel = interaction.client.channels.cache.get(

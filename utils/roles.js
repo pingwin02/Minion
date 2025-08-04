@@ -1,4 +1,4 @@
-const { EmbedBuilder, OverwriteType } = require("discord.js");
+const { EmbedBuilder, OverwriteType, MessageFlags } = require("discord.js");
 const { printError } = require("./embeds.js");
 const { logInfo } = require("./logger.js");
 const { getGuildConfig, getCommonConfig } = require("./config.js");
@@ -111,7 +111,7 @@ async function manageRoles({ client, interaction }) {
             .setTitle(":x: Brak roli do usunięcia")
             .setDescription("Nie posiadasz roli specjalności.")
         ],
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     }
 
@@ -139,7 +139,7 @@ async function manageRoles({ client, interaction }) {
           .setTitle(":white_check_mark: Usunięto rolę")
           .setDescription("Usunięto rolę specjalności.")
       ],
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
   }
 
@@ -161,7 +161,7 @@ async function manageRoles({ client, interaction }) {
               "Aby zmienić rolę, użyj przycisku \"Usuń\" przed wyborem innej."
           )
       ],
-      ephemeral: true
+      flags: MessageFlags.Ephemeral
     });
   }
 
@@ -189,7 +189,7 @@ async function manageRoles({ client, interaction }) {
         .setTitle(":white_check_mark: Dodano rolę")
         .setDescription(`Dodano rolę <@&${roleToAdd.id}>.`)
     ],
-    ephemeral: true
+    flags: MessageFlags.Ephemeral
   });
 }
 
