@@ -85,10 +85,7 @@ async function manageRoles({ client, interaction }) {
     ) + 2;
 
   if (!guild || !member) {
-    return printError(
-      interaction,
-      "Nie można znaleźć serwera lub użytkownika."
-    );
+    return printError(interaction, "Cannot find server or user.");
   }
 
   const roles = [
@@ -105,7 +102,7 @@ async function manageRoles({ client, interaction }) {
 
   const userRoles = member.roles.cache.filter((r) => roles.includes(r.name));
 
-  if (role === "DELETE") {
+  if (role === "REMOVE") {
     const rolesToRemove = await Promise.all(
       roles.map(async (role) => guild.roles.cache.find((r) => r.name === role))
     );
@@ -118,8 +115,8 @@ async function manageRoles({ client, interaction }) {
         embeds: [
           new EmbedBuilder()
             .setColor("Red")
-            .setTitle(":x: Brak roli do usunięcia")
-            .setDescription("Nie posiadasz roli specjalności.")
+            .setTitle(":x: No roles to remove")
+            .setDescription("You do not have any specialization roles.")
         ],
         flags: MessageFlags.Ephemeral
       });
@@ -131,12 +128,12 @@ async function manageRoles({ client, interaction }) {
         null,
         null,
         guildName,
-        "Usunięto",
+        "Removed",
         userId,
         nick
       ]);
     } else {
-      await appendRow(spreadsheetId, "E", ["Usunięto"], row);
+      await appendRow(spreadsheetId, "E", ["Removed"], row);
     }
 
     await member.roles.remove(validRoles);
@@ -146,8 +143,8 @@ async function manageRoles({ client, interaction }) {
       embeds: [
         new EmbedBuilder()
           .setColor("Green")
-          .setTitle(":white_check_mark: Usunięto rolę")
-          .setDescription("Usunięto rolę specjalności.")
+          .setTitle(":white_check_mark: Role removed")
+          .setDescription("Specialization role removed.")
       ],
       flags: MessageFlags.Ephemeral
     });
@@ -156,7 +153,7 @@ async function manageRoles({ client, interaction }) {
   const roleToAdd = await guild.roles.cache.find((r) => r.name === role);
 
   if (!roleToAdd) {
-    return printError(interaction, "Nie można znaleźć roli.");
+    return printError(interaction, "Cannot find role.");
   }
 
   if (userRoles.size) {
@@ -165,10 +162,11 @@ async function manageRoles({ client, interaction }) {
       embeds: [
         new EmbedBuilder()
           .setColor("Red")
-          .setTitle(":x: Masz już rolę")
+          .setTitle(":x: You already have a role")
           .setDescription(
-            "Masz już przypisaną rolę specjalności. " +
-              "Aby zmienić rolę, użyj przycisku \"Usuń\" przed wyborem innej."
+            "You already have a specialization role assigned. " +
+              "To change your role, use the \"Remove\" " +
+              "button before choosing another."
           )
       ],
       flags: MessageFlags.Ephemeral
@@ -196,8 +194,8 @@ async function manageRoles({ client, interaction }) {
     embeds: [
       new EmbedBuilder()
         .setColor("Green")
-        .setTitle(":white_check_mark: Dodano rolę")
-        .setDescription(`Dodano rolę <@&${roleToAdd.id}>.`)
+        .setTitle(":white_check_mark: Role added")
+        .setDescription(`Role <@&${roleToAdd.id}> added.`)
     ],
     flags: MessageFlags.Ephemeral
   });

@@ -13,20 +13,20 @@ const utils = require("../utils");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("wybor-specek")
-    .setDescription("Wysyła embed z przyciskami do wyboru specjalności")
+    .setName("specialization-embed")
+    .setDescription("Sends an embed with buttons to choose a specialization")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addChannelOption((option) =>
       option
-        .setName("kanał")
-        .setDescription("Kanał, na który wysłać embed")
+        .setName("channel")
+        .setDescription("Channel to send the embed to")
         .setRequired(true)
     )
     .setContexts(InteractionContextType.Guild),
   async execute({ client, interaction }) {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const channel = interaction.options.getChannel("kanał");
+    const channel = interaction.options.getChannel("channel");
 
     if (
       !channel ||
@@ -36,8 +36,8 @@ module.exports = {
     ) {
       return utils.printError(
         interaction,
-        "Nie znaleziono wybranego kanału, " +
-          "brak uprawnień lub niepoprawny typ kanału."
+        "Selected channel not found, missing permissions " +
+          "or incorrect channel type."
       );
     }
 
@@ -48,7 +48,7 @@ module.exports = {
         "Choose your specialization by clicking the appropriate button. " +
           "You can select **only one** specialization. " +
           "If you want to change your choice, " +
-          "use the \"Delete\" button before selecting another."
+          "use the \"Remove\" button before selecting another."
       )
       .setThumbnail(utils.getGuildConfig(interaction.guildId).logo);
 
@@ -96,8 +96,8 @@ module.exports = {
           .setLabel("Guest")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId("spec#DELETE")
-          .setLabel("Delete")
+          .setCustomId("spec#REMOVE")
+          .setLabel("Remove")
           .setStyle(ButtonStyle.Danger)
       )
     ];
@@ -108,8 +108,10 @@ module.exports = {
       embeds: [
         new EmbedBuilder()
           .setColor("Green")
-          .setTitle(":white_check_mark: Wysłano")
-          .setDescription("Wysłano embed z przyciskami do wyboru specjalności.")
+          .setTitle(":white_check_mark: Sent")
+          .setDescription(
+            "Embed with specialization selection buttons has been sent."
+          )
       ]
     });
   }

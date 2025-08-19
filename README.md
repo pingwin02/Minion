@@ -31,15 +31,15 @@ The bot supports the following slash and prefix commands:
 - `/losuj`: Generates a random number within the given range.
 - `/przywroc-wnioski`: Restores student verification requests.
 - `/purge`: Deletes the specified number of messages.
+- `/specialization-embed`: Initiates the process of selecting specializations.
 - `/verify`: Command for student verification.
-- `/wybor-specek`: Initiates the process of selecting specialities.
 
 - `!pin`: Pins a replied message.
 - `!unpin`: Unpins a replied message.
 - `!clear`: Deletes messages sent by the bot in the current channel.\*
 - `!avatar_update`: Updates the bot's avatar and banner.\*
 - `!remove_all_roles`: Removes all roles and channel permission overrides from every member of the server.\*
-- `!handle_guests`: Adds the "Gość" role to all users without any specialities.\*
+- `!handle_guests`: Adds the "Gość" role to all users without any specializations.\*
 
 \*These commands are only available to the bot's admin.
 
