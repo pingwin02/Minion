@@ -35,24 +35,24 @@ module.exports = {
         .setDescription("Student specialization")
         .setRequired(true)
         .setChoices([
-          { name: "[UM] Uczenie maszynowe", value: "UM" },
-          { name: "[ISI] Inżynieria systemów informacyjnych", value: "ISI" },
           { name: "[SK] Sieci komputerowe", value: "SK" },
-          {
-            name: "[ISINT] Inteligentne systemy interaktywne",
-            value: "ISINT"
-          },
+          { name: "[ATI] Algorytmy i technologie internetowe", value: "ATI" },
           {
             name:
               "[PWWIO] Przetwarzanie wysokiej wydajności " +
               "i inteligencja obliczeniowa",
             value: "PWWIO"
           },
+          { name: "[ISI] Inteligentne systemy interaktywne", value: "ISI" },
+          {
+            name: "[ISINF] Inżynieria systemów informacyjnych",
+            value: "ISINF"
+          },
+          { name: "[UM] Uczenie maszynowe", value: "UM" },
           {
             name: "[TGM] Technologie geoinformatyczne i mobilne",
             value: "TGM"
           },
-          { name: "[ATI] Algorytmy i technologie internetowe", value: "ATI" },
           {
             name: "[English] Distributed Applications and Internet Services",
             value: "English"

@@ -63,13 +63,13 @@ module.exports = {
 
     const categoryGroups = {
       WSPÓLNE: _.cloneDeep(eventGroups),
-      UM: _.cloneDeep(eventGroups),
-      ISI: _.cloneDeep(eventGroups),
       SK: _.cloneDeep(eventGroups),
-      ISINT: _.cloneDeep(eventGroups),
-      PWWIO: _.cloneDeep(eventGroups),
-      TGM: _.cloneDeep(eventGroups),
       ATI: _.cloneDeep(eventGroups),
+      PWWIO: _.cloneDeep(eventGroups),
+      ISI: _.cloneDeep(eventGroups),
+      ISINF: _.cloneDeep(eventGroups),
+      UM: _.cloneDeep(eventGroups),
+      TGM: _.cloneDeep(eventGroups),
       ENGLISH: _.cloneDeep(eventGroups),
       PRZEDAWNIONE: _.cloneDeep(eventGroups)
     };
@@ -118,13 +118,13 @@ module.exports = {
         eventType = "PROJEKTY";
       }
 
-      if (summary.includes("[um]")) category = "UM";
-      else if (summary.includes("[isi]")) category = "ISI";
-      else if (summary.includes("[sk]")) category = "SK";
-      else if (summary.includes("[isint]")) category = "ISINT";
-      else if (summary.includes("[pwwio]")) category = "PWWIO";
-      else if (summary.includes("[tgm]")) category = "TGM";
+      if (summary.includes("[sk]")) category = "SK";
       else if (summary.includes("[ati]")) category = "ATI";
+      else if (summary.includes("[pwwio]")) category = "PWWIO";
+      else if (summary.includes("[isi]")) category = "ISI";
+      else if (summary.includes("[isinf]")) category = "ISINF";
+      else if (summary.includes("[um]")) category = "UM";
+      else if (summary.includes("[tgm]")) category = "TGM";
       else if (summary.includes("[english]")) category = "ENGLISH";
       else if (summary.includes("[p]")) category = "PRZEDAWNIONE";
 

@@ -43,53 +43,61 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor("Blue")
-      .setTitle("Wybór specjalności")
+      .setTitle("Specialization Selection")
       .setDescription(
-        "Wybierz specjalność, klikając odpowiedni przycisk. " +
-          "Możesz wybrać maksymalnie **jedną** specjalność. " +
-          "Jeśli chcesz zmienić wybór, " +
-          "użyj przycisku \"Usuń\" przed wyborem innej."
+        "Choose your specialization by clicking the appropriate button. " +
+          "You can select **only one** specialization. " +
+          "If you want to change your choice, " +
+          "use the \"Delete\" button before selecting another."
       )
       .setThumbnail(utils.getGuildConfig(interaction.guildId).logo);
 
     const rows = [
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId("spec#UM")
-          .setLabel("Uczenie maszynowe [UM]")
+          .setCustomId("spec#SK")
+          .setLabel("[SK] Sieci komputerowe")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("spec#ATI")
+          .setLabel("[ATI] Algorytmy i technologie internetowe")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("spec#PWWIO")
+          .setLabel(
+            "[PWWIO] Przetwarzanie wysokiej wydajności " +
+              "i inteligencja obliczeniowa"
+          )
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#ISI")
-          .setLabel("Inżynieria systemów informacyjnych [ISI]")
+          .setLabel("[ISI] Inteligentne systemy interaktywne")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId("spec#SK")
-          .setLabel("Sieci komputerowe [SK]")
+          .setCustomId("spec#ISINF")
+          .setLabel("[ISINF] Inżynieria systemów informacyjnych")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId("spec#ISINT")
-          .setLabel("Inteligentne systemy interaktywne [ISINT]")
+          .setCustomId("spec#UM")
+          .setLabel("[UM] Uczenie maszynowe")
           .setStyle(ButtonStyle.Primary)
       ),
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
-          .setCustomId("spec#PWWIO")
-          .setLabel(
-            "Przetwarzanie wysokiej wydajności " +
-              "i inteligencja obliczeniowa [PWWIO]"
-          )
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
           .setCustomId("spec#TGM")
-          .setLabel("Technologie geoinformatyczne i mobilne [TGM]")
+          .setLabel("[TGM] Technologie geoinformatyczne i mobilne")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
-          .setCustomId("spec#ATI")
-          .setLabel("Algorytmy i technologie internetowe [ATI]")
+          .setCustomId("spec#English")
+          .setLabel("[English] Distributed Applications and Internet Services")
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId("spec#Gość")
+          .setLabel("Guest")
           .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#DELETE")
-          .setLabel("Usuń")
+          .setLabel("Delete")
           .setStyle(ButtonStyle.Danger)
       )
     ];

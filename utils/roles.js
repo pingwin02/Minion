@@ -91,7 +91,17 @@ async function manageRoles({ client, interaction }) {
     );
   }
 
-  const roles = ["UM", "ISI", "SK", "ISINT", "PWWIO", "TGM", "ATI"];
+  const roles = [
+    "SK",
+    "ATI",
+    "PWWIO",
+    "ISI",
+    "ISINF",
+    "UM",
+    "TGM",
+    "English",
+    "Gość"
+  ];
 
   const userRoles = member.roles.cache.filter((r) => roles.includes(r.name));
 
