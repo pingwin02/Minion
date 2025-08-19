@@ -76,13 +76,13 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("spec#ISINF")
           .setLabel("[ISINF] Inżynieria systemów informacyjnych")
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId("spec#UM")
-          .setLabel("[UM] Uczenie maszynowe")
           .setStyle(ButtonStyle.Primary)
       ),
       new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId("spec#UM")
+          .setLabel("[UM] Uczenie maszynowe")
+          .setStyle(ButtonStyle.Primary),
         new ButtonBuilder()
           .setCustomId("spec#TGM")
           .setLabel("[TGM] Technologie geoinformatyczne i mobilne")
