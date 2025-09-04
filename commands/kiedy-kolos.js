@@ -82,6 +82,7 @@ module.exports = {
 
     events.forEach((event) => {
       let startUnix, startFormatted;
+      let countDownFormatted = "";
       const summary = event.summary?.toLowerCase() || "brak nazwy wydarzenia";
 
       if (event.start.dateTime) {
@@ -90,16 +91,26 @@ module.exports = {
         startFormatted = `<t:${startUnix}:f>`;
       } else {
         // When event is all-day
-        if (summary.includes("{mid}")) {
-          startUnix = moment(event.start.date).unix();
+        const startDate = moment(event.start.date);
+        const endDate = moment(event.end.date).subtract(1, "days");
+        const startUnixRange = startDate.hour(0).minute(0).second(0).unix();
+        const endUnixRange = endDate.hour(23).minute(59).second(59).unix();
+        const nowUnix = moment().unix();
+        if (endDate.isAfter(startDate, "day")) {
+          // Event lasts more than one day
+          startFormatted = `<t:${startUnixRange}:d> - <t:${endUnixRange}:d>`;
+          startUnix = nowUnix > startUnixRange ? endUnixRange : startUnixRange;
+          countDownFormatted = nowUnix > startUnixRange ? "koniec " : "start ";
+        } else if (summary.includes("{mid}")) {
+          startUnix = startUnixRange;
           startFormatted = `<t:${startUnix}:d>`;
         } else {
-          startUnix = moment(event.end.date).unix() - 1;
+          startUnix = endUnixRange;
           startFormatted = `<t:${startUnix}:d>`;
         }
       }
 
-      const countDownFormatted = `<t:${startUnix}:R>`;
+      countDownFormatted += `<t:${startUnix}:R>`;
       const location = event.location ? `**${event.location}** ` : "";
 
       let eventType = "INNE"; // Default event type "INNE"
@@ -134,7 +145,7 @@ module.exports = {
         .trim();
 
       categoryGroups[category][eventType].push(
-        `:calendar_spiral: ${startFormatted} - ${cleanSummary} ` +
+        `:calendar_spiral: ${startFormatted} — ${cleanSummary} ` +
           `${location}(${countDownFormatted})`
       );
     });
