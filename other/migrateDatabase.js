@@ -85,6 +85,26 @@ async function migrateData() {
 
     if (updates.length === 0 && newEntries.length === 0) {
       console.log("No matching rows found for update or insert.");
+    } else {
+      console.log("Normalizing Index column formatting...");
+
+      const indexColumnResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: spreadsheetDataId,
+        range: `${targetSheet}!A2:A`
+      });
+
+      const indexValues = indexColumnResponse.data.values || [];
+
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: spreadsheetDataId,
+        range: `${targetSheet}!A2:A`,
+        valueInputOption: "USER_ENTERED",
+        resource: {
+          values: indexValues
+        }
+      });
+
+      console.log("Index column normalized (apostrophes removed).");
     }
   } catch (error) {
     console.error("Error migrating data:", error);
