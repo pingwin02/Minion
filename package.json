@@ -19,7 +19,7 @@
   "author": "pingwin02",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "14.23.2",
+    "discord.js": "14.24.2",
     "dotenv": "17.2.3",
     "googleapis": "164.1.0",
     "moment-timezone": "0.6.0"
