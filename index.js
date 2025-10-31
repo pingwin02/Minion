@@ -45,7 +45,9 @@ const client = new Client({
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   presence: {
-    activities: [{ name: "słucha studentów (debili)", type: ActivityType.Custom }],
+    activities: [
+      { name: "słucha studentów (debili)", type: ActivityType.Custom }
+    ],
     status: PresenceUpdateStatus.Online
   }
 });
