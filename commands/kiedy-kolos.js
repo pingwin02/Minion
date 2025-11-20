@@ -61,6 +61,15 @@ module.exports = {
       INNE: []
     };
 
+    const eventTypeLabels = {
+      ENGLISH: {
+        EGZAMINY: "EXAMS",
+        POPRAWY: "RETAKES",
+        PROJEKTY: "PROJECTS",
+        INNE: "OTHER"
+      }
+    };
+
     const categoryGroups = {
       WSPÓLNE: _.cloneDeep(eventGroups),
       SK: _.cloneDeep(eventGroups),
@@ -157,7 +166,12 @@ module.exports = {
 
       Object.entries(eventGroups).forEach(([eventType, events]) => {
         if (events.length > 0) {
-          categoryContent.push(`### **${eventType}**\n${events.join("\n")}`);
+          const eventTypeLabel =
+            eventTypeLabels[category]?.[eventType] || eventType;
+
+          categoryContent.push(
+            `### **${eventTypeLabel}**\n${events.join("\n")}`
+          );
         }
       });
 
