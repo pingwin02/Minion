@@ -80,6 +80,7 @@ module.exports = {
       UM: _.cloneDeep(eventGroups),
       TGM: _.cloneDeep(eventGroups),
       ENGLISH: _.cloneDeep(eventGroups),
+      OBIERALNE: _.cloneDeep(eventGroups),
       PRZEDAWNIONE: _.cloneDeep(eventGroups)
     };
 
@@ -146,6 +147,7 @@ module.exports = {
       else if (summary.includes("[um]")) category = "UM";
       else if (summary.includes("[tgm]")) category = "TGM";
       else if (summary.includes("[english]")) category = "ENGLISH";
+      else if (summary.includes("[ob]")) category = "OBIERALNE";
       else if (summary.includes("[p]")) category = "PRZEDAWNIONE";
 
       const cleanSummary = event.summary
