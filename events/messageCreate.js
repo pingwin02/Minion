@@ -15,8 +15,7 @@ module.exports = {
         await utils.handleUnpinCommand(message);
       } else if (
         lowerContent === "!clear" &&
-        message.author.id ===
-          (utils.isDev() ? process.env.ADMIN_ID_DEV : process.env.ADMIN_ID)
+        message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleClearCommand(message);
       } else if (lowerContent === "student") {
@@ -25,21 +24,18 @@ module.exports = {
         await utils.handleObszarCommand(message);
       } else if (
         lowerContent === "!avatar_update" &&
-        message.author.id ===
-          (utils.isDev() ? process.env.ADMIN_ID_DEV : process.env.ADMIN_ID)
+        message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleAvatarUpdateCommand(message);
       } else if (
         lowerContent === "!remove_all_roles" &&
-        message.author.id ===
-          (utils.isDev() ? process.env.ADMIN_ID_DEV : process.env.ADMIN_ID)
+        message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleRemoveAllRolesCommand(message);
       } else if (
         lowerContent === "!handle_guests" &&
         message.guild &&
-        message.author.id ===
-          (utils.isDev() ? process.env.ADMIN_ID_DEV : process.env.ADMIN_ID)
+        message.author.id === process.env.ADMIN_ID
       ) {
         await utils.handleGuests(message);
       }

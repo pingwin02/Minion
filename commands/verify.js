@@ -168,14 +168,19 @@ module.exports = {
     const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
 
     if (ids && ids.length > 0) {
+      const [groups] = await utils.fetchSheetData(spreadsheetId, ["E2:E"]);
+
       const matchingRequests = ids
         .map((idRow, index) => ({
           id: idRow[0],
-          guildName: guildNames[index] ? guildNames[index]?.[0] : null
+          guildName: guildNames[index] ? guildNames[index]?.[0] : null,
+          group: groups[index] ? groups[index]?.[0] : null
         }))
         .filter(
           (request) =>
-            request.id === userId && request.guildName === guildConfig.name
+            request.id === userId &&
+            request.guildName === guildConfig.name &&
+            request.group !== "Gość"
         );
 
       if (matchingRequests.length > 0) {

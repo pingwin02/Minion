@@ -56,7 +56,6 @@ To run the bot, you need to have the following files:
   - `SUSPEND_VERIFY`: Set to `true` to disable the `/verify` command globally.
   - `TOKEN_DEV`: Token of the bot for development purposes.
   - `CLIENT_ID_DEV`: Client ID of the bot for development purposes.
-  - `ADMIN_ID_DEV`: ID of the admin for development purposes.
 
 - `config.json`:
 
