@@ -33,6 +33,10 @@ if (!fs.existsSync("logs")) {
   fs.mkdirSync("logs");
 }
 
+if (fs.existsSync("logs/dev.log")) {
+  fs.unlinkSync("logs/dev.log");
+}
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,

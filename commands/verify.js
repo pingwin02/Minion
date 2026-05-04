@@ -164,12 +164,13 @@ module.exports = {
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
     const spreadsheetDataId = utils.getCommonConfig().spreadsheetDataId;
 
-    const ranges = ["D2:D", "F2:F"];
-    const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
+    const ranges = ["D2:D", "E2:E", "F2:F"];
+    const [guildNames, groups, ids] = await utils.fetchSheetData(
+      spreadsheetId,
+      ranges
+    );
 
     if (ids && ids.length > 0) {
-      const [groups] = await utils.fetchSheetData(spreadsheetId, ["E2:E"]);
-
       const matchingRequests = ids
         .map((idRow, index) => ({
           id: idRow[0],

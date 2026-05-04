@@ -37,14 +37,19 @@ module.exports = {
     }
 
     const spreadsheetId = utils.getCommonConfig().spreadsheetId;
-    const ranges = ["D2:D", "F2:F"];
-    const [guildNames, ids] = await utils.fetchSheetData(spreadsheetId, ranges);
+    const ranges = ["D2:D", "E2:E", "F2:F"];
+    const [guildNames, groups, ids] = await utils.fetchSheetData(
+      spreadsheetId,
+      ranges
+    );
 
     const guildName = guildConfig.name;
     const row =
       ids.findIndex(
         (idRow, index) =>
-          idRow[0] === _user && guildNames[index]?.[0] === guildName
+          idRow[0] === _user &&
+          guildNames[index]?.[0] === guildName &&
+          groups[index]?.[0] === _group
       ) + 2;
 
     if (row === 1) {
