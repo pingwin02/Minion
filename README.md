@@ -26,7 +26,8 @@ npm install
 The bot supports the following slash and prefix commands:
 
 - `/info`: Provides information about the bot.
-- `/inzynier`: Adds the "Inżynier" role to the user.
+- `/inzynier`: Adds the "Inżynier" role to the user and keeps its channel clear by removing regular messages.
+- `/magister`: Adds the "Magister" role to the user and keeps its channel clear by removing regular messages.
 - `/kiedy-kolos`: Updates message with events from Google Calendar API.
 - `/losuj`: Generates a random number within the given range.
 - `/przywroc-wnioski`: Restores student verification requests.
@@ -85,6 +86,7 @@ To run the bot, you need to have the following files:
       "calendarId": "<ID>calendar.google.com",
       "inviteLink": "https://discord.gg/invite",
       "inzynierId": "<CHANNEL_ID>",
+      "magisterId": "<CHANNEL_ID>",
       "kiedyKolosId": "<CHANNEL_ID>",
       "logo": "https://example.com/logo1.png",
       "name": "Example 1",
@@ -97,6 +99,7 @@ To run the bot, you need to have the following files:
       "calendarId": "<ID>@group.calendar.google.com",
       "inviteLink": "https://discord.gg/invite",
       "inzynierId": "<CHANNEL_ID>",
+      "magisterId": "<CHANNEL_ID>",
       "isDev": true,
       "kiedyKolosId": "<CHANNEL_ID>",
       "logo": "https://example.com/logo2.png",
@@ -125,7 +128,8 @@ Each guild (Discord server) has its own key (`<GUILD_ID>`) containing its settin
 - `autoVerify` - Boolean (`true/false`) specifying whether users are automatically verified.
 - `calendarId` - Google Calendar ID associated with the server.
 - `inviteLink` - Invitation link to the Discord server.
-- `inzynierId` - Channel ID for the `/inzynier` command.
+- `inzynierId` - Channel ID for the `/inzynier` command. Regular user messages in this channel are deleted automatically.
+- `magisterId` - Channel ID for the `/magister` command. Regular user messages in this channel are deleted automatically.
 - `kiedyKolosId` - ID of the channel where the bot posts exam schedules.
 - `logo` - URL of the server's logo, used in embedded messages (`embeds`).
 - `name` - Name of the server.

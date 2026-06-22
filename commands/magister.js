@@ -8,15 +8,15 @@ const utils = require("../utils");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("inzynier")
-    .setDescription("Odbiera rolę Inżyniera")
+    .setName("magister")
+    .setDescription("Przypisuje rolę Magistra")
     .setContexts(InteractionContextType.Guild),
-  async execute({ client, interaction }) {
+  async execute({ interaction }) {
     const guildConfig = utils.getGuildConfig(interaction.guildId);
-    const allowedChannelId = guildConfig.inzynierId;
+    const allowedChannelId = guildConfig.magisterId;
 
     if (!allowedChannelId) {
-      utils.logInfo("inzynier", "Command used in wrong guild");
+      utils.logInfo("magister", "Command used in wrong guild");
       const embed = new EmbedBuilder()
         .setColor("Red")
         .setTitle(":x: Błąd")
@@ -29,7 +29,7 @@ module.exports = {
     }
 
     if (interaction.channelId !== allowedChannelId) {
-      utils.logInfo("inzynier", "Command used in wrong channel");
+      utils.logInfo("magister", "Command used in wrong channel");
       const embed = new EmbedBuilder()
         .setColor("Red")
         .setTitle(":x: Błąd")
@@ -43,7 +43,7 @@ module.exports = {
       });
     }
 
-    const roleName = "Inżynier";
+    const roleName = "Magister";
     const member = interaction.member;
 
     const role = interaction.guild.roles.cache.find((r) => r.name === roleName);
@@ -52,7 +52,7 @@ module.exports = {
     }
 
     if (member.roles.cache.has(role.id)) {
-      utils.logInfo("inzynier", "Role already assigned");
+      utils.logInfo("magister", "Role already assigned");
       const embed = new EmbedBuilder()
         .setColor("Red")
         .setTitle(":x: Błąd")
@@ -70,20 +70,17 @@ module.exports = {
       .setColor("Blue")
       .setTitle("Gratulacje!")
       .setDescription(
-        "Gratulujemy zdania egzaminu inżynierskiego! " +
+        "Gratulujemy zdania egzaminu magisterskiego! " +
           `Pomyślnie przypisano rolę <@&${role.id}>.`
       )
       .setThumbnail(guildConfig.logo)
       .addFields({
         name: " ",
         value:
-          "<:profesor:1045785569239781437>" +
-          "<:konor:1122557089106112675>" +
-          "<:kuchta:1229551359473225738>" +
-          "<:dziubdziub:1052315768555061279>" +
-          "<:profdrhabin:1069695060561629284>" +
-          "<:nowicki:1119353299544588318>" +
-          "<:daciuk:1060192736533291060>"
+          "<:armata:1423312596999737344>" +
+          "<:ez:1380538306672197632>" +
+          "<:jarnul:1371903240651935874>" +
+          "<:obszar:1346228519700533269>"
       });
 
     await interaction.reply({ embeds: [embed] });

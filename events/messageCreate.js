@@ -8,39 +8,77 @@ module.exports = {
       if (message.author.bot) return;
 
       const lowerContent = message.content.toLowerCase();
+      const handler = getMessageHandler(message, lowerContent);
 
-      if (lowerContent === "!pin" && message.reference) {
-        await utils.handlePinCommand(message);
-      } else if (lowerContent === "!unpin" && message.reference) {
-        await utils.handleUnpinCommand(message);
-      } else if (
-        lowerContent === "!clear" &&
-        message.author.id === process.env.ADMIN_ID
-      ) {
-        await utils.handleClearCommand(message);
-      } else if (lowerContent === "student") {
-        await utils.handleStudentCommand(message);
-      } else if (lowerContent.includes("obszar")) {
-        await utils.handleObszarCommand(message);
-      } else if (
-        lowerContent === "!avatar_update" &&
-        message.author.id === process.env.ADMIN_ID
-      ) {
-        await utils.handleAvatarUpdateCommand(message);
-      } else if (
-        lowerContent === "!remove_all_roles" &&
-        message.author.id === process.env.ADMIN_ID
-      ) {
-        await utils.handleRemoveAllRolesCommand(message);
-      } else if (
-        lowerContent === "!handle_guests" &&
-        message.guild &&
-        message.author.id === process.env.ADMIN_ID
-      ) {
-        await utils.handleGuests(message);
+      if (isProtectedCommandChannel(message) && !handler) {
+        const guildName = message.guild?.name || message.guildId;
+        const channelName = message.channel.name || message.channelId;
+
+        await message.delete();
+        utils.logInfo(
+          `[${guildName}] Deleted message in protected channel ` +
+            `#${channelName}: ${message.content}`
+        );
+        return;
+      }
+
+      if (handler) {
+        await handler(message);
       }
     } catch (err) {
       utils.logInfo(`${message.content} message`, err);
     }
   }
 };
+
+function getMessageHandler(message, lowerContent) {
+  const isAdminMessage = message.author.id === process.env.ADMIN_ID;
+
+  if (lowerContent === "!pin" && message.reference) {
+    return utils.handlePinCommand;
+  }
+
+  if (lowerContent === "!unpin" && message.reference) {
+    return utils.handleUnpinCommand;
+  }
+
+  if (lowerContent === "!clear" && isAdminMessage) {
+    return utils.handleClearCommand;
+  }
+
+  if (lowerContent === "student") {
+    return utils.handleStudentCommand;
+  }
+
+  if (lowerContent.includes("obszar")) {
+    return utils.handleObszarCommand;
+  }
+
+  if (lowerContent === "!avatar_update" && isAdminMessage) {
+    return utils.handleAvatarUpdateCommand;
+  }
+
+  if (lowerContent === "!remove_all_roles" && isAdminMessage) {
+    return utils.handleRemoveAllRolesCommand;
+  }
+
+  if (lowerContent === "!handle_guests" && message.guild && isAdminMessage) {
+    return utils.handleGuests;
+  }
+
+  return null;
+}
+
+function isProtectedCommandChannel(message) {
+  if (!message.guild) {
+    return false;
+  }
+
+  const guildConfig = utils.getGuildConfig(message.guildId);
+  const protectedChannelIds = [
+    guildConfig.inzynierId,
+    guildConfig.magisterId
+  ].filter(Boolean);
+
+  return protectedChannelIds.includes(message.channelId);
+}
