@@ -13,11 +13,12 @@ module.exports = {
       if (isProtectedCommandChannel(message) && !handler) {
         const guildName = message.guild?.name || message.guildId;
         const channelName = message.channel.name || message.channelId;
+        const authorName = message.author.username;
 
         await message.delete();
         utils.logInfo(
           `[${guildName}] Deleted message in protected channel ` +
-            `#${channelName}: ${message.content}`
+            `#${channelName} by @${authorName}: ${message.content}`
         );
         return;
       }
