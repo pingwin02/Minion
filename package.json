@@ -20,14 +20,14 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "14.27.0",
-    "dotenv": "18.0.1",
-    "googleapis": "181.0.0",
-    "moment-timezone": "0.6.4"
+    "dotenv": "18.0.8",
+    "googleapis": "187.0.0",
+    "moment-timezone": "0.6.5"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "eslint": "10.11.0",
-    "globals": "17.12.0",
-    "prettier": "3.9.8"
+    "eslint": "10.13.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.10"
   }
 }
